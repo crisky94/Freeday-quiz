@@ -1,0 +1,29 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Games {
+  id           Int        @id @default(autoincrement())
+  nickUser     String     @db.VarChar(255)
+  nameGame     String     @db.VarChar(255)
+  Asks Asks[]
+}
+
+model Asks {
+  id                Int    @id @default(autoincrement())
+  gameId            Int
+  ask               String @db.VarChar(255)
+  a                 String @db.VarChar(255)
+  b                 String @db.VarChar(255)
+  c                 String @db.VarChar(255)
+  d                 String @db.VarChar(255)
+  answer            String @db.VarChar(1)
+  game              Games  @relation(fields: [gameId], references: [id])
+
+  @@index([gameId])
+}
