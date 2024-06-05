@@ -6,6 +6,7 @@ import User from './components/User';
 
 import { ClerkProvider } from '@clerk/nextjs'
 import { AuthProvider } from './pages/authContext';
+import { SocketProvider } from '@/context/SocketContext';
 
 
 import { shadesOfPurple } from '@clerk/themes';
@@ -19,8 +20,8 @@ export default function RootLayout({ children }) {
           }}
     >
       <AuthProvider >
+    <SocketProvider>
         <html lang="en">
-
           <body className=''>
             <Header />
             <Sidebar />
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
             </main>
           </body>
         </html>
+    </SocketProvider>
       </AuthProvider>
     </ClerkProvider>
   )
