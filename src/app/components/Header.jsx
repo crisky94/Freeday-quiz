@@ -1,0 +1,30 @@
+"use client";
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { SignInButton, useUser } from '@clerk/nextjs'
+
+export default function Header() {
+  const { user } = useUser();
+  return (
+    <div className='flex flex-row  justify-between p-5 w-full flex-wrap container-header'>
+      <Link href={"/"}><Image src={"/logo.png"} alt='logo' width={50} height={60} className='logo' /></Link>
+      <nav className="nav-header">
+        {
+          user ? (
+            <div className='flex flex-row flex-wrap justify-center gap-5'>
+              <Link href={'/pages/access-pin'}>Acess Pin</Link>
+              <Link href={'/pages/control-quiz'}>Control Quiz</Link>
+              <Link href={'/pages/modify-quiz'}>Modify Quiz</Link>
+              <Link href={'/pages/demo-game'}>Demo game</Link>
+              <Link href={'/pages/nick-name-form'}>NickNameForm</Link>
+              <Link href={'/pages/ranking'}>Ranking</Link>
+              <Link href={'/pages/create-quiz'}>Create Quiz</Link>
+              <Link href={'/pages/start-quiz'}>Start Quiz</Link>
+            </div>) : <SignInButton className='mr-10' />
+        }
+
+      </nav>
+    </div>
+  );
+}
