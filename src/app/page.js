@@ -1,10 +1,8 @@
-'use client'
-
-import NickNameForm from './pages/nick-name-form/page';
+'use client';
 import GamesList from './components/Games';
-
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
+import AccesPin from './pages/access-pin/page';
 
 function HomePage() {
   const [nickname, setNickname] = useState('');
@@ -20,12 +18,14 @@ function HomePage() {
   }, [nickname]);
 
   return !user && !nickname ? (
-    <div><NickNameForm /></div>
+    <>
+      <AccesPin />
+    </>
   ) : (
-      <div><GamesList /></div>
-  )
-
-
+    <>
+      <GamesList />
+    </>
+  );
 }
 
 export default HomePage;

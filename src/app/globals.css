@@ -9,22 +9,22 @@
 }
 
 body {
+  background-image: url('../../public/bbburst.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
-  transition: all 3s;
 }
 
 .nav-header {
-  display: none
+  display: none;
 }
 
-
 /* Estilos para pantallas más grandes que 768px (desktop y superiores) */
-@media (min-width: 768px) {
+@media (min-width: 989px) {
   body {
     width: 100%;
     font-size: 20px;
-
   }
 
   /* HEADER */
@@ -37,9 +37,8 @@ body {
   }
 
   .nav-header {
-    display: block
+    display: block;
   }
-
 }
 
 /* Estilos para pantallas más grandes que 1024px (large desktop y superiores) */
@@ -47,11 +46,38 @@ body {
   body {
     width: 100%;
     font-size: 22px;
- 
   }
 
   .logo {
     width: 80px;
   }
+}
 
+/* !LOADER */
+.loader {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.loader:before,
+.loader:after {
+  content: '';
+  height: 80px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side, #000 95%, #0000) 35% 35%/6px 6px
+    no-repeat #fff;
+  transform: scaleX(var(--s, 1)) rotate(0deg);
+  animation: l6 1s infinite linear;
+}
+
+.loader:after {
+  --s: -1;
+  animation-delay: -0.1s;
+}
+
+@keyframes l6 {
+  100% {
+    transform: scaleX(var(--s, 1)) rotate(360deg);
+  }
 }
