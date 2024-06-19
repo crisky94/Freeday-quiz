@@ -1,9 +1,18 @@
 import { PrismaClient } from "@prisma/client";
+import { checkAuth } from "../../../lib/authApi";
 
 // Inicializa el cliente de Prisma
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
+  // Verifica la autenticación del usuario utilizando la función checkAuth
+  const { isAuthenticated, response, userId } = await checkAuth(req);
+
+  // Si el usuario no está autenticado, devuelve la respuesta de error
+  if (!isAuthenticated) {
+    return response;
+  }
+
   // Verifica si el método HTTP de la solicitud es POST
   if (req.method === "POST") {
     // Extrae el nombre, el nick y el codeGame del cuerpo de la solicitud (body)

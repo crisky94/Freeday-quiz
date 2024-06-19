@@ -1,9 +1,18 @@
 import { PrismaClient } from "@prisma/client";
+import { checkAuth } from "../../../../lib/authApi";
 
 // Inicializa el cliente de Prisma
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
+  // Verifica la autenticación del usuario utilizando la función checkAuth
+  const { isAuthenticated, response, userId } = await checkAuth(req);
+
+  // Si el usuario no está autenticado, devuelve la respuesta de error
+  if (!isAuthenticated) {
+    return response;
+  }
+
   // Extrae el parámetro 'id' de la consulta (query)
   const { id } = req.query;
 
@@ -88,11 +97,9 @@ export default async function handler(req, res) {
       res.status(200).json({ message: `El juego '${nameGame}' fue eliminado` });
     } catch (error) {
       // En caso de error, devuelve un estado 500 (Error del servidor) con un mensaje de error
-      res
-        .status(500)
-        .json({
-          error: "Error al eliminar el juego y sus preguntas relacionadas",
-        });
+      res.status(500).json({
+        error: "Error al eliminar el juego y sus preguntas relacionadas",
+      });
     }
   } else if (req.method === "GET") {
     try {
