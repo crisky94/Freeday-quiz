@@ -21,13 +21,27 @@ app.prepare().then(() => {
     });
 
     // !AQUI VA EL RESTO DE EVENTOS DEL LADO DEL SERVER
-    //  unirse al juego
-    socket.on('joinGame', ({ playerName, gameId }) => {
-      players[socket.id] = { name: playerName, score: 0 };
-      socket.join(gameId);
-      io.to(gameId.emit('playerjoined', { playerName, playerId: socket.id }));
+
+    // Evento para obtener los juegos
+    socket.on('getGames', async (callback) => {
+      try {
+        // Consultamos todos los juegos en la base de datos
+        const games = await prisma.games.findMany({
+          select: {
+            id: true,
+            nameGame: true,
+            detailGame: true,
+          },
+        });
+
+        // Llamamos al callback con los datos de los juegos obtenidos
+        callback({ games });
+      } catch (e) {
+        console.error('error:', e);
+        // Llamamos al callback con un error si algo sale mal
+        callback({ error: 'Error al obtener juegos' });
+      }
     });
-  });
 
   // Inicia el servidor
   httpServer.listen(port, (err) => {
