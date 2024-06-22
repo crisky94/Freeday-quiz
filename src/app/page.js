@@ -22,9 +22,9 @@ function HomePage() {
       <AccesPin />
     </>
   ) : (
-    <>
+      <div className='w-full min-h-screen md:min-h-[80vh] lg:min-h-[70vh]' >
       <GamesList />
-    </>
+    </div>
   );
 }
 

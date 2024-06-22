@@ -69,12 +69,6 @@ app.prepare().then(() => {
         callback({ error: 'Error al crear juego' });
       }
     });
-
-    // Escuchamos cuando el cliente se desconecta
-    socket.on('disconnect', () => {
-      console.log('socket desconectado 😐');
-    // !AQUI VA EL RESTO DE EVENTOS DEL LADO DEL SERVER
-
     // Evento para obtener los juegos
     socket.on('getGames', async (callback) => {
       try {
@@ -96,8 +90,63 @@ app.prepare().then(() => {
       }
     });
 
-  httpServer.listen(port, (err) => {
-    if (err) throw err;
-    console.log(`Servidor escuchando en http://localhost:${port}`);
+    socket.on('deleteGame', async ({ gameId }, callback) => {
+      try {
+        // Eliminar las preguntas relacionadas con el juego
+        await prisma.asks.deleteMany({
+          where: {
+            gameId: parseInt(gameId), // Aseguramos que gameId es un entero
+          },
+        });
+
+        // Eliminar el juego
+        await prisma.games.delete({
+          where: {
+            id: parseInt(gameId), // Aseguramos que gameId es un entero
+          },
+        });
+
+        // Llamamos al callback con un mensaje de éxito
+        callback({ success: true });
+      } catch (error) {
+        console.error('Error al eliminar el juego:', error);
+        // Llamamos al callback con un mensaje de error si ocurre algún problema
+        callback({ error: 'Error al eliminar el juego' });
+      }
+    });
+
+    socket.on("correctCodeGame", async ({ code }, callback) => {
+      try {
+        const game = await prisma.games.findUnique({
+          where: {
+            codeGame: code,
+          },
+          select: {
+            codeGame: true,
+            id: true,
+          }
+        });
+        const gameId = game.id
+        if (game && game.codeGame === code) {
+          callback({ success: true, message: "Pin correcto!", gameId });
+        } else {
+          callback({ success: false, message: "Pin incorrecto!" });
+        }
+      } catch (error) {
+        console.error('Error al buscar el juego:', error);
+        callback({ success: false, message: 'Error al buscar el juego' });
+      }
+    });
+
+    // Escuchamos cuando el cliente se desconecta
+    socket.on('disconnect', () => {
+      console.log('socket desconectado 😐');
+      // !AQUI VA EL RESTO DE EVENTOS DEL LADO DEL SERVER
+
+    })
+    httpServer.listen(port, (err) => {
+      if (err) throw err;
+      console.log(`Servidor escuchando en http://localhost:${port}`);
+    });
   });
-});
+})
