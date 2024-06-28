@@ -13,7 +13,7 @@ export default function Header() {
         <Image
           src={'/logo.png'}
           alt='logo'
-          width={50}
+          width={90}
           height={60}
           className='logo'
         />
@@ -21,14 +21,11 @@ export default function Header() {
       <nav className='nav-header'>
         {user ? (
           <div className='flex flex-row flex-wrap items-center justify-center gap-5'>
-            <Link href={'/pages/access-pin'}>Acess Pin</Link>
             <Link href={'/pages/control-quiz'}>Control Quiz</Link>
             <Link href={'/pages/modify-quiz'}>Modify Quiz</Link>
             <Link href={'/pages/demo-game'}>Demo game</Link>
-            <Link href={'/pages/nick-name-form'}>NickNameForm</Link>
             <Link href={'/pages/ranking'}>Ranking</Link>
             <Link href={'/pages/create-quiz'}>Create Quiz</Link>
-            <Link href={'/pages/start-quiz'}>Start Quiz</Link>
             <User />
           </div>
         ) : (

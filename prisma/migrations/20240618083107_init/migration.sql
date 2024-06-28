@@ -21,6 +21,7 @@ CREATE TABLE `Asks` (
     `c` VARCHAR(255) NOT NULL,
     `d` VARCHAR(255) NOT NULL,
     `answer` VARCHAR(1) NOT NULL,
+    `timeLimit` INTEGER NOT NULL,
 
     INDEX `Asks_gameId_idx`(`gameId`),
     PRIMARY KEY (`id`)

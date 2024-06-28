@@ -39,6 +39,7 @@ app.prepare().then(() => {
         // Insertamos en la base de datos la información del juego que se va a crear
         const game = await prisma.games.create({
           data: {
+            detailGame: gamedata.detailGame,
             nickUser: gamedata.nickUser, // Nombre del usuario
             nameGame: gamedata.nameGame, // Nombre del juego
             codeGame: codeGame, // Código del juego
@@ -54,6 +55,7 @@ app.prepare().then(() => {
           c: ask.c, // Opción c
           d: ask.d, // Opción d
           answer: ask.answer, // Respuesta correcta
+          timeLimit: ask.timeLimit,
         }));
 
         // Insertamos las preguntas en la base de datos

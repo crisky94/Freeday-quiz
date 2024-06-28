@@ -1,23 +1,11 @@
 'use client';
 import GamesList from './components/Games';
-import { useEffect, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
+import User from './components/User';
 import AccesPin from './pages/access-pin/page';
-
+import { useAuth } from '@/context/authContext';
 function HomePage() {
-  const [nickname, setNickname] = useState('');
-  const { user } = useUser();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedNickname = localStorage.getItem('nickname');
-      if (storedNickname) {
-        setNickname(storedNickname);
-      }
-    }
-  }, [nickname]);
-
-  return !user && !nickname ? (
+  const { user, isSignedIn } = useAuth(User);
+  return !user && !isSignedIn ? (
     <>
       <AccesPin />
     </>

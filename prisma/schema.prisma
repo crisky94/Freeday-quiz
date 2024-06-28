@@ -27,6 +27,7 @@ model Asks {
   c       String @db.VarChar(255)
   d       String @db.VarChar(255)
   answer  String @db.VarChar(1)
+  timeLimit Int
   game    Games  @relation(fields: [gameId], references: [id])
 
   @@index([gameId])

@@ -38,9 +38,7 @@ const Sidebar = () => {
           {user ? (
             <>
               <User />
-              <Link onClick={toggleSidebar} href={'/pages/access-pin'}>
-                Acess Pin
-              </Link>
+
               <Link onClick={toggleSidebar} href={'/pages/control-quiz'}>
                 Control Quiz
               </Link>
@@ -50,17 +48,12 @@ const Sidebar = () => {
               <Link onClick={toggleSidebar} href={'/pages/demo-game'}>
                 Demo game
               </Link>
-              <Link onClick={toggleSidebar} href={'/pages/nick-name-form'}>
-                NickNameForm
-              </Link>
+
               <Link onClick={toggleSidebar} href={'/pages/ranking'}>
                 Ranking
               </Link>
               <Link onClick={toggleSidebar} href={'/pages/create-quiz'}>
                 Create Quiz
-              </Link>
-              <Link onClick={toggleSidebar} href={'/pages/start-quiz'}>
-                Start Quiz
               </Link>
             </>
           ) : (
