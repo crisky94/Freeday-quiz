@@ -96,7 +96,6 @@ app.prepare().then(() => {
     // Escuchamos cuando el cliente se desconecta
     socket.on('disconnect', () => {
       console.log('socket desconectado 😐');
-      // Aquí podrías manejar otras lógicas de desconexión si es necesario
     });
   });
 
