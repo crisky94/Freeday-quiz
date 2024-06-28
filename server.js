@@ -72,9 +72,31 @@ app.prepare().then(() => {
       }
     });
 
+    // Evento para obtener los juegos
+    socket.on('getGames', async (callback) => {
+      try {
+        // Consultamos todos los juegos en la base de datos
+        const games = await prisma.games.findMany({
+          select: {
+            id: true,
+            nameGame: true,
+            detailGame: true,
+          },
+        });
+
+        // Llamamos al callback con los datos de los juegos obtenidos
+        callback({ games });
+      } catch (e) {
+        console.error('error:', e);
+        // Llamamos al callback con un error si algo sale mal
+        callback({ error: 'Error al obtener juegos' });
+      }
+    });
+
     // Escuchamos cuando el cliente se desconecta
     socket.on('disconnect', () => {
       console.log('socket desconectado 😐');
+      // Aquí podrías manejar otras lógicas de desconexión si es necesario
     });
   });
 

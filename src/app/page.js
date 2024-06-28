@@ -1,5 +1,5 @@
 'use client';
-import GamesList from './components/Games';
+import GamesList from './pages/game/page';
 import User from './components/User';
 import AccesPin from './pages/access-pin/page';
 import { useAuth } from '@/context/authContext';
