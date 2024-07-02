@@ -32,6 +32,9 @@ export default function User() {
             />
           </div>
         </SignedIn>
+        {
+          user ? localStorage.removeItem('nickname') : ''
+        }
         {user && !nickname && user.firstName ? (
           <p className='mt-5 text-center mr-12'>
             {user.firstName} {user.lastName}
@@ -40,9 +43,6 @@ export default function User() {
           ''
         )}
         {nickname && !user ? <p>Bienvenidx {nickname}</p> : ''}
-        {/* {
-          !nickname && user ? <p className='mt-12 mr-12'>{user.username}</p> : ''
-        } */}
       </div>
     </>
   );

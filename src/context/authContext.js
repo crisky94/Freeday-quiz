@@ -1,20 +1,20 @@
 'use client'
 import { createContext, useContext, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const { isSignedIn, user } = useUser();
-  const router = useRouter();
+  // const router = useRouter();
 
     useEffect(() => {
       if (isSignedIn) {
         
-         router.push('/');
+        //  router.push('/');
       }
-    }, [isSignedIn, router, user]);
+    }, [isSignedIn, user]);
 
   return (
     <AuthContext.Provider value={{ isSignedIn, user }}>
