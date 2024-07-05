@@ -1,18 +1,30 @@
 // components/Sidebar.js
 'use client';
-import { useState } from 'react';
-import Link from 'next/link';
 
+import Link from 'next/link';
 import { SignInButton, useUser } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
+import Avvvatars from 'avvvatars-react'
 import User from './User';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [nickname, setNickname] = useState('');
   const { user } = useUser();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+
+    if (typeof window !== 'undefined') {
+      const storedNickname = localStorage.getItem('nickname');
+      if (storedNickname) {
+        setNickname(storedNickname);
+      }
+    }
+  }, [nickname]);
 
   return (
     <div className='sidebar'>
@@ -64,7 +76,11 @@ const Sidebar = () => {
               </Link>
             </>
           ) : (
-            <SignInButton />
+              <div className='flex flex-row gap-10'>
+                <Avvvatars value={nickname} style="shape" borderSize={2} size={50} radius={40} shadow={true} />
+                <p className='flex flex-row gap-2 justify-center items-center'>{nickname}</p>
+                <SignInButton className='mr-10' />
+              </div>
           )}
         </nav>
       </div>

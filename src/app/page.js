@@ -1,5 +1,5 @@
 'use client';
-import GamesList from './components/Games';
+import GamesList from './pages/games/page';
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import AccesPin from './pages/access-pin/page';

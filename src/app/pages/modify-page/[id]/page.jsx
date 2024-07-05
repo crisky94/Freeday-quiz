@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useSocket } from '../../../context/SocketContext';
+import { useSocket } from '../../../../context/SocketContext';
 import { useState, useEffect, useCallback } from 'react';
 import { ToastContainer, toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
@@ -116,7 +115,7 @@ export default function EditGame({ params }) {
   return (
     <form className="flex flex-col items-center w-full max-w-3xl mx-auto p-4" onSubmit={handleSubmit}>
       <div className="card-body w-full border rounded-md flex flex-col justify-center text-center items-center mb-5 py-5 px-5">
-        <label className="text-black text-sm sm:text-base font-bold" htmlFor="gameName">Nombre del Juego:</label>
+        <label className="text-white text-sm sm:text-base font-bold" htmlFor="gameName">Nombre del Juego:</label>
         <input
           className="text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none ring-4 focus:ring-purple-500 mb-4 w-full"
           type="text"
@@ -126,7 +125,7 @@ export default function EditGame({ params }) {
           onChange={handleChange}
         />
 
-        <label className="text-black text-sm sm:text-base font-bold" htmlFor="gameDetail">Detalle del Juego:</label>
+        <label className="text-white text-sm sm:text-base font-bold" htmlFor="gameDetail">Detalle del Juego:</label>
         <textarea
           className="text-slate-500 text-center rounded-md placeholder:text-center focus:outline-none ring-4 focus:ring-purple-500 mb-4 w-full resize-none overflow-hidden"
           id="gameDetail"
@@ -140,7 +139,7 @@ export default function EditGame({ params }) {
         {formData.asks.map((ask, index) => (
           <div key={index} className="card-body border rounded-md flex flex-col justify-center text-center items-center px-5 py-5 w-full">
             <div className="flex flex-col card-title w-full">
-              <label className="text-black text-sm sm:text-base font-bold" htmlFor={`ask-${index}`}>Pregunta {index + 1}:</label>
+              <label className="text-white text-sm sm:text-base font-bold" htmlFor={`ask-${index}`}>Pregunta {index + 1}:</label>
               <textarea
                 className=' text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none ring-4 focus:ring-purple-500 mb-4 w-full resize-none overflow-hidden'
                 id={`ask-${index}`}
@@ -153,25 +152,25 @@ export default function EditGame({ params }) {
             <div className="card-body w-full ">
               {['a', 'b', 'c', 'd'].map((option) => (
                 <div className='flex gap-2' key={option}>
-                  <label className="text-black text-sm sm:text-base mr-4 font-bold" htmlFor={`${option}-${index}`}>Opción {option.toUpperCase()}:</label>
+                  <label className="text-white text-sm sm:text-base mr-4 font-bold" htmlFor={`${option}-${index}`}>Opción {option.toUpperCase()}:</label>
                   <textarea
                     className={` ${option == "a"
-                      ? 'bg-red-500 focus:ring-red-700'
+                      ? 'bg-red-600 focus:ring-red-800'
                       : option == "b"
-                        ? 'bg-blue-500 focus:ring-blue-700'
+                        ? 'bg-blue-600 focus:ring-blue-800'
                         : option == 'c'
-                          ? 'bg-green-500 focus:ring-green-700'
-                          : 'bg-yellow-500 focus:ring-yellow-700'
-                      } text-black text-center rounded-md h-10 px-4 placeholder:text-center focus:outline-none ring-4  mb-4 w-full resize-none overflow-hidden`}
+                          ? 'bg-green-600 focus:ring-green-800'
+                          : 'bg-yellow-600 focus:ring-yellow-800'
+                      } text-white text-center rounded-md h-10 px-2 placeholder:text-center focus:outline-none ring-4  mb-4 w-full resize-none overflow-hidden`}
                     id={`${option}-${index}`}
                     name={`${option}-${index}`}
                     value={ask[option]}
                     onChange={(e) => handleAskChange(index, option, e.target.value)}
                     onInput={handleAutoResize}
                   />
+                  
                   <input
                     type='radio'
-                    className='h-5 w-5 flex mt-2'
                     value={ask[option]}
                     name={`correctAnswer-${index}`}
                     checked={ask.answer === option}
@@ -181,10 +180,12 @@ export default function EditGame({ params }) {
               ))}
 
               <div className="flex flex-col card-title w-full justify-center items-center">
-                <label className="text-black text-sm sm:text-base font-bold" htmlFor={`timer-${index}`}>Temporizador (segundos):</label>
+                <label className="text-white text-sm sm:text-base font-bold" htmlFor={`timer-${index}`}>Temporizador (segundos):</label>
                 <input
                   className="text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none ring-4 focus:ring-purple-500 mb-4 w-20"
                   type="number"
+                  min={3}
+                  max={50}
                   id={`timer-${index}`}
                   name={`timer-${index}`}
                   value={ask.timer}

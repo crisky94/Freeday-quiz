@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import { PrismaClient } from '@prisma/client';
 
+
 // Creamos una instancia del cliente de Prisma
 const prisma = new PrismaClient();
 
@@ -28,8 +29,9 @@ app.prepare().then(() => {
   // Escuchamos cuando un cliente se conecta vía WebSocket
   io.on('connection', (socket) => {
     console.log(`socket conectado con id:${socket.id}`);
-
-    // !AQUI VA EL RESTO DE EVENTOS DEL LADO DEL SERVER
+    socket.on('disconnect', () => {
+      console.log('socket desconectado 😐');
+    });
     // Escuchamos el evento 'createGame' y recibimos los datos del juego (gamedata)
     socket.on('createGame', async (gamedata, callback) => {
       try {
@@ -70,7 +72,7 @@ app.prepare().then(() => {
         callback({ error: 'Error al crear juego' });
       }
     });
-    // Evento para obtener los juegos
+    // Evento para obtener solo los títulos de los juegos
     socket.on('getGames', async (callback) => {
       try {
         // Consultamos todos los juegos en la base de datos
@@ -90,7 +92,6 @@ app.prepare().then(() => {
         callback({ error: 'Error al obtener juegos' });
       }
     });
-
     //obtener juego por id
     socket.on('getGamesId', async ({ gameId }, callback) => {
       try {
@@ -114,7 +115,7 @@ app.prepare().then(() => {
         callback({ error: 'Error al obtener juegos' });
       }
     });
-    //obtener preguntas por id
+
     socket.on('getAsks', async ({ gameId }, callback) => {
       try {
         // Consulta las preguntas del juego específico por su ID
@@ -143,7 +144,6 @@ app.prepare().then(() => {
       }
     });
 
-    //Actualizar juego y/o preguntas
     socket.on('updateGame', async ({ formData, gameId }, callback) => {
       try {
         // Preparamos las promesas de actualización de las preguntas
@@ -187,7 +187,7 @@ app.prepare().then(() => {
       }
     });
 
-    //Eliminar juego por id
+
     socket.on('deleteGame', async ({ gameId }, callback) => {
       try {
         // Eliminar las preguntas relacionadas con el juego
@@ -213,7 +213,6 @@ app.prepare().then(() => {
       }
     });
 
-    //Validar pin
     socket.on("correctCodeGame", async ({ code }, callback) => {
       try {
         const game = await prisma.games.findUnique({
@@ -237,15 +236,50 @@ app.prepare().then(() => {
       }
     });
 
-    // Escuchamos cuando el cliente se desconecta
-    socket.on('disconnect', () => {
-      console.log('socket desconectado 😐');
-    
+    //obtener el juego por el code
+    socket.on('getCodeGame', async ( {code} , callback) => {
+      try {
+        const game = await prisma.games.findUnique({
+          where: {
+            codeGame: code, // Asegúrate de que codeGame sea un número entero
+          },
+          select: {
+            id: true,
+          },
+        });
 
-    })
-    httpServer.listen(port, (err) => {
-      if (err) throw err;
-      console.log(`Servidor escuchando en http://localhost:${port}`);
+        if (!game) {
+          return callback({ success: false, message: 'Juego no encontrado' });
+        }
+
+        const asks = await prisma.asks.findMany({
+          where: {
+            gameId: game.id
+          },
+          select: {
+            id: true,
+            ask: true,
+            a: true,
+            b: true,
+            c: true,
+            d: true,
+            timer: true,
+            answer: true,
+          }
+        });
+
+        callback({ success: true, asks });
+
+      } catch (error) {
+        callback({ success: false, message: 'Error al validar el PIN' });
+      }
     });
+    // Escuchamos cuando el cliente se desconecta
+
   });
-})
+
+  httpServer.listen(port, (err) => {
+    if (err) throw err;
+    console.log(`Servidor escuchando en http://localhost:${port}`);
+  });
+});

@@ -3,16 +3,22 @@
 import { useState } from 'react';
 
 
-const NickNameForm = () => {
+const NickNameForm = ({params}) => {
   const [nickname, setNickname] = useState('');
-
-
+ const code = parseInt(params.code)
   const handleSubmit = (e) => {
     e.preventDefault();
     if (nickname) {
       localStorage.setItem('nickname', nickname);
-      window.location.href = '/pages/access-pin';
-    }
+      window.location.href = `/pages/page-game/${code}`
+    } else {
+        toast.error(response.message, {
+          onClose: () => {
+            window.location.reload()
+          }
+        });
+      }
+
   };
 
   return (

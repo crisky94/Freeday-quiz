@@ -1,6 +1,6 @@
 'use client'
 import { createContext, useContext, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react'; 
 // import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
@@ -10,8 +10,7 @@ export function AuthProvider({ children }) {
   // const router = useRouter();
 
     useEffect(() => {
-      if (isSignedIn) {
-        
+      if (isSignedIn) { 
         //  router.push('/');
       }
     }, [isSignedIn, user]);

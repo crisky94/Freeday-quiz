@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import { useSocket } from '../../context/SocketContext';
+import { useSocket } from '../../../context/SocketContext';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -12,18 +12,11 @@ function AccessPin({ gameId }) {
 
   const handleInputChange = (e) => {
     setCode(parseInt(e.target.value))
-    socket.emit('getCodegame', (response) => {
-      if (response.error) {
-        setError(response.error);
-      } else {
-        setGameId(response.games.id);
-      }
-    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     socket.emit('correctCodeGame', { code, gameId }, (response) => {
       if (response.success) {
         toast.success(response.message, {
@@ -40,9 +33,7 @@ function AccessPin({ gameId }) {
           }
         });
       }
-
     })
-
   };
 
   return (

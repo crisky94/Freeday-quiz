@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "avvvatars-react": "^0.4.2",
     "react-toastify": "^10.0.5",
     "@prisma/client": "^5.15.0",
     "@clerk/nextjs": "^5.1.5",

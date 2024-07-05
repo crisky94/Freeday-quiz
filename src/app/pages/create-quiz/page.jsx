@@ -1,5 +1,5 @@
 'use client';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '../../../context/SocketContext';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/authContext';
 import User from '@/app/components/User';
