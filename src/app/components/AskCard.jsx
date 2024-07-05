@@ -1,6 +1,6 @@
 export default function AskCard({ ask, index, onEdit, onDelete }) {
   return (
-    <div className='bg-slate-200 text-black w-48 p-2 rounded-lg m-2 border-2 border-purple-700'>
+    <div className=' bounce-in-bck bg-slate-200 text-black w-48 p-2 rounded-lg m-2 border-2 border-purple-700'>
       <p className='truncate'>
         <strong>Pregunta:</strong> {ask.ask}
       </p>

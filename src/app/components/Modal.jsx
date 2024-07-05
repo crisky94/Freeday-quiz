@@ -23,10 +23,11 @@ export default function ModalComponent({ value, onChange }) {
         Añadir descripción
       </button>
       {isOpen && (
-        <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center  '>
+        <div className='fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center  '>
           <div className='bg-white m-5 p-5 rounded shadow-lg max-w-lg w-full'>
             <h2 className='text-xl text-black font-bold mb-4'>Descripción:</h2>
             <textarea
+              autoFocus
               value={value}
               onChange={(e) => onChange(e.target.value)}
               className='w-full p-2 border text-black border-black rounded focus:outline-none focus:ring-5 focus:ring-purple-700 focus:border-purple-700'

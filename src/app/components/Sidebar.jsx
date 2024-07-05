@@ -34,25 +34,45 @@ const Sidebar = () => {
         <button className='p-4 text-white' onClick={toggleSidebar}>
           ✕
         </button>
-        <nav className='flex flex-col text-center gap-5 mt-5'>
+        <nav className='flex flex-col text-center gap-3 mt-5'>
           {user ? (
             <>
               <User />
 
-              <Link onClick={toggleSidebar} href={'/pages/control-quiz'}>
+              <Link
+                className=' mx-2 hover:bg-purple-700 rounded-md px-2 py-1 transition duration-300 border-2 border-transparent hover:border-blue-500'
+                onClick={toggleSidebar}
+                href={'/pages/control-quiz'}
+              >
                 Control Quiz
               </Link>
-              <Link onClick={toggleSidebar} href={'/pages/modify-quiz'}>
+              <Link
+                className=' mx-2 hover:bg-purple-700 rounded-md px-2 py-1 transition duration-300 border-2 border-transparent hover:border-blue-500'
+                onClick={toggleSidebar}
+                href={'/pages/modify-quiz'}
+              >
                 Modify Quiz
               </Link>
-              <Link onClick={toggleSidebar} href={'/pages/demo-game'}>
+              <Link
+                className=' mx-2 hover:bg-purple-700 rounded-md px-2 py-1 transition duration-300 border-2 border-transparent hover:border-blue-500'
+                onClick={toggleSidebar}
+                href={'/pages/demo-game'}
+              >
                 Demo game
               </Link>
 
-              <Link onClick={toggleSidebar} href={'/pages/ranking'}>
+              <Link
+                className=' mx-2 hover:bg-purple-700 rounded-md px-2 py-1 transition duration-300 border-2 border-transparent hover:border-blue-500'
+                onClick={toggleSidebar}
+                href={'/pages/ranking'}
+              >
                 Ranking
               </Link>
-              <Link onClick={toggleSidebar} href={'/pages/create-quiz'}>
+              <Link
+                className=' mx-2 hover:bg-purple-700 rounded-md px-2 py-1 transition duration-300 border-2 border-transparent hover:border-blue-500'
+                onClick={toggleSidebar}
+                href={'/pages/create-quiz'}
+              >
                 Create Quiz
               </Link>
             </>

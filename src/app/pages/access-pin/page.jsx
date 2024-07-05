@@ -1,31 +1,68 @@
 'use client';
 
-import Image from 'next/image';
+import { useState } from 'react';
+import { useSocket } from '@/context/socketContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/navigation';
 
-export default function AccesPin() {
+function AccessPin({ gameId }) {
+  const router = useRouter();
+  const [code, setCode] = useState('');
+  const socket = useSocket();
+  const toastDuration = 500;
+
+  const handleInputChange = (e) => {
+    setCode(parseInt(e.target.value));
+    socket.emit('getCodegame', (response) => {
+      if (response.error) {
+        setError(response.error);
+      } else {
+        setGameId(response.games.id);
+      }
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // if (pin === e.target.pin) {
-    //   window.location.href = `/pages/game/${gameId}`
-    // }
+    socket.emit('correctCodeGame', { code, gameId }, (response) => {
+      if (response.success) {
+        toast.success(response.message, {
+          onClose: () => {
+            setTimeout(() => {
+              router.push(`/pages/nick-name-form/${code}`);
+            }, 9000);
+          },
+        });
+      } else {
+        toast.error(response.message, {
+          onClose: () => {
+            window.location.reload();
+          },
+        });
+      }
+    });
   };
 
   return (
-    <div className='flex flex-col gap-5 w-72 items-center m-5'>
-      <Image className='rounded-md' src={'/js.png'} width={250} height={300} />
+    <div className='flex flex-col w-80 p-10 m-5 items-center mt-32 border  bg-slate-800 rounded-md'>
       <input
         type='text'
         placeholder='PIN'
+        onChange={handleInputChange}
         name='pin'
-        className=' text-black rounded-md h-10 placeholder:text-center'
+        className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent'
       />
+      <ToastContainer />
       <button
-        className='bg-purple-400 text-slate-700 w-40 h-10 font-bold rounded-md'
-        onSubmit={handleSubmit}
+        className=' border text-white w-40 h-10 mt-5 font-bold rounded-md hover:shadow-lg hover:shadow-purple-400'
+        onClick={handleSubmit}
       >
-        Acess
+        Access
       </button>
     </div>
   );
 }
+
+export default AccessPin;
