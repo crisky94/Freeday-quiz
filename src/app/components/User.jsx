@@ -32,9 +32,7 @@ export default function User() {
             />
           </div>
         </SignedIn>
-        {
-          user ? localStorage.removeItem('nickname') : ''
-        }
+        {user ? localStorage.removeItem('nickname') : ''}
         {user && !nickname && user.firstName ? (
           <p className='mt-5 text-center mr-12'>
             {user.firstName} {user.lastName}

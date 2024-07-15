@@ -25,6 +25,8 @@ app.prepare().then(() => {
   // Inicializamos el servidor de Socket.io sobre el servidor HTTP
   const io = new SocketServer(httpServer);
 
+  const gamePlayerMap = {};
+
   // Escuchamos cuando un cliente se conecta vía WebSocket
   io.on('connection', (socket) => {
     console.log(`socket conectado con id:${socket.id}`);
@@ -32,6 +34,131 @@ app.prepare().then(() => {
     // aqui van los eventos del juego y jugadores
     gameEvents(socket, prisma);
 
+    socket.on('joinRoom', async ({ nickname, code }) => {
+      try {
+        const game = await prisma.games.findUnique({
+          where: { codeGame: code },
+        });
+
+        if (game) {
+          const existingPlayer = await prisma.players.findFirst({
+            where: {
+              gameId: game.id,
+              socketId: socket.id,
+            },
+          });
+
+          if (existingPlayer) {
+            socket.emit('nicknameConflict', {
+              message: 'Ya tienes un player en esta sala',
+            });
+          } else {
+            const player = await prisma.players.create({
+              data: {
+                playerName: nickname,
+                gameId: game.id,
+                score: 0,
+                socketId: socket.id,
+              },
+            });
+
+            socket.join(`game-${code}`);
+            io.to(`game-${code}`).emit('newPlayer', player);
+            gamePlayerMap[code] = socket.id;
+            socket.emit('joinSuccess');
+          }
+        } else {
+          socket.emit('error', { message: 'Juego no encontrado' });
+        }
+      } catch (error) {
+        console.error('Error al unirse a la sala:', error);
+        socket.emit('error', { message: 'Error al unirse a la sala' });
+      }
+    });
+
+    socket.on('replaceNickname', async ({ nickname, code }) => {
+      try {
+        const game = await prisma.games.findUnique({
+          where: { codeGame: code },
+        });
+
+        if (game) {
+          await prisma.players.updateMany({
+            where: {
+              gameId: game.id,
+              socketId: socket.id,
+            },
+            data: {
+              playerName: nickname,
+            },
+          });
+
+          const player = await prisma.players.findFirst({
+            where: {
+              gameId: game.id,
+              socketId: socket.id,
+            },
+          });
+
+          socket.join(`game-${code}`);
+          io.to(`game-${code}`).emit('updatePlayer', player);
+          gamePlayerMap[code] = socket.id;
+          socket.emit('joinSuccess');
+        } else {
+          socket.emit('error', { message: 'Juego no encontrado' });
+        }
+      } catch (error) {
+        console.error('Error al reemplazar nickname:', error);
+        socket.emit('error', { message: 'Error al reemplazar nickname' });
+      }
+    });
+
+    socket.on('deletePlayer', async ({ playerId, code }, callback) => {
+      try {
+        await prisma.players.delete({
+          where: {
+            id: playerId,
+          },
+        });
+
+        // socket.leave(`game-${code}`);
+        io.to(`game-${code}`).emit('exitPlayer', playerId);
+        callback({ success: true });
+      } catch (error) {
+        console.error('Error al eliminar jugador:', error);
+        callback({ error: 'Error al eliminar jugador' });
+      }
+    });
+
+    // Obtener los jugadores del juego por código del juego
+    socket.on('getPlayers', async ({ code }, callback) => {
+      try {
+        const game = await prisma.games.findUnique({
+          where: {
+            codeGame: code,
+          },
+        });
+
+        if (game) {
+          const players = await prisma.players.findMany({
+            where: {
+              gameId: game.id,
+            },
+            select: {
+              id: true,
+              playerName: true,
+              socketId: true,
+            },
+          });
+          callback({ players });
+        } else {
+          callback({ error: 'Juego no encontrado' });
+        }
+      } catch (error) {
+        console.error('Error al obtener jugadores:', error);
+        callback({ error: 'Error al obtener jugadores' });
+      }
+    });
     //obtener juego por id
     socket.on('getGamesId', async ({ gameId }, callback) => {
       try {
@@ -55,7 +182,7 @@ app.prepare().then(() => {
         callback({ error: 'Error al obtener juegos' });
       }
     });
-    //obtener preguntas por id
+
     socket.on('getAsks', async ({ gameId }, callback) => {
       try {
         // Consulta las preguntas del juego específico por su ID
@@ -84,7 +211,6 @@ app.prepare().then(() => {
       }
     });
 
-    //Actualizar juego y/o preguntas
     socket.on('updateGame', async ({ formData, gameId }, callback) => {
       try {
         // Preparamos las promesas de actualización de las preguntas
@@ -128,7 +254,6 @@ app.prepare().then(() => {
       }
     });
 
-    //Eliminar juego por id
     socket.on('deleteGame', async ({ gameId }, callback) => {
       try {
         // Eliminar las preguntas relacionadas con el juego
@@ -154,7 +279,6 @@ app.prepare().then(() => {
       }
     });
 
-    //Validar pin
     socket.on('correctCodeGame', async ({ code }, callback) => {
       try {
         const game = await prisma.games.findUnique({
@@ -177,11 +301,74 @@ app.prepare().then(() => {
         callback({ success: false, message: 'Error al buscar el juego' });
       }
     });
+
+    //obtener el juego por el code
+    socket.on('getCodeGame', async ({ code }, callback) => {
+      try {
+        const game = await prisma.games.findUnique({
+          where: {
+            codeGame: code, // Asegúrate de que codeGame sea un número entero
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (!game) {
+          return callback({ success: false, message: 'Juego no encontrado' });
+        }
+
+        const asks = await prisma.asks.findMany({
+          where: {
+            gameId: game.id,
+          },
+          select: {
+            id: true,
+            ask: true,
+            a: true,
+            b: true,
+            c: true,
+            d: true,
+            timeLimit: true,
+            answer: true,
+          },
+        });
+
+        callback({ success: true, asks });
+      } catch (error) {
+        callback({ success: false, message: 'Error al validar el PIN' });
+      }
+    });
     // Escuchamos cuando el cliente se desconecta
-    socket.on('disconnect', () => {
-      console.log('socket desconectado 😐');
+    socket.on('disconnect', async () => {
+      console.log(`Socket desconectado: ${socket.id} y eliminado `);
+      try {
+        const player = await prisma.players.findFirst({
+          where: { socketId: socket.id },
+        });
+
+        if (player) {
+          await prisma.players.delete({
+            where: {
+              id: player.id,
+            },
+          });
+
+          const gameCode = Object.keys(gamePlayerMap).find(
+            (code) => gamePlayerMap[code] === socket.id
+          );
+
+          if (gameCode) {
+            io.to(`game-${gameCode}`).emit('exitPlayer', player.id);
+            delete gamePlayerMap[gameCode];
+          }
+        }
+      } catch (error) {
+        console.error('Error al eliminar jugador en desconexión:', error);
+      }
     });
   });
+
   httpServer.listen(port, (err) => {
     if (err) throw err;
     console.log(`Servidor escuchando en http://localhost:${port}`);

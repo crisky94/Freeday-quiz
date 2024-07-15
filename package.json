@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/themes": "^2.1.9",
     "@nextui-org/tooltip": "^2.0.36",
+    "avvvatars-react": "^0.4.2",
     "react-toastify": "^10.0.5",
     "@prisma/client": "^5.15.0",
     "@clerk/nextjs": "^5.1.5",

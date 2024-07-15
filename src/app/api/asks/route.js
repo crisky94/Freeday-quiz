@@ -29,7 +29,7 @@ export async function handler(req) {
       }
 
       // Crea una nueva pregunta en la base de datos
-      const newAsk = await prisma.ask.create({
+      const newAsk = await prisma.asks.create({
         data: {
           gameId: parseInt(gameId), // Convierte gameId a un número entero
           ask, // La pregunta

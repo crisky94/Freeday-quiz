@@ -3,7 +3,7 @@ export function gameEvents(socket, prisma) {
   socket.on('createGame', async (gamedata, callback) => {
     try {
       // Generamos un código aleatorio de 4 dígitos para el juego
-      const codeGame = Math.floor(1000 + Math.random() * 9000);
+      const codeGame = Math.floor(100000 + Math.random() * 900000);
       console.log(codeGame);
 
       // Insertamos en la base de datos la información del juego que se va a crear

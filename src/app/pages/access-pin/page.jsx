@@ -2,25 +2,17 @@
 
 import { useState } from 'react';
 import { useSocket } from '@/context/socketContext';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Flip, ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AccessPin({ gameId }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const socket = useSocket();
-  const toastDuration = 500;
 
   const handleInputChange = (e) => {
     setCode(parseInt(e.target.value));
-    socket.emit('getCodegame', (response) => {
-      if (response.error) {
-        setError(response.error);
-      } else {
-        setGameId(response.games.id);
-      }
-    });
   };
 
   const handleSubmit = (e) => {
@@ -29,10 +21,12 @@ function AccessPin({ gameId }) {
     socket.emit('correctCodeGame', { code, gameId }, (response) => {
       if (response.success) {
         toast.success(response.message, {
+          autoClose: 1000,
+          position: 'bottom-center',
+          theme: 'light',
+          transition: Flip,
           onClose: () => {
-            setTimeout(() => {
-              router.push(`/pages/nick-name-form/${code}`);
-            }, 9000);
+            router.push(`/pages/nick-name-form/${code}`);
           },
         });
       } else {

@@ -1,4 +1,3 @@
-'use client';
 import Header from '@/app/components/Header';
 import Sidebar from '@/app/components/Sidebar';
 import { ClerkProvider } from '@clerk/nextjs';

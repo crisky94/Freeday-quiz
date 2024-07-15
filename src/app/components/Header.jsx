@@ -3,10 +3,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { SignInButton, useUser } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
+import Avvvatars from 'avvvatars-react';
 import User from './User';
 
 export default function Header() {
   const { user } = useUser();
+  const [nickname, setNickname] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedNickname = localStorage.getItem('nickname');
+      if (storedNickname) {
+        setNickname(storedNickname);
+      }
+    }
+  }, [nickname]);
+
   return (
     <div className='flex   flex-row justify-between items-center p-3 w-full flex-wrap container-header'>
       <Link href={'/'}>
@@ -78,7 +91,22 @@ export default function Header() {
             </div>
           </div>
         ) : (
-          <SignInButton className='mr-10' />
+          <div className='flex flex-row gap-80 w-full'>
+            <div className='flex flex-row gap-2'>
+              <Avvvatars
+                value={nickname}
+                style='shape'
+                borderSize={2}
+                size={50}
+                radius={40}
+                shadow={true}
+              />
+              <p className='flex flex-row justify-center items-center'>
+                {nickname}
+              </p>
+            </div>
+            <SignInButton className='mr-10' />
+          </div>
         )}
       </nav>
     </div>
