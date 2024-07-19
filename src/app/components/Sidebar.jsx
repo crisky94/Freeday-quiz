@@ -2,6 +2,7 @@
 
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
+
 import User from './User';
 
 const Sidebar = () => {
@@ -16,6 +17,8 @@ const Sidebar = () => {
     setIsOpen(!isOpen);
   };
 
+
+
   const avatars = async () => {
     try {
       const response = await fetch(`https://api.multiavatar.com/${nickname}.svg?apikey=${apikey}`
@@ -28,6 +31,7 @@ const Sidebar = () => {
     }
   };
   avatars();
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -59,6 +63,7 @@ const Sidebar = () => {
         ''
       )}
       <div
+
         className={`fixed top-0 right-0 h-full w-64 bg-black shadow-xl text-white transition-transform transform z-50 ${ // Aumentar z-index aquí
           isOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
@@ -70,6 +75,7 @@ const Sidebar = () => {
           {user ? (
             <div className='ml-8'>
               <User />
+
             </div>
           ) : (
             <div className='flex flex-col justify-center items-center text-center w-full h-full gap-2'>

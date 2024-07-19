@@ -3,15 +3,12 @@ import { useEffect, useState } from 'react';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Link from 'next/link';
-
-import { useSocket } from '../../../context/SocketContext';
+import { useSocket } from '@/context/socketContext';
+import DeleteConfirmation from '@/app/components/DeleteGame';
 import { useAuth } from '../../../context/authContext';
 import CreateButton from '@/app/components/CreateButton';
-import DeleteConfirmation from '../../components/DeleteGame';
 import CustomDot from '../../components/CustomDot';
 import User from '../../components/User';
-
-
 import '../../styles/games/deleteGame.css'
 import '../../styles/games/editButtonGames.css'
 import '../../styles/games/ListCard.css'
@@ -25,6 +22,7 @@ export default function GamesList() {
   const socket = useSocket();
   useEffect(() => {
 
+
     if (user) {
       setNickUser(`${user.firstName} ${user.lastName}`);
     }
@@ -35,8 +33,6 @@ export default function GamesList() {
         setNickname(storedNickname);
       }
     }
-
-
   }, [games, nickname]);
   useEffect(() => {
     const fetchData = async () => {

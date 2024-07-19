@@ -1,25 +1,21 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
-import { SignedIn, UserButton, useUser } from '@clerk/nextjs'
-
-
+import { SignedIn, UserButton, useUser } from '@clerk/nextjs';
 export default function User() {
   const [nickname, setNickname] = useState('');
   const { user } = useUser();
 
   useEffect(() => {
-
     if (typeof window !== 'undefined') {
       const storedNickname = localStorage.getItem('nickname');
+
       if (storedNickname) {
         setNickname(storedNickname);
       }
-
       if (user) {
         localStorage.removeItem('nickname')
       }
-
     }
   }, [user, nickname]);
 
@@ -45,9 +41,7 @@ export default function User() {
 
             : ''
         }
-
       </div>
-
     </>
   );
 }

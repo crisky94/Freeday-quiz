@@ -1,14 +1,13 @@
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
 
-import { ClerkProvider } from '@clerk/nextjs'
-import { AuthProvider } from './../context/authContext';
-import { SocketProvider } from '../context/SocketContext';
+import Header from '@/app/components/Header';
+import Sidebar from '@/app/components/Sidebar';
+import { ClerkProvider } from '@clerk/nextjs';
+import { AuthProvider } from '@/context/authContext';
+import { SocketProvider } from '@/context/socketContext';
+import './globals.css';
 import { Montserrat } from 'next/font/google'
-
-
 import { neobrutalism } from '@clerk/themes';
-import "./globals.css";
+
 
 export const metadata = {
   title: "HACK A BOSS | FREEDAYQUIZ",

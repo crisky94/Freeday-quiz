@@ -17,6 +17,7 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
   };
 
   return (
+
     <div className='left-0'>
       <button onClick={handleDeleteClick} class="button">
         <svg
@@ -56,24 +57,27 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
             </clipPath>
           </defs>
         </svg>
+
       </button>
 
 
 
       {showConfirmation && (
+
         <div className="fixed top-0 left-0 w-full h-full  flex justify-center items-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-sm w-full text-white">
             <p className="text-lg font-semibold mb-4">¿Estás seguro que deseas eliminar este juego?</p>
             <div className="flex justify-end">
+
               <button
                 onClick={handleCancel}
-                className="text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg mr-2"
+                className='text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg mr-2'
               >
                 Cancelar
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg"
+                className='text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg'
               >
                 Confirmar
               </button>

@@ -8,58 +8,33 @@ generator client {
 }
 
 model Games {
-  id         Int       @id @default(autoincrement())
-  nickUser   String    @db.VarChar(255)
-  nameGame   String    @db.VarChar(255)
-  codeGame   Int       @unique
-  detailGame String?   @db.VarChar(255)
-  endedAt    DateTime?
-  Asks       Asks[]
-
-  // Relación con la tabla Players
-  players Player[]
-
-  @@index([codeGame])
-  // Configuración de la codificación y el collate
-  @@map("Games")
+  id           Int       @id @default(autoincrement())
+  nickUser     String    @db.VarChar(255)
+  nameGame     String    @db.VarChar(255)
+  codeGame     Int       @unique
+  detailGame   String?   @db.VarChar(255)
+  endedAt      DateTime? // Nueva columna para registrar la fecha de finalización del juego
+  players      Players[]
+  asks         Asks[]
 }
 
-// Definición de la tabla Players
-model Player {
-  id         Int    @id @default(autoincrement())
+model Players {
+  id         Int     @id @default(autoincrement())
   gameId     Int
-  playerName String
+  playerName String  @db.VarChar(255)
   score      Int
-
-  // Relación con la tabla Games
-  game Games @relation(fields: [gameId], references: [id])
-
-  // Restricciones de la base de datos
-  @@unique([id])
-  // Definición de la foreign key
-  @@index([gameId])
-  // Configuración de la codificación y el collate
-  @@map("Players")
+  game       Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  socketId   String?
 }
 
 model Asks {
-  id     Int    @id @default(autoincrement())
-  gameId Int
-  ask    String @db.VarChar(255)
-  a      String @db.VarChar(255)
-  b      String @db.VarChar(255)
-  c      String @db.VarChar(255)
-  d      String @db.VarChar(255)
-  answer String @db.VarChar(1)
-  timer  Int
-
-  // Relación con la tabla Games
-  game   Games  @relation(fields: [gameId], references: [id])
-
- @@unique([id])
-
-  @@index([gameId])
-
-  // Configuración de la codificación y el collate
-  @@map("Asks")
-}
+  id        Int     @id @default(autoincrement())
+  gameId    Int
+  ask       String  @db.VarChar(255)
+  a         String  @db.VarChar(255)
+  b         String  @db.VarChar(255)
+  c         String  @db.VarChar(255)
+  d         String  @db.VarChar(255)
+  answer    String  @db.VarChar(1)
+  timer Int
+  game      Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)

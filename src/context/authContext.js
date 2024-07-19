@@ -1,5 +1,4 @@
 'use client';
-
 import { createContext, useContext, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { useRouter } from 'next/navigation';

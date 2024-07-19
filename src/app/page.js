@@ -29,6 +29,7 @@ function HomePage() {
       )}
       {!user && nickname && <AccesPin />}
     </>
+
   );
 
 }

@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
-// import Avvvatars from 'avvvatars-react';
 import User from './User';
 
 export default function Header() {
@@ -28,7 +27,6 @@ export default function Header() {
   avatars();
 
   useEffect(() => {
-
     if (typeof window !== 'undefined') {
       const storedNickname = localStorage.getItem('nickname');
       if (storedNickname) {
@@ -47,6 +45,7 @@ export default function Header() {
   }, [nickname]);
 
   return (
+
     <nav className="header fixed top-0 w-full flex justify-between items-center pl-8 shadow-md shadow-slate-200 z-50 h-24">
       <Link href="/">
         <Image
@@ -55,10 +54,12 @@ export default function Header() {
           height={60}
           className="logo"
           alt="Logo"
+
         />
       </Link>
       <div className='nav-header w-full'>
         {user ? (
+
           <div className="flex justify-between w-full pr-4 mt-6 text-white">
             <div className='w-full flex items-center justify-center text-center gap-6 bg-[#111] h-12 rounded-md '>
               <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/demo-game'}>Demo game</Link>

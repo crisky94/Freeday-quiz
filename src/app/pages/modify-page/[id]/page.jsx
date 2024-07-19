@@ -1,10 +1,8 @@
 'use client';
-
-import { useSocket } from '../../../../context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 // import User from '../../../components/User';
 import '../../../styles/pageModify.css';
 
@@ -12,7 +10,7 @@ export default function EditGame({ params }) {
   const [formData, setFormData] = useState({
     gameName: '',
     gameDetail: '',
-    asks: []
+    asks: [],
   });
 
   const socket = useSocket();
@@ -28,12 +26,12 @@ export default function EditGame({ params }) {
         } else {
           setFormData((prevData) => ({
             ...prevData,
-            asks: response.questions.map(question => ({
+            asks: response.questions.map((question) => ({
               ...question,
               ask: question.ask || '',
               answer: question.answer || null,
-              timer: question.timer || 30
-            }))
+              timer: question.timer || 30,
+            })),
           }));
         }
       });
@@ -59,7 +57,7 @@ export default function EditGame({ params }) {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   }, []);
 
@@ -68,7 +66,7 @@ export default function EditGame({ params }) {
       const newAsks = [...prevData.asks];
       newAsks[index] = {
         ...newAsks[index],
-        [field]: value
+        [field]: value,
       };
       return { ...prevData, asks: newAsks };
     });
@@ -79,7 +77,7 @@ export default function EditGame({ params }) {
       const newAsks = [...prevData.asks];
       newAsks[index] = {
         ...newAsks[index],
-        answer: option
+        answer: option,
       };
       return { ...prevData, asks: newAsks };
     });
@@ -97,7 +95,7 @@ export default function EditGame({ params }) {
             setTimeout(() => {
               window.location.href = '/';
             });
-          }
+          },
         });
       } else {
         toast.error('Error al actualizar el juego', {
@@ -105,7 +103,7 @@ export default function EditGame({ params }) {
             setTimeout(() => {
               window.location.reload();
             });
-          }
+          },
         });
       }
     });
@@ -126,6 +124,7 @@ export default function EditGame({ params }) {
           type="text"
           id="gameName"
           name="gameName"
+
           value={formData.gameName}
           onChange={handleChange}
         />
@@ -170,7 +169,9 @@ export default function EditGame({ params }) {
                     id={`${option}-${index}`}
                     name={`${option}-${index}`}
                     value={ask[option]}
-                    onChange={(e) => handleAskChange(index, option, e.target.value)}
+                    onChange={(e) =>
+                      handleAskChange(index, option, e.target.value)
+                    }
                     onInput={handleAutoResize}
                   />
 
@@ -193,7 +194,9 @@ export default function EditGame({ params }) {
                   id={`timer-${index}`}
                   name={`timer-${index}`}
                   value={ask.timer}
-                  onChange={(e) => handleAskChange(index, 'timer', e.target.value)}
+                  onChange={(e) =>
+                    handleAskChange(index, 'timer', e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -203,6 +206,7 @@ export default function EditGame({ params }) {
       <ToastContainer />
       <div className="flex justify-center mt-10 mb-10">
         <button type="submit" className="btnfos-5 h-10 w-32  rounded-md text-black">
+
           Guardar
         </button>
       </div>

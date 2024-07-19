@@ -3,8 +3,8 @@ import next from 'next';
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import { PrismaClient } from '@prisma/client';
-
-
+import { gameEvents } from './src/eventsServer/gameEvents.js';
+import { playerEvents } from './src/eventsServer/playerEvents.js';
 // Creamos una instancia del cliente de Prisma
 const prisma = new PrismaClient();
 
@@ -26,52 +26,17 @@ app.prepare().then(() => {
   // Inicializamos el servidor de Socket.io sobre el servidor HTTP
   const io = new SocketServer(httpServer);
 
+  const gamePlayerMap = {};
+
   // Escuchamos cuando un cliente se conecta vía WebSocket
   io.on('connection', (socket) => {
     console.log(`socket conectado con id:${socket.id}`);
-    socket.on('disconnect', () => {
-      console.log('socket desconectado 😐');
-    });
-    // Escuchamos el evento 'createGame' y recibimos los datos del juego (gamedata)
-    socket.on('createGame', async (gamedata, callback) => {
-      try {
-        // Generamos un código aleatorio de 4 dígitos para el juego
-        const codeGame = Math.floor(1000 + Math.random() * 9000);
-        console.log(codeGame);
 
-        // Insertamos en la base de datos la información del juego que se va a crear
-        const game = await prisma.games.create({
-          data: {
-            nickUser: gamedata.nickUser, // Nombre del usuario
-            nameGame: gamedata.nameGame, // Nombre del juego
-            codeGame: codeGame, // Código del juego
-          },
-        });
 
-        // Preparamos las preguntas del juego para insertarlas en la base de datos
-        const asks = gamedata.asks.map((ask) => ({
-          gameId: game.id, // ID del juego relacionado
-          ask: ask.ask, // Pregunta
-          a: ask.a, // Opción a
-          b: ask.b, // Opción b
-          c: ask.c, // Opción c
-          d: ask.d, // Opción d
-          answer: ask.answer, // Respuesta correcta
-        }));
+    // aqui van los eventos del juego y jugadores
+    gameEvents(socket, prisma);
+    playerEvents(socket, io, prisma, gamePlayerMap);
 
-        // Insertamos las preguntas en la base de datos
-        await prisma.asks.createMany({
-          data: asks,
-        });
-
-        // Llamamos al callback con la información del juego creado
-        callback({ game });
-      } catch (e) {
-        console.error('error:', e);
-        // Llamamos al callback con un error si algo sale mal
-        callback({ error: 'Error al crear juego' });
-      }
-    });
  //obtener lista de juegos
     // Escuchar el evento 'getGames'
     socket.on('getGames', async ({ user }, callback) => {
@@ -97,7 +62,6 @@ app.prepare().then(() => {
         callback({ error: 'Error al obtener juegos' });
       }
     });
-
 
     //obtener juego por id
     socket.on('getGamesId', async ({ gameId }, callback) => {
@@ -140,7 +104,7 @@ app.prepare().then(() => {
             answer: true,
             timer: true,
           },
-        })
+        });
 
         // Llamamos al callback con las preguntas obtenidas
         callback({ questions });
@@ -166,7 +130,7 @@ app.prepare().then(() => {
               c: ask.c,
               d: ask.d,
               timer: parseInt(ask.timer),
-              answer: ask.answer
+              answer: ask.answer,
             },
           });
         });
@@ -194,7 +158,6 @@ app.prepare().then(() => {
       }
     });
 
-
     socket.on('deleteGame', async ({ gameId }, callback) => {
       try {
         // Eliminar las preguntas relacionadas con el juego
@@ -220,7 +183,7 @@ app.prepare().then(() => {
       }
     });
 
-    socket.on("correctCodeGame", async ({ code }, callback) => {
+    socket.on('correctCodeGame', async ({ code }, callback) => {
       try {
         const game = await prisma.games.findUnique({
           where: {
@@ -229,13 +192,13 @@ app.prepare().then(() => {
           select: {
             codeGame: true,
             id: true,
-          }
+          },
         });
-        const gameId = game.id
+        const gameId = game.id;
         if (game && game.codeGame === code) {
-          callback({ success: true, message: "Pin correcto!", gameId });
+          callback({ success: true, message: 'Pin correcto!', gameId });
         } else {
-          callback({ success: false, message: "Pin incorrecto!" });
+          callback({ success: false, message: 'Pin incorrecto!' });
         }
       } catch (error) {
         console.error('Error al buscar el juego:', error);
@@ -261,7 +224,7 @@ app.prepare().then(() => {
 
         const asks = await prisma.asks.findMany({
           where: {
-            gameId: game.id
+            gameId: game.id,
           },
           select: {
             id: true,
@@ -270,17 +233,21 @@ app.prepare().then(() => {
             b: true,
             c: true,
             d: true,
-            timer: true,
+            timeLimit: true,
             answer: true,
           },
         });
 
+
         callback({ success: true, asks, game });
+
 
       } catch (error) {
         callback({ success: false, message: 'Error al validar el PIN' });
       }
     });
+
+
     socket.on('insertPlayer', async ({ gameId, playerName, score, data }) => {
       try {
         const data = {

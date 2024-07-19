@@ -6,7 +6,6 @@ import { useSocket } from '../../../../context/SocketContext';
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 export default function GamePage({ params }) {
   const [questions, setQuestions] = useState([]);
   const [gameId, setGameId] = useState([]);
@@ -33,6 +32,7 @@ export default function GamePage({ params }) {
         if (response.error) {
           console.error(response.error);
         } else {
+
           setQuestions(response.asks);
           setCurrentQuestionIndex(0);
           setTimeLeft((response.asks[0]?.timer || 0) * 1000); // Convertir a milisegundos
@@ -137,6 +137,7 @@ export default function GamePage({ params }) {
     }
   };
 
+
   if (questions.length === 0) {
     return <Loading />;
   }
@@ -153,7 +154,7 @@ export default function GamePage({ params }) {
     if (answerKey === selectedAnswer) {
       return "ring-4 ring-white";
     }
-    return "";
+    return '';
   };
 
   const formatTime = (milliseconds) => {
@@ -163,6 +164,7 @@ export default function GamePage({ params }) {
   };
 
   return (
+
     <div className='flex justify-center items-center w-full min-h-screen'>
       <div className="flex flex-col gap-5 items-center sm:w-full md:w-2/3 lg:w-1/3 xl:w-2/5 rounded-md mt-20 border-8 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-black ">
         <ToastContainer />
