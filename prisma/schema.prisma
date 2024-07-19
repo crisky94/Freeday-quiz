@@ -36,6 +36,5 @@ model Asks {
   c         String  @db.VarChar(255)
   d         String  @db.VarChar(255)
   answer    String  @db.VarChar(1)
-  timeLimit Int
+  timer Int
   game      Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
-}

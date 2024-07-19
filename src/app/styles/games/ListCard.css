@@ -1,0 +1,41 @@
+.card {
+  background: linear-gradient(to right, #ffcc00, #01ffff);
+  border-radius: 20px;
+}
+
+.card2 {
+  background: #111;
+  border-radius: 20px;
+}
+
+.card2:hover {
+  transform: scale(0.98);
+  border-radius: 20px;
+}
+
+.card:hover {
+  box-shadow: 0px 0px 30px 1px white
+}
+
+/* Carrousel */
+
+
+
+/* DOTS*/
+.custom-dot {
+  background-color: transparent;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.custom-dot .dot {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.custom-dot--active .dot {
+  background-color: white;
+}

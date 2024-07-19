@@ -1,32 +1,48 @@
+
 import Header from '@/app/components/Header';
 import Sidebar from '@/app/components/Sidebar';
 import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from '@/context/authContext';
 import { SocketProvider } from '@/context/socketContext';
-
-import { shadesOfPurple } from '@clerk/themes';
 import './globals.css';
+import { Montserrat } from 'next/font/google'
+import { neobrutalism } from '@clerk/themes';
+
+
+export const metadata = {
+  title: "HACK A BOSS | FREEDAYQUIZ",
+};
+
+const monserrat = Montserrat({
+  weight: '400',
+  subsets: ['latin'],
+})
+
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: [shadesOfPurple],
-      }}
-    >
-      <AuthProvider>
-        <SocketProvider>
-          <html lang='en'>
-            <body className='bg-black'>
+    <SocketProvider>
+      <ClerkProvider
+        appearance={{
+          baseTheme: [neobrutalism],
+        }}
+      >
+        <AuthProvider>
+          <html lang="en">
+            <head>
+              <link rel="icon" href="/logotipo.png" />
+              <title>{metadata.title}</title>
+            </head>
+            <body className={`${monserrat.className} pt-16`}>
               <Header />
               <Sidebar />
-              <main className='flex flex-col items-center justify-between p-4 gap-10'>
+              <main className="flex flex-col flex-wrap items-center justify-between gap-8 w-full h-auto min-h-screen md:min-h-[90vh] lg:min-h-[70vh]">
                 {children}
               </main>
             </body>
           </html>
-        </SocketProvider>
-      </AuthProvider>
-    </ClerkProvider>
+        </AuthProvider>
+      </ClerkProvider>
+    </SocketProvider>
   );
 }

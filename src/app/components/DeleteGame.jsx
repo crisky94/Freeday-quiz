@@ -17,40 +17,58 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
   };
 
   return (
-    <>
-      <button
-        onClick={handleDeleteClick}
-        className='mb-2 ml-2 select-none rounded-lg bg-red-500 py-1 px-2 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-      >
+
+    <div className='left-0'>
+      <button onClick={handleDeleteClick} class="button">
         <svg
-          className='h-5 w-8 ml-3 text-black'
-          width='24'
-          height='24'
-          viewBox='0 0 24 24'
-          stroke-width='2'
-          stroke='currentColor'
-          fill='none'
-          stroke-linecap='round'
-          stroke-linejoin='round'
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 69 14"
+          class="svgIcon bin-top"
         >
-          {' '}
-          <path stroke='none' d='M0 0h24v24H0z' />{' '}
-          <line x1='4' y1='7' x2='20' y2='7' />{' '}
-          <line x1='10' y1='11' x2='10' y2='17' />{' '}
-          <line x1='14' y1='11' x2='14' y2='17' />{' '}
-          <path d='M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12' />{' '}
-          <path d='M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3' />
+          <g clip-path="url(#clip0_35_24)">
+            <path
+              fill="black"
+              d="M20.8232 2.62734L19.9948 4.21304C19.8224 4.54309 19.4808 4.75 19.1085 4.75H4.92857C2.20246 4.75 0 6.87266 0 9.5C0 12.1273 2.20246 14.25 4.92857 14.25H64.0714C66.7975 14.25 69 12.1273 69 9.5C69 6.87266 66.7975 4.75 64.0714 4.75H49.8915C49.5192 4.75 49.1776 4.54309 49.0052 4.21305L48.1768 2.62734C47.3451 1.00938 45.6355 0 43.7719 0H25.2281C23.3645 0 21.6549 1.00938 20.8232 2.62734ZM64.0023 20.0648C64.0397 19.4882 63.5822 19 63.0044 19H5.99556C5.4178 19 4.96025 19.4882 4.99766 20.0648L8.19375 69.3203C8.44018 73.0758 11.6746 76 15.5712 76H53.4288C57.3254 76 60.5598 73.0758 60.8062 69.3203L64.0023 20.0648Z"
+            ></path>
+          </g>
+          <defs>
+            <clipPath id="clip0_35_24">
+              <rect fill="white" height="14" width="60"></rect>
+            </clipPath>
+          </defs>
         </svg>
-        Eliminar
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 69 57"
+          class="svgIcon bin-bottom"
+        >
+          <g clip-path="url(#clip0_35_22)">
+            <path
+              fill="black"
+              d="M20.8232 -16.3727L19.9948 -14.787C19.8224 -14.4569 19.4808 -14.25 19.1085 -14.25H4.92857C2.20246 -14.25 0 -12.1273 0 -9.5C0 -6.8727 2.20246 -4.75 4.92857 -4.75H64.0714C66.7975 -4.75 69 -6.8727 69 -9.5C69 -12.1273 66.7975 -14.25 64.0714 -14.25H49.8915C49.5192 -14.25 49.1776 -14.4569 49.0052 -14.787L48.1768 -16.3727C47.3451 -17.9906 45.6355 -19 43.7719 -19H25.2281C23.3645 -19 21.6549 -17.9906 20.8232 -16.3727ZM64.0023 1.0648C64.0397 0.4882 63.5822 0 63.0044 0H5.99556C5.4178 0 4.96025 0.4882 4.99766 1.0648L8.19375 50.3203C8.44018 54.0758 11.6746 57 15.5712 57H53.4288C57.3254 57 60.5598 54.0758 60.8062 50.3203L64.0023 1.0648Z"
+            ></path>
+          </g>
+          <defs>
+            <clipPath id="clip0_35_22">
+              <rect fill="white" height="57" width="79"></rect>
+            </clipPath>
+          </defs>
+        </svg>
+
       </button>
 
+
+
       {showConfirmation && (
-        <div className='fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center z-50'>
-          <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-sm w-full text-white'>
-            <p className='text-lg font-semibold mb-4'>
-              ¿Estás seguro que deseas eliminar este juego?
-            </p>
-            <div className='flex justify-end'>
+
+        <div className="fixed top-0 left-0 w-full h-full  flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-sm w-full text-white">
+            <p className="text-lg font-semibold mb-4">¿Estás seguro que deseas eliminar este juego?</p>
+            <div className="flex justify-end">
+
               <button
                 onClick={handleCancel}
                 className='text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg mr-2'
@@ -67,7 +85,7 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

@@ -29,6 +29,7 @@ const NickNameForm = ({ params }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (nickname) {
+localStorage.setItem('nickname', nickname);
       setPendingNickname(nickname);
       socket.emit('joinRoom', { nickname, code });
     } else {
@@ -60,7 +61,7 @@ const NickNameForm = ({ params }) => {
           type='text'
           placeholder='NICKNAME'
           value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
+          onChange={(e) => setNickname(capitalizeFirstLetter(e.target.value))}
           required
         />
         <div className='flex flex-row flex-wrap justify-center items-center w-72'>

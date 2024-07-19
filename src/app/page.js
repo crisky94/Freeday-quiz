@@ -1,19 +1,37 @@
 'use client';
-import GamesList from './pages/game/page';
-import User from './components/User';
+import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+
 import AccesPin from './pages/access-pin/page';
-import { useAuth } from '@/context/authContext';
+import GamesList from './pages/games/page';
+
+
 function HomePage() {
-  const { user, isSignedIn } = useAuth(User);
-  return !user && !isSignedIn ? (
+  const [nickname, setNickname] = useState('');
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedNickname = localStorage.getItem('nickname');
+      if (storedNickname) {
+        setNickname(storedNickname);
+      }
+    }
+  }, [user, nickname]);
+
+  return (
     <>
-      <AccesPin />
+      {!user && !nickname && <AccesPin />}
+      {user && !nickname && (
+        <div className='w-full min-h-screen md:min-h-[80vh] lg:min-h-[70vh]'>
+          <GamesList />
+        </div>
+      )}
+      {!user && nickname && <AccesPin />}
     </>
-  ) : (
-    <div className='w-full min-h-screen md:min-h-[80vh] lg:min-h-[70vh]'>
-      <GamesList />
-    </div>
+
   );
+
 }
 
 export default HomePage;

@@ -32,9 +32,36 @@ app.prepare().then(() => {
   io.on('connection', (socket) => {
     console.log(`socket conectado con id:${socket.id}`);
 
+
     // aqui van los eventos del juego y jugadores
     gameEvents(socket, prisma);
     playerEvents(socket, io, prisma, gamePlayerMap);
+
+ //obtener lista de juegos
+    // Escuchar el evento 'getGames'
+    socket.on('getGames', async ({ user }, callback) => {
+      try {
+        console.log('Usuario recibido:', user); // Verifica que el usuario sea el esperado
+
+        const games = await prisma.games.findMany({
+          where: {
+            nickUser: user,
+          },
+          select: {
+            id: true,
+            nameGame: true,
+            detailGame: true,
+          },
+        });
+
+        // console.log('Juegos encontrados:', games); // Verifica que los juegos sean los esperados
+
+        callback({ games });
+      } catch (e) {
+        console.error('error:', e);
+        callback({ error: 'Error al obtener juegos' });
+      }
+    });
 
     //obtener juego por id
     socket.on('getGamesId', async ({ gameId }, callback) => {
@@ -74,8 +101,8 @@ app.prepare().then(() => {
             b: true,
             c: true,
             d: true,
-            timer: true,
             answer: true,
+            timer: true,
           },
         });
 
@@ -211,11 +238,34 @@ app.prepare().then(() => {
           },
         });
 
-        callback({ success: true, asks });
+
+        callback({ success: true, asks, game });
+
+
       } catch (error) {
         callback({ success: false, message: 'Error al validar el PIN' });
       }
     });
+
+
+    socket.on('insertPlayer', async ({ gameId, playerName, score, data }) => {
+      try {
+        const data = {
+          gameId: gameId,
+          playerName: playerName,
+          score: score,
+        };
+
+        const result = await prisma.player.create({ data });
+
+        // Emitir la respuesta al cliente
+        socket.emit('insertPlayerResponse', result);
+      } catch (error) {
+        // Emitir un error al cliente
+        socket.emit('insertPlayerResponse', { error: error.message });
+      }
+    });
+
   });
 
   httpServer.listen(port, (err) => {

@@ -4,111 +4,91 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
-import Avvvatars from 'avvvatars-react';
 import User from './User';
 
 export default function Header() {
   const { user } = useUser();
   const [nickname, setNickname] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const [mostrarAvatar, setMostrarAvatar] = useState(false);
+  const apikey = process.env.apikey;
+
+  const avatars = async () => {
+    try {
+      const response = await fetch(`https://api.multiavatar.com/${nickname}.svg?apikey=${apikey}`);
+      const svg = await response.text();
+      const adjustedSvg = svg.replace('<svg ', '<svg width="50" height="50" ');
+      setAvatar(adjustedSvg);
+    } catch (error) {
+      console.error('Error fetching avatar:');
+    }
+  };
+
+  avatars();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedNickname = localStorage.getItem('nickname');
       if (storedNickname) {
+
         setNickname(storedNickname);
+        setMostrarAvatar(!mostrarAvatar);
+      }
+      if (user) {
+        localStorage.removeItem('nickname');
+      }
+
+      if (user && !nickname) {
+        setMostrarAvatar(mostrarAvatar);
       }
     }
   }, [nickname]);
 
   return (
-    <div className='flex   flex-row justify-between items-center p-3 w-full flex-wrap container-header'>
-      <Link href={'/'}>
+
+    <nav className="header fixed top-0 w-full flex justify-between items-center pl-8 shadow-md shadow-slate-200 z-50 h-24">
+      <Link href="/">
         <Image
-          src={'/3.svg'}
-          alt='logo'
-          width={120}
-          height={100}
-          className='logo -mt-5'
+          src={'/Logotipo_Logotipo.png'}
+          width={50}
+          height={60}
+          className="logo"
+          alt="Logo"
+
         />
       </Link>
-      <nav className='nav-header'>
+      <div className='nav-header w-full'>
         {user ? (
-          <div className='flex flex-row flex-wrap items-center justify-center gap-5  '>
-            <Link
-              className='hover:bg-purple-700 rounded-md px-2  transition duration-300 border-2 border-transparent hover:border-blue-500'
-              href='/pages/control-quiz'
-            >
-              Control Quiz
-            </Link>
-            <Link
-              className='hover:bg-purple-700 rounded-md px-2  transition duration-300 border-2 border-transparent hover:border-blue-500'
-              href='/pages/modify-quiz'
-            >
-              Modify Quiz
-            </Link>
-            <Link
-              className='hover:bg-purple-700 rounded-md px-2  transition duration-300 border-2 border-transparent hover:border-blue-500'
-              href='/pages/demo-game'
-            >
-              Demo Game
-            </Link>
-            <Link
-              className='hover:bg-purple-700 rounded-md px-2  transition duration-300 border-2 border-transparent hover:border-blue-500'
-              href='/pages/ranking'
-            >
-              Ranking
-            </Link>
-            <Link
-              className='hover:bg-purple-700 rounded-md px-2  transition duration-300 border-2 border-transparent hover:border-blue-500'
-              href='/pages/create-quiz'
-            >
-              Create Quiz
-            </Link>
-            <User />
-            <div className='flex flex-col justify-center items-center text-center w-full'>
-              <Link href='/pages/create-quiz'>
-                <button className='mb-2 select-none rounded-lg bg-blue-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-black shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
-                  <svg
-                    class='h-8 w-8 ml-1 text-white'
-                    width='24'
-                    height='24'
-                    viewBox='0 0 24 24'
-                    stroke-width='2'
-                    stroke='currentColor'
-                    fill='none'
-                    stroke-linecap='round'
-                    stroke-linejoin='round'
-                  >
-                    {' '}
-                    <path stroke='none' d='M0 0h24v24H0z' />{' '}
-                    <line x1='9' y1='12' x2='15' y2='12' />{' '}
-                    <line x1='12' y1='9' x2='12' y2='15' />{' '}
-                    <path d='M4 6v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1m-5 0h-2m-5 0h-1a1 1 0 0 1 -1 -1v-1m0 -5v-2m0 -5' />
-                  </svg>
-                  Crear
-                </button>
-              </Link>
+
+          <div className="flex justify-between w-full pr-4 mt-6 text-white">
+            <div className='w-full flex items-center justify-center text-center gap-6 bg-[#111] h-12 rounded-md '>
+              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/demo-game'}>Demo game</Link>
+              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/control-quiz'}>Control Quiz</Link>
+              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/'}>Game Page</Link>
+              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/start-quiz'}>Start Quiz</Link>
             </div>
+            <User />
           </div>
         ) : (
-          <div className='flex flex-row gap-80 w-full'>
-            <div className='flex flex-row gap-2'>
-              <Avvvatars
-                value={nickname}
-                style='shape'
-                borderSize={2}
-                size={50}
-                radius={40}
-                shadow={true}
-              />
-              <p className='flex flex-row justify-center items-center'>
-                {nickname}
-              </p>
+
+          <div className='flex flex-col sm:flex-row items-center w-full justify-around'>
+            <div className='flex flex-row flex-wrap justify-center items-center text-center gap-4 mb-4 sm:mb-0 sm:w-auto'>
+              {!mostrarAvatar && nickname && (
+                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
+              )}
+              {mostrarAvatar && !nickname && (
+                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
+              )}
+              <p className="flex flex-row items-center bg-black h-8 px-2 rounded-md">{nickname}</p>
             </div>
-            <SignInButton className='mr-10' />
+            <div className='flex flex-row justify-end items-end text-end w-full sm:w-auto'>
+              <SignInButton />
+            </div>
           </div>
+
+
         )}
-      </nav>
-    </div>
+      </div >
+    </nav>
   );
 }

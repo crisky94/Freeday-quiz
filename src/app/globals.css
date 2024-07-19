@@ -4,30 +4,30 @@
 
 :root {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 83, 59, 124;
-  /* --background-end-rgb: 255, 255, 255; */
+  --number-of-characters: 21;
 }
 
-body {
-  /* background-image: url('../../public/bbburst.svg'); */
-  background-repeat: no-repeat;
+
+
+/* Header */
+
+.header {
+  background-image: url('../../public/Header.png');
   background-position: center;
-  background-size: 100%;
-  color: rgb(var(--foreground-rgb));
-  overflow-x: hidden;
-}
+  height: 100px;
 
-.bgGradiant {
-  /* background: rgb(28, 255, 228); */
-  background: linear-gradient(
-    90deg,
-    rgba(28, 255, 228, 1) 0%,
-    rgba(252, 255, 0, 1) 100%
-  );
 }
 
 .nav-header {
   display: none;
+}
+
+/* Body */
+body {
+  background-image: url('../../public/Background.png');
+  background-color: black;
+  background-size: cover;
+  color: rgb(var(--foreground-rgb));
 }
 
 /* Estilos para pantallas más grandes que 768px (desktop y superiores) */
@@ -37,12 +37,21 @@ body {
     font-size: 20px;
   }
 
+
+  .logo {
+    width: 80px;
+  }
+
   .sidebar {
     display: none;
   }
 
   .nav-header {
     display: block;
+  }
+
+  .header {
+    height: 150px;
   }
 }
 
@@ -66,8 +75,7 @@ body {
   height: 80px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(farthest-side, #000 95%, #0000) 35% 35%/6px 6px
-    no-repeat #fff;
+  background: radial-gradient(farthest-side, #000 95%, #0000) 35% 35%/6px 6px no-repeat #fff;
   transform: scaleX(var(--s, 1)) rotate(0deg);
   animation: l6 1s infinite linear;
 }
@@ -81,6 +89,7 @@ body {
   100% {
     transform: scaleX(var(--s, 1)) rotate(360deg);
   }
+
 }
 /* logo */
 .logo {
@@ -163,3 +172,6 @@ body {
     animation-timing-function: ease-out;
   }
 }
+
+}
+
