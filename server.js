@@ -72,11 +72,16 @@ app.prepare().then(() => {
         callback({ error: 'Error al crear juego' });
       }
     });
-    // Evento para obtener solo los títulos de los juegos
-    socket.on('getGames', async (callback) => {
+ //obtener lista de juegos
+    // Escuchar el evento 'getGames'
+    socket.on('getGames', async ({ user }, callback) => {
       try {
-        // Consultamos todos los juegos en la base de datos
+        console.log('Usuario recibido:', user); // Verifica que el usuario sea el esperado
+
         const games = await prisma.games.findMany({
+          where: {
+            nickUser: user,
+          },
           select: {
             id: true,
             nameGame: true,
@@ -84,14 +89,16 @@ app.prepare().then(() => {
           },
         });
 
-        // Llamamos al callback con los datos de los juegos obtenidos
+        // console.log('Juegos encontrados:', games); // Verifica que los juegos sean los esperados
+
         callback({ games });
       } catch (e) {
         console.error('error:', e);
-        // Llamamos al callback con un error si algo sale mal
         callback({ error: 'Error al obtener juegos' });
       }
     });
+
+
     //obtener juego por id
     socket.on('getGamesId', async ({ gameId }, callback) => {
       try {
@@ -130,8 +137,8 @@ app.prepare().then(() => {
             b: true,
             c: true,
             d: true,
-            timer: true,
             answer: true,
+            timer: true,
           },
         })
 
@@ -237,7 +244,7 @@ app.prepare().then(() => {
     });
 
     //obtener el juego por el code
-    socket.on('getCodeGame', async ( {code} , callback) => {
+    socket.on('getCodeGame', async ({ code }, callback) => {
       try {
         const game = await prisma.games.findUnique({
           where: {
@@ -265,16 +272,32 @@ app.prepare().then(() => {
             d: true,
             timer: true,
             answer: true,
-          }
+          },
         });
 
-        callback({ success: true, asks });
+        callback({ success: true, asks, game });
 
       } catch (error) {
         callback({ success: false, message: 'Error al validar el PIN' });
       }
     });
-    // Escuchamos cuando el cliente se desconecta
+    socket.on('insertPlayer', async ({ gameId, playerName, score, data }) => {
+      try {
+        const data = {
+          gameId: gameId,
+          playerName: playerName,
+          score: score,
+        };
+
+        const result = await prisma.player.create({ data });
+
+        // Emitir la respuesta al cliente
+        socket.emit('insertPlayerResponse', result);
+      } catch (error) {
+        // Emitir un error al cliente
+        socket.emit('insertPlayerResponse', { error: error.message });
+      }
+    });
 
   });
 
