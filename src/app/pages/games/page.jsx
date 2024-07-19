@@ -1,29 +1,33 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import Link from 'next/link';
 
 import { useSocket } from '../../../context/SocketContext';
-import DeleteConfirmation from '@/app/components/DeleteGame';
+import { useAuth } from '../../../context/authContext';
+import CreateButton from '@/app/components/CreateButton';
+import DeleteConfirmation from '../../components/DeleteGame';
+import CustomDot from '../../components/CustomDot';
+import User from '../../components/User';
 
+
+import '../../styles/games/deleteGame.css'
+import '../../styles/games/editButtonGames.css'
+import '../../styles/games/ListCard.css'
 
 export default function GamesList() {
   const [games, setGames] = useState([]);
-  const [error, setError] = useState()
+  const [error, setError] = useState();
   const [nickname, setNickname] = useState('');
+  const [nickUser, setNickUser] = useState('');
+  const { user } = useAuth(User);
   const socket = useSocket();
-
   useEffect(() => {
-    const fetchData = (async () => {
-      socket.emit('getGames', (response) => {
 
-        if (response.error) {
-          setError(response.error);
-        } else {
-          setGames(response.games);
-        }
-      });
-
-    })
+    if (user) {
+      setNickUser(`${user.firstName} ${user.lastName}`);
+    }
 
     if (typeof window !== 'undefined') {
       const storedNickname = localStorage.getItem('nickname');
@@ -31,79 +35,115 @@ export default function GamesList() {
         setNickname(storedNickname);
       }
     }
-  fetchData()
+
+
   }, [games, nickname]);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (nickUser) {
+        console.log(nickUser);
+        socket.emit('getGames', { user: nickUser }, (response) => {
+          console.log(response);
+          if (response.error) {
+            setError(response.error);
+          } else {
+            setGames(response.games);
+          }
+        });
+      }
+    };
+
+    fetchData();
+  }, [nickUser, socket]);
+
+  // const handleClick = () => {
+  //   window.location.reload();
+  // }
 
   const handleDelete = async (gameId) => {
     socket.emit('deleteGame', { gameId }, (response) => {
       if (response.error) {
         console.error(response.error);
-        // Manejar el error (mostrar mensaje, etc.)
       } else {
         console.log('Juego eliminado exitosamente');
-        // Actualizar la lista de juegos o realizar otras acciones necesarias
       }
     });
   };
 
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 6000, min: 3000 },
+      items: 5,
+    },
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    }
+  };
+
   return (
-    <div className="w-full h-auto p-4 mt-10 rounded-lg shadow-2xl sm:p-6">
-      {games.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {games.map((game, i) => (
-            <div
-              key={game.id}
-              className="card w-full bg-slate-100 text-black shadow-xl border rounded-md p-2 sm:p-4 justify-center items-center text-center"
-            >
-              <div className="card-body">
-                <h2 className="card-title font-bold text-sm sm:text-base">
-                  {i + 1}. {game.nameGame}
-                </h2>
-                <p className="text-slate-400 text-xs sm:text-sm">
-                  {game.detailGame}
-                </p>
-                <div className="card-actions justify-center items-center text-center mt-2">
-                  <Link href={`/pages/modify-page/${game.id}.jsx`}>
-                    <button className="mb-2 ml-2 select-none rounded-lg bg-amber-500 py-1 px-2 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                      <svg
-                        className="h-5 w-9 text-black"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                        />
-                      </svg>
-                      Editar
-                    </button>
-                  </Link>
-                  <DeleteConfirmation gameId={game.id} onDelete={handleDelete} />
-                </div>
-              </div>
+    <>
+      {
+        user ? (
+          <div className=" min-h-screen pt-16 ">
+            <div className='mt-16'>
+              <CreateButton />
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col justify-center items-center text-center w-full">
-          <h1 className="font-medium">Aún no tienes juegos creados</h1>
-          <Link href="/pages/create-quiz">
-            <button className="mb-2 select-none rounded-lg bg-blue-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-black shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-              <svg class="h-8 w-8 ml-1 text-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <line x1="9" y1="12" x2="15" y2="12" />  <line x1="12" y1="9" x2="12" y2="15" />  <path d="M4 6v-1a1 1 0 0 1 1 -1h1m5 0h2m5 0h1a1 1 0 0 1 1 1v1m0 5v2m0 5v1a1 1 0 0 1 -1 1h-1m-5 0h-2m-5 0h-1a1 1 0 0 1 -1 -1v-1m0 -5v-2m0 -5" /></svg>
-              Crear
-            </button>
-          </Link>
-        </div>
-      )}
-    </div>
+            {games.length > 0 ? (
+              <Carousel
+                responsive={responsive}
+                removeArrowOnDeviceType={["tablet", "mobile"]}
+                containerClass="carousel-container"
+                itemClass="carousel-item"
+                dotListClass="custom-dot-list"
+                customDot={<CustomDot />}
+                arrows
+                swipeable
+                draggable
+                showDots
+              >
+                {games.map((game, i) => (
+                  <div
+                    key={game.id}
+                    className=" card w-full rounded-md sm:p-2 min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl transition-all mx-10 sm:mx-12"
+                  >
+                    <div className="card2 p-6 text-white min-h-72  ">
+                      <h2 className="card-title font-bold text-sm sm:text-base uppercase p-6 ">
+                        {i + 1}. {game.nameGame}
+                      </h2>
+                      <div className="flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4">
+                        <Link href={`/pages/modify-page/${game.id}.jsx`}>
+                          <button className="edit-button">
+                            <svg className="edit-svgIcon" viewBox="0 0 512 512">
+                              <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path>
+                            </svg>
+                          </button>
+                        </Link>
+                        <DeleteConfirmation gameId={game.id} onDelete={handleDelete} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </Carousel>
+            ) : (
+              <div className="flex flex-col justify-center items-center text-center w-full h-full">
+                <h1 className="font-medium">Aún no tienes juegos creados</h1>
+              </div>
+            )}
+          </div>
+        ) : ''
+      }
 
+
+    </>
   );
-
-
-
 }
-
 
