@@ -1,8 +1,10 @@
 'use client';
-import GamesList from './components/Games';
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
+
 import AccesPin from './pages/access-pin/page';
+import GamesList from './pages/games/page';
+
 
 function HomePage() {
   const [nickname, setNickname] = useState('');
@@ -15,17 +17,20 @@ function HomePage() {
         setNickname(storedNickname);
       }
     }
-  }, [nickname]);
+  }, [user, nickname]);
 
-  return !user && !nickname ? (
+  return (
     <>
-      <AccesPin />
-    </>
-  ) : (
-    <>
-      <GamesList />
+      {!user && !nickname && <AccesPin />}
+      {user && !nickname && (
+        <div className='w-full min-h-screen md:min-h-[80vh] lg:min-h-[70vh]'>
+          <GamesList />
+        </div>
+      )}
+      {!user && nickname && <AccesPin />}
     </>
   );
+
 }
 
 export default HomePage;

@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
       // Busca todas las preguntas (asks) que corresponden al juego con el id proporcionado
-      const asks = await prisma.ask.findMany({
+      const asks = await prisma.asks.findMany({
         where: {
           gameId: parseInt(id), // Convierte el id a un número entero
         },

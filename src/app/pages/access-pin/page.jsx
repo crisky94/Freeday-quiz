@@ -1,31 +1,68 @@
-'use client';
+'use client'
 
-import Image from 'next/image';
+import { useState } from 'react';
+import { useSocket } from '../../../context/SocketContext';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function AccesPin() {
+function AccessPin({ gameId }) {
+  const [code, setCode] = useState('');
+  const socket = useSocket();
+  const toastDuration = 100;
+
+  const handleInputChange = (e) => {
+    setCode(parseInt(e.target.value))
+  };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // if (pin === e.target.pin) {
-    //   window.location.href = `/pages/game/${gameId}`
-    // }
+    socket.emit('correctCodeGame', { code, gameId }, (response) => {
+      if (response.success) {
+        toast.success(response.message, {
+          autoClose: 2000,
+          onClose: () => {
+            setTimeout(() => {
+              window.location.href = `/pages/nick-name-form/${code}`;
+            }, toastDuration);
+          }
+        });
+      } else {
+        toast.error(response.message, {
+          autoClose: 2000,
+          onClose: () => {
+            window.location.reload()
+          }
+        });
+      }
+    })
   };
 
   return (
-    <div className='flex flex-col gap-5 w-72 items-center m-5'>
-      <Image className='rounded-md' src={'/js.png'} width={250} height={300} />
-      <input
-        type='text'
-        placeholder='PIN'
-        name='pin'
-        className=' text-black rounded-md h-10 placeholder:text-center'
-      />
-      <button
-        className='bg-purple-400 text-slate-700 w-40 h-10 font-bold rounded-md'
-        onSubmit={handleSubmit}
-      >
-        Acess
-      </button>
+    <div className='flex flex-col items-center justify-center min-h-screen '>
+      <div className="flex flex-col p-20 m-5 w-72 sm:w-full items-center border-4 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md">
+        <label className='bg-black uppercase text-xl mb-6'>Introduce el pin</label>
+        <input
+          type="text"
+          placeholder="PIN"
+
+          onChange={handleInputChange}
+          name="pin"
+          className="text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+        />
+        <ToastContainer />
+        <button
+          className=" border text-white w-40 h-10 mt-5 font-bold rounded-md hover:shadow-lg hover:shadow-yellow-400"
+          onClick={handleSubmit}
+        >
+          Ingresar
+        </button>
+
+      </div>
     </div>
   );
 }
+
+
+export default AccessPin;
