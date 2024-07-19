@@ -16,7 +16,10 @@ const WaitingRoom = ({ params }) => {
     if (socket) {
       setSocketId(socket.id);
     }
-  }, [socket]);
+    if (!socket) {
+      router.push('/');
+    }
+  }, [socket, router]);
 
   useEffect(() => {
     if (!code) {
@@ -95,6 +98,20 @@ const WaitingRoom = ({ params }) => {
     };
   }, [socket, code]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue =
+        '¿Estás seguro de que deseas recargar la página? Se perderán los datos no guardados.';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   const deletePlayer = () => {
     if (!socket) return;
 
@@ -113,7 +130,6 @@ const WaitingRoom = ({ params }) => {
       }
     });
   };
-
   return (
     <div className='w-screen h-screen bg-slate-400'>
       <div>

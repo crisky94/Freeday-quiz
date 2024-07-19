@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
       <AuthProvider>
         <SocketProvider>
           <html lang='en'>
-            <body className='bg-primary'>
+            <body className='bg-black'>
               <Header />
               <Sidebar />
               <main className='flex flex-col items-center justify-between p-4 gap-10'>

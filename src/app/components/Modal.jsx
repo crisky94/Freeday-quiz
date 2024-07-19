@@ -17,7 +17,7 @@ export default function ModalComponent({ value, onChange }) {
     <>
       <button
         type='button'
-        className='bg-blue-700  text-white px-5 text-xs h-12 rounded-lg hover:bg-blue-600 hover:transition duration-200'
+        className='bgGradiant text-black px-5 text-xs h-12 rounded-lg hover:bg-blue-600 hover:transition duration-200'
         onClick={toggleModal}
       >
         Añadir descripción
@@ -30,7 +30,7 @@ export default function ModalComponent({ value, onChange }) {
               autoFocus
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              className='w-full p-2 border text-black border-black rounded focus:outline-none focus:ring-5 focus:ring-purple-700 focus:border-purple-700'
+              className='w-full p-2 border text-black border-black rounded focus:outline-none focus:ring-5  focus:border-'
               rows='5'
               placeholder='Escribe tu descripción aquí...'
             ></textarea>
@@ -38,13 +38,13 @@ export default function ModalComponent({ value, onChange }) {
               <button
                 type='button'
                 onClick={handleSave}
-                className='bg-primary text-white px-4 py-1 mx-2 rounded-lg shadow hover:bg-purple-700 hover:transition duration-200'
+                className='bgGradiant text-black px-4 py-1 mx-2 rounded-lg shadow hover:bg-purple-700 hover:transition duration-200'
               >
                 Guardar
               </button>
               <button
                 type='button'
-                className='bg-primary text-white px-4 py-1 mx-2 rounded-lg shadow hover:bg-red-500 hover:transition duration-200'
+                className='bgGradiant text-black px-4 py-1 mx-2 rounded-lg shadow hover:bg-secundary hover:transition duration-200'
                 onClick={toggleModal}
               >
                 Cerrar

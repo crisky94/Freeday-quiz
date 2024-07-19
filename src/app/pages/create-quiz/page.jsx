@@ -244,7 +244,7 @@ export default function CreateGame() {
   };
 
   return (
-    <form className='fondo w-screen h-screen  ' onSubmit={handleSubmit}>
+    <form className=' fondo w-screen h-screen  ' onSubmit={handleSubmit}>
       <ToastContainer
         position='bottom-center'
         autoClose={5000}
@@ -262,7 +262,7 @@ export default function CreateGame() {
         <ModalComponent value={detailGame} onChange={setDetailGame} />
         <input
           placeholder='Coloca un título'
-          className=' text-center truncate p-2 md:mx-28  text-md placeholder-slate-500 uppercase rounded-md h-12 w-2/3 mx-5   text-black font-bold focus:outline-none focus:ring-2 focus:ring-purple-700 focus:border-purple-700'
+          className=' text-center truncate p-2 md:mx-28  text-md placeholder-slate-500 uppercase rounded-md h-12 w-2/3 mx-5   text-black font-bold focus:outline-none focus:ring-2 focus:ring-primary'
           type='text'
           value={nameGame}
           onChange={(e) => setNameGame(e.target.value)}
@@ -273,7 +273,7 @@ export default function CreateGame() {
           <input
             type='text'
             placeholder='Escribe tu pregunta'
-            className=' text-center text-md uppercase rounded-md mt-4 h-14 m-5 w-full text-black  focus:outline-none focus:ring-2 focus:ring-purple-700 focus:border-purple-700 placeholder-slate-500'
+            className=' text-center text-md uppercase rounded-md mt-4 h-14 m-5 w-full text-black  focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-500'
             value={currentAsk}
             onChange={(e) => setCurrentAsk(e.target.value)}
           />
@@ -282,14 +282,14 @@ export default function CreateGame() {
         <div className='flex justify-center items-center h-2'>
           <Tooltip
             content='Coloca el tiempo para la pregunta'
-            className='bg-purple-700 p-1  rounded-md text-xs'
+            className='bg-primary p-1  rounded-md text-xs'
           >
             <input
               min={3}
               max={50}
               type='number'
               placeholder='50s max'
-              className='text-center  text-xs uppercase rounded-md  h-8  w-24 text-black font-bold focus:outline-none focus:ring-2 focus:ring-purple-700 focus:border-purple-700 placeholder-slate-400'
+              className='text-center  text-xs uppercase rounded-md  h-8  w-24 text-black font-bold focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-400'
               value={timeLimit}
               onChange={(e) => {
                 const value = e.target.value;

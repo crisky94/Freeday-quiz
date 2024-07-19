@@ -9,12 +9,21 @@
 }
 
 body {
-  background-image: url('../../public/bbburst.svg');
+  /* background-image: url('../../public/bbburst.svg'); */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
   color: rgb(var(--foreground-rgb));
   overflow-x: hidden;
+}
+
+.bgGradiant {
+  /* background: rgb(28, 255, 228); */
+  background: linear-gradient(
+    90deg,
+    rgba(28, 255, 228, 1) 0%,
+    rgba(252, 255, 0, 1) 100%
+  );
 }
 
 .nav-header {

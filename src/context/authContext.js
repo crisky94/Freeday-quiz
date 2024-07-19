@@ -7,11 +7,6 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const { isSignedIn, user } = useUser();
 
-  useEffect(() => {
-    if ((isSignedIn, user)) {
-    }
-  }, [isSignedIn, user]);
-
   return (
     <AuthContext.Provider value={{ isSignedIn, user }}>
       {children}
