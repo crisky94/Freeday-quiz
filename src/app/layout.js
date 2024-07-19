@@ -1,33 +1,49 @@
-import Header from '@/app/components/Header';
-import Sidebar from '@/app/components/Sidebar';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
 
 import { ClerkProvider } from '@clerk/nextjs'
 import { AuthProvider } from './../context/authContext';
-import { SocketProvider } from '../context/SocketContext'
+import { SocketProvider } from '../context/SocketContext';
+import { Montserrat } from 'next/font/google'
 
-import { shadesOfPurple } from '@clerk/themes';
+
+import { neobrutalism } from '@clerk/themes';
 import "./globals.css";
+
+export const metadata = {
+  title: "HACK A BOSS | FREEDAYQUIZ",
+};
+
+const monserrat = Montserrat({
+  weight: '400',
+  subsets: ['latin'],
+})
+
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: [shadesOfPurple],
-      }}
-    >
-      <AuthProvider>
-        <SocketProvider>
+    <SocketProvider>
+      <ClerkProvider
+        appearance={{
+          baseTheme: [neobrutalism],
+        }}
+      >
+        <AuthProvider>
           <html lang="en">
-            <body className='h-auto min-h-screen md:min-h-[80vh] lg:min-h-[70vh] flex flex-col bg-primary'>
+            <head>
+              <link rel="icon" href="/logotipo.png" />
+              <title>{metadata.title}</title>
+            </head>
+            <body className={`${monserrat.className} pt-16`}>
               <Header />
               <Sidebar />
-              <main className="flex flex-col flex-wrap items-center justify-between gap-8 w-full h-auto min-h-screen md:min-h-[80vh] lg:min-h-[70vh]">
+              <main className="flex flex-col flex-wrap items-center justify-between gap-8 w-full h-auto min-h-screen md:min-h-[90vh] lg:min-h-[70vh]">
                 {children}
               </main>
             </body>
           </html>
-        </SocketProvider>
-      </AuthProvider>
-    </ClerkProvider>
+        </AuthProvider>
+      </ClerkProvider>
+    </SocketProvider>
   );
 }
