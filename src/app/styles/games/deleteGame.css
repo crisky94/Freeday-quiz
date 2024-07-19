@@ -1,0 +1,69 @@
+.button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgb(255, 69, 69);
+  border: none;
+  margin: 0;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+  cursor: pointer;
+  transition-duration: 0.3s;
+  overflow: hidden;
+  position: relative;
+  gap: 1px;
+}
+
+.svgIcon {
+  width: 17px;
+  transition-duration: 0.3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.button:hover {
+  width: 140px;
+  border-radius: 50px;
+  transition-duration: 0.3s;
+  background-color: rgb(255, 69, 69);
+  align-items: center;
+  gap: 0;
+}
+
+.button:hover .bin-bottom {
+  width: 40px;
+  transition-duration: 0.3s;
+  transform: translateY(60%);
+}
+
+.bin-top {
+  transform-origin: bottom right;
+}
+
+.button:hover .bin-top {
+  width: 40px;
+  transition-duration: 0.3s;
+  transform: translateY(60%) rotate(160deg);
+}
+
+.button::before {
+  position: absolute;
+  top: -26px;
+  content: "Eliminar";
+  color: white;
+  transition-duration: 0.3s;
+  font-size: 3px;
+}
+
+.button:hover::before {
+  font-size: 14px;
+  opacity: 1;
+  transform: translateY(35px);
+  transition-duration: 0.3s;
+}
