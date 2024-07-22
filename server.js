@@ -225,7 +225,7 @@ app.prepare().then(() => {
 
         const asks = await prisma.asks.findMany({
           where: {
-            gameId: game.id,
+            gameId: game.id
           },
           select: {
             id: true,
@@ -234,14 +234,12 @@ app.prepare().then(() => {
             b: true,
             c: true,
             d: true,
-            timeLimit: true,
+            timer: true,
             answer: true,
           },
         });
 
-
         callback({ success: true, asks, game });
-
 
       } catch (error) {
         callback({ success: false, message: 'Error al validar el PIN' });
