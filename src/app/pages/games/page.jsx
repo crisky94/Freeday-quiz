@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Link from 'next/link';
+
 import { useSocket } from '@/context/socketContext';
 import DeleteConfirmation from '@/app/components/DeleteGame';
 import { useAuth } from '../../../context/authContext';
 import CreateButton from '@/app/components/CreateButton';
 import CustomDot from '../../components/CustomDot';
 import User from '../../components/User';
+
 import '../../styles/games/deleteGame.css'
 import '../../styles/games/editButtonGames.css'
 import '../../styles/games/ListCard.css'
@@ -52,10 +54,6 @@ export default function GamesList() {
     fetchData();
   }, [nickUser, socket]);
 
-  // const handleClick = () => {
-  //   window.location.reload();
-  // }
-
   const handleDelete = async (gameId) => {
     socket.emit('deleteGame', { gameId }, (response) => {
       if (response.error) {
@@ -90,10 +88,11 @@ export default function GamesList() {
       {
         user ? (
           <div className=" min-h-screen pt-16 ">
-            <div className='mt-16'>
-              <CreateButton />
-            </div>
             {games.length > 0 ? (
+              <>
+                <div className='mt-16'>
+                  <CreateButton />
+                </div>
               <Carousel
                 responsive={responsive}
                 removeArrowOnDeviceType={["tablet", "mobile"]}
@@ -129,9 +128,13 @@ export default function GamesList() {
                   </div>
                 ))}
               </Carousel>
+              </>
             ) : (
-              <div className="flex flex-col justify-center items-center text-center w-full h-full">
-                <h1 className="font-medium">Aún no tienes juegos creados</h1>
+              <div className="flex flex-col justify-center items-center text-center w-full h-full mt-16">
+                  <div className='mt-16 mb-4'>
+                    <CreateButton />
+                  </div>
+                  <h1 className="font-bold">Aún no tienes juegos creados</h1>
               </div>
             )}
           </div>
