@@ -10,7 +10,7 @@ import { neobrutalism } from '@clerk/themes';
 
 
 export const metadata = {
-  title: 'HACK A BOSS | FREEDAYQUIZ',
+  title: 'HACK A BOSS | FREEDAYQUIZ ⭐️',
 };
 
 const monserrat = Montserrat({
