@@ -11,7 +11,8 @@
   overflow: hidden;
   transition-duration: .3s;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
-  background: linear-gradient(144deg, #0c0b0c, #dfe524 50%, #010404);
+  background: linear-gradient(to right,#ffcc00,
+    #01ffff);
 }
 
 /* plus sign */
