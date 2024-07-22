@@ -37,8 +37,7 @@ app.prepare().then(() => {
     gameEvents(socket, prisma);
     playerEvents(socket, io, prisma, gamePlayerMap);
 
-    //obtener lista de juegos
-    // Escuchar el evento 'getGames'
+    //*Obtener lista de juegos
     socket.on('getGames', async ({ user }, callback) => {
       try {
         console.log('Usuario recibido:', user); // Verifica que el usuario sea el esperado
@@ -54,8 +53,6 @@ app.prepare().then(() => {
           },
         });
 
-        // console.log('Juegos encontrados:', games); // Verifica que los juegos sean los esperados
-
         callback({ games });
       } catch (e) {
         console.error('error:', e);
@@ -63,7 +60,7 @@ app.prepare().then(() => {
       }
     });
 
-    //obtener juego por id
+    //*Obtener juego por id(modify)
     socket.on('getGamesId', async ({ gameId }, callback) => {
       try {
         // Consultamos todos los juegos en la base de datos
@@ -87,6 +84,7 @@ app.prepare().then(() => {
       }
     });
 
+    //*Obtener preguntas por id del juego(modify)
     socket.on('getAsks', async ({ gameId }, callback) => {
       try {
         // Consulta las preguntas del juego específico por su ID
@@ -115,6 +113,7 @@ app.prepare().then(() => {
       }
     });
 
+    //*Actualizar el juego(modify)
     socket.on('updateGame', async ({ formData, gameId }, callback) => {
       try {
         // Preparamos las promesas de actualización de las preguntas
@@ -158,6 +157,7 @@ app.prepare().then(() => {
       }
     });
 
+    //*Eliminar juego por id(games)
     socket.on('deleteGame', async ({ gameId }, callback) => {
       try {
         // Eliminar las preguntas relacionadas con el juego
@@ -183,6 +183,7 @@ app.prepare().then(() => {
       }
     });
 
+    //*Validar el codigo/pin del juego(access-pin)
     socket.on('correctCodeGame', async ({ code }, callback) => {
       try {
         const game = await prisma.games.findUnique({
@@ -206,7 +207,7 @@ app.prepare().then(() => {
       }
     });
 
-    //obtener el juego por el code
+    //*Obtener el juego por el code(page-game)
     socket.on('getCodeGame', async ({ code }, callback) => {
       try {
         const game = await prisma.games.findUnique({
@@ -247,7 +248,7 @@ app.prepare().then(() => {
       }
     });
 
-
+   //*Insertar datos jugador en la tabla players(page-game)
     socket.on('insertPlayer', async ({ gameId, playerName, score, data }) => {
       try {
         const data = {
