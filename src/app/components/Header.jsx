@@ -57,15 +57,14 @@ export default function Header() {
 
         />
       </Link>
-      <div className='nav-header w-full'>
         {user ? (
-
-          <div className="flex justify-between w-full pr-4 mt-6 text-white">
+          <div className="nav-header flex justify-between w-full pr-4 mt-6 text-white">
             <div className='w-full flex items-center justify-center text-center gap-6 bg-[#111] h-12 rounded-md '>
               <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/demo-game'}>Demo game</Link>
               <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/control-quiz'}>Control Quiz</Link>
               <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/'}>Game Page</Link>
               <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/start-quiz'}>Start Quiz</Link>
+            <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/create-quiz'}>Create Quiz</Link>
             </div>
             <User />
           </div>
@@ -74,21 +73,21 @@ export default function Header() {
           <div className='flex flex-col sm:flex-row items-center w-full justify-around'>
             <div className='flex flex-row flex-wrap justify-center items-center text-center gap-4 mb-4 sm:mb-0 sm:w-auto'>
               {!mostrarAvatar && nickname && (
-                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
+                  <>
+                    <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
+                    <p className="flex flex-row items-center bg-black h-8 px-2 rounded-md">{nickname}</p>
+                  </>
               )}
               {mostrarAvatar && !nickname && (
-                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
+                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />                        
               )}
-              <p className="flex flex-row items-center bg-black h-8 px-2 rounded-md">{nickname}</p>
+
             </div>
             <div className='flex flex-row justify-end items-end text-end w-full sm:w-auto'>
               <SignInButton />
             </div>
           </div>
-
-
         )}
-      </div >
     </nav>
   );
 }

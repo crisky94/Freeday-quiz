@@ -123,7 +123,7 @@ export default function CreateGame() {
       c: answers[2],
       d: answers[3],
       answer: ['A', 'B', 'C', 'D'][correctAnswer],
-      timeLimit: numericTimeLimit,
+      timer: numericTimeLimit,
     };
 
     let updatedAsks;
@@ -244,7 +244,7 @@ export default function CreateGame() {
   };
 
   return (
-    <form className=' fondo w-screen h-screen  ' onSubmit={handleSubmit}>
+    <form className=' fondo w-screen h-screen pt-24 ' onSubmit={handleSubmit}>
       <ToastContainer
         position='bottom-center'
         autoClose={5000}
