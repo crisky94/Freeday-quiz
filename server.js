@@ -265,9 +265,11 @@ app.prepare().then(() => {
         socket.emit('insertPlayerResponse', { error: error.message });
       }
     });
-
+    socket.on('disconnect', () => {
+      console.log('socket desconectado 😐')
+    })
   });
-
+  
   httpServer.listen(port, (err) => {
     if (err) throw err;
     console.log(`Servidor escuchando en http://localhost:${port}`);
