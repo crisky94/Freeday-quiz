@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
     try {
       // Comprueba si el codeGame ya existe en la base de datos
-      const existingGame = await prisma.game.findUnique({
+      const existingGame = await prisma.games.findUnique({
         where: { codeGame },
       });
 
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
       }
 
       // Crea un nuevo juego en la base de datos
-      const newGame = await prisma.game.create({
+      const newGame = await prisma.games.create({
         data: {
           nickUser,
           nameGame,

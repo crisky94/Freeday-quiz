@@ -25,7 +25,7 @@ export function gameEvents(socket, prisma) {
         c: ask.c, // Opción c
         d: ask.d, // Opción d
         answer: ask.answer, // Respuesta correcta
-        timeLimit: ask.timeLimit,
+        timer: ask.timer,
       }));
 
       // Insertamos las preguntas en la base de datos

@@ -10,7 +10,6 @@ function AccessPin({ gameId }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const socket = useSocket();
-  const toastDuration = 100;
 
   const handleInputChange = (e) => {
     setCode(parseInt(e.target.value));
