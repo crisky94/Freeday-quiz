@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 // Inicializa el cliente de Prisma
 const prisma = new PrismaClient();
@@ -7,22 +7,22 @@ export default async function handler(req, res) {
   // Extrae el parámetro 'id' de la consulta (query)
   const { id } = req.query;
 
-  if (req.method === "PUT") {
+  if (req.method === 'PUT') {
     // Extrae el nuevo nombre y codeGame del cuerpo de la solicitud (body)
     const { nameGame, detailGame, codeGame } = req.body;
 
     // Valida que el nombre y el codeGame estén presentes
     if (!nameGame || codeGame === undefined) {
       return res.status(400).json({
-        error: "El nombre del juego y el código del juego son requeridos",
+        error: 'El nombre del juego y el código del juego son requeridos',
       });
     }
 
     // Verifica que el codeGame sea un número entero de cuatro cifras
-    if (typeof codeGame !== "number" || codeGame < 1000 || codeGame > 9999) {
+    if (typeof codeGame !== 'number' || codeGame < 1000 || codeGame > 9999) {
       return res.status(400).json({
         error:
-          "El código del juego debe ser un número entero de cuatro cifras (1000-9999)",
+          'El código del juego debe ser un número entero de cuatro cifras (1000-9999)',
       });
     }
 
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
       if (existingGame && existingGame.id !== parseInt(id)) {
         return res.status(409).json({
-          error: "El código del juego ya está en uso. Por favor, elija otro.",
+          error: 'El código del juego ya está en uso. Por favor, elija otro.',
         });
       }
 
@@ -53,9 +53,9 @@ export default async function handler(req, res) {
       res.status(200).json(updateGame);
     } catch (error) {
       // En caso de error, devuelve un estado 500 (Error del servidor) con un mensaje de error
-      res.status(500).json({ error: "Error al actualizar el juego" });
+      res.status(500).json({ error: 'Error al actualizar el juego' });
     }
-  } else if (req.method === "DELETE") {
+  } else if (req.method === 'DELETE') {
     try {
       // Obtén el juego a eliminar
       const gameToDelete = await prisma.games.findUnique({
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
       });
 
       if (!gameToDelete) {
-        return res.status(404).json({ error: "Juego no encontrado" });
+        return res.status(404).json({ error: 'Juego no encontrado' });
       }
 
       const { nameGame } = gameToDelete;
@@ -91,10 +91,10 @@ export default async function handler(req, res) {
       res
         .status(500)
         .json({
-          error: "Error al eliminar el juego y sus preguntas relacionadas",
+          error: 'Error al eliminar el juego y sus preguntas relacionadas',
         });
     }
-  } else if (req.method === "GET") {
+  } else if (req.method === 'GET') {
     try {
       // Busca los juegos creados por el nickUser
       const games = await prisma.games.findMany({
@@ -106,7 +106,7 @@ export default async function handler(req, res) {
       // Si no se encuentran juegos, devuelve un mensaje indicando esto
       if (games.length === 0) {
         return res.status(404).json({
-          message: "Este usuario no creó todavía ningún juego",
+          message: 'Este usuario no creó todavía ningún juego',
         });
       }
 
@@ -114,11 +114,11 @@ export default async function handler(req, res) {
       res.status(200).json(games);
     } catch (error) {
       // En caso de error, devuelve un estado 500 (Error del servidor) con un mensaje de error
-      res.status(500).json({ error: "Error al buscar los juegos" });
+      res.status(500).json({ error: 'Error al buscar los juegos' });
     }
   } else {
     // Si el método HTTP no es PUT, DELETE o GET, devuelve un estado 405 (Método no permitido)
-    res.setHeader("Allow", ["PUT", "DELETE", "GET"]);
+    res.setHeader('Allow', ['PUT', 'DELETE', 'GET']);
     res.status(405).end(`Método ${req.method} no permitido`);
   }
 }

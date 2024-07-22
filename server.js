@@ -37,7 +37,7 @@ app.prepare().then(() => {
     gameEvents(socket, prisma);
     playerEvents(socket, io, prisma, gamePlayerMap);
 
- //obtener lista de juegos
+    //obtener lista de juegos
     // Escuchar el evento 'getGames'
     socket.on('getGames', async ({ user }, callback) => {
       try {
@@ -266,8 +266,8 @@ app.prepare().then(() => {
       }
     });
     socket.on('disconnect', () => {
-      console.log('socket desconectado 😐')
-    })
+      console.log('socket desconectado 😐');
+    });
   });
   
   httpServer.listen(port, (err) => {

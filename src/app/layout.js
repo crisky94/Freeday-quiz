@@ -5,18 +5,18 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from '@/context/authContext';
 import { SocketProvider } from '@/context/socketContext';
 import './globals.css';
-import { Montserrat } from 'next/font/google'
+import { Montserrat } from 'next/font/google';
 import { neobrutalism } from '@clerk/themes';
 
 
 export const metadata = {
-  title: "HACK A BOSS | FREEDAYQUIZ",
+  title: 'HACK A BOSS | FREEDAYQUIZ',
 };
 
 const monserrat = Montserrat({
   weight: '400',
   subsets: ['latin'],
-})
+});
 
 
 export default function RootLayout({ children }) {

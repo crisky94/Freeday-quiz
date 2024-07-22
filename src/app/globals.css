@@ -7,8 +7,6 @@
   --number-of-characters: 21;
 }
 
-
-
 /* Header */
 
 .header {
@@ -171,7 +169,5 @@ body {
     transform: scale(1);
     animation-timing-function: ease-out;
   }
-}
-
 }
 
