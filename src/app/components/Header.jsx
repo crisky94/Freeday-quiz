@@ -55,6 +55,7 @@ export default function Header() {
                   <>
                   <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
                     <p className="flex flex-row items-center bg-black h-8 px-2 rounded-md">{nickname}</p>
+                  
                   </>
               )}
               {mostrarAvatar && !nickname && (
@@ -66,7 +67,6 @@ export default function Header() {
             </div>
           </div>
         )}
-      </div>
     </nav>
   );
 }
