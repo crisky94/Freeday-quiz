@@ -122,7 +122,7 @@ export default function CreateGame() {
       b: answers[1],
       c: answers[2],
       d: answers[3],
-      answer: ['A', 'B', 'C', 'D'][correctAnswer],
+      answer: ['a', 'b', 'c', 'd'][correctAnswer],
       timer: numericTimeLimit,
     };
 
@@ -152,8 +152,8 @@ export default function CreateGame() {
     const askToEdit = asks[index];
     setCurrentAsk(askToEdit.ask);
     setAnswers([askToEdit.a, askToEdit.b, askToEdit.c, askToEdit.d]);
-    setCorrectAnswer(['A', 'B', 'C', 'D'].indexOf(askToEdit.answer));
-    setTimer(askToEdit.timer.toString());
+    setCorrectAnswer(['a', 'b', 'c', 'd'].indexOf(askToEdit.answer));
+    setTimeLimit(askToEdit.timer.toString());
     setEditIndex(index);
   };
 

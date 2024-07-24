@@ -1,0 +1,19 @@
+:root {
+  --bg-link-header:linear-gradient(to right, #ffcc00,
+      #01ffff);
+  --text-color:#000000;
+  --text-color-sign:#ffcc00;
+}
+
+.menu:hover{
+  background: var(--bg-link-header);
+  color: var(--text-color);
+}
+
+.signIn-button {
+  text-transform: uppercase;
+}
+
+.signIn-button:hover {
+  color: var(--text-color-sign);
+}

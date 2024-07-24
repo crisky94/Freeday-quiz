@@ -33,18 +33,17 @@ function AccessPin({ gameId }) {
         toast.error(response.message, {
           autoClose: 2000,
           onClose: () => {
-            window.location.reload();
+            router.refresh();
           },
         });
       }
     });
   };
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen w-full    '>
+
+    <div className='flex flex-col items-center justify-center min-h-screen w-full'>
       <div
-        className='bg-custom-linear flex 
-      '
-      >
+        className='bg-custom-linear flex '>
         <div className='flex flex-col  p-14 m-1 h-auto w-58 sm:w-full items-center bg-black '>
           <label className=' uppercase text-xl mb-6'>Introduce el pin</label>
           <input
@@ -57,8 +56,7 @@ function AccessPin({ gameId }) {
           <ToastContainer />
           <button
             className='  text-black w-40 h-10 mt-5 font-bold rounded-md hoverGradiant bg-custom-linear'
-            onClick={handleSubmit}
-          >
+            onClick={handleSubmit}>
             Ingresar
           </button>
         </div>

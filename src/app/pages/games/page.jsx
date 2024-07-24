@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Link from 'next/link';
+
 import { useSocket } from '@/context/socketContext';
-import DeleteConfirmation from '@/app/components/DeleteGame';
 import { useAuth } from '../../../context/authContext';
+import DeleteConfirmation from '@/app/components/DeleteGame';
 import CreateButton from '@/app/components/CreateButton';
 import CustomDot from '../../components/CustomDot';
 import User from '../../components/User';
+
 import '../../styles/games/deleteGame.css'
 import '../../styles/games/editButtonGames.css'
 import '../../styles/games/ListCard.css'
@@ -20,8 +22,9 @@ export default function GamesList() {
   const [nickUser, setNickUser] = useState('');
   const { user } = useAuth(User);
   const socket = useSocket();
-  useEffect(() => {
 
+  useEffect(() => {
+    console.log(games);
 
     if (user) {
       setNickUser(`${user.firstName} ${user.lastName}`);
@@ -34,6 +37,7 @@ export default function GamesList() {
       }
     }
   }, [games, nickname]);
+
   useEffect(() => {
     const fetchData = async () => {
       if (nickUser) {
@@ -52,10 +56,6 @@ export default function GamesList() {
     fetchData();
   }, [nickUser, socket]);
 
-  // const handleClick = () => {
-  //   window.location.reload();
-  // }
-
   const handleDelete = async (gameId) => {
     socket.emit('deleteGame', { gameId }, (response) => {
       if (response.error) {
@@ -68,7 +68,7 @@ export default function GamesList() {
 
   const responsive = {
     superLargeDesktop: {
-      breakpoint: { max: 6000, min: 3000 },
+      breakpoint: { max: 3000, min: 1024 },
       items: 5,
     },
     desktop: {
@@ -85,21 +85,25 @@ export default function GamesList() {
     }
   };
 
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   return (
     <>
-      {
-        user ? (
-          <div className=" min-h-screen pt-16 ">
-            <div className='mt-16'>
-              <CreateButton />
-            </div>
-            {games.length > 0 ? (
+      {user ? (
+        <div className="min-h-screen p-2 md:p-16 lg:p-16">
+          {games.length > 0 ? (
+            <>
+              <div className='mt-10'>
+                <CreateButton />
+              </div>
               <Carousel
                 responsive={responsive}
-                removeArrowOnDeviceType={["tablet", "mobile"]}
-                containerClass="carousel-container"
-                itemClass="carousel-item"
-                dotListClass="custom-dot-list"
                 customDot={<CustomDot />}
                 arrows
                 swipeable
@@ -109,11 +113,11 @@ export default function GamesList() {
                 {games.map((game, i) => (
                   <div
                     key={game.id}
-                    className=" card w-full rounded-md sm:p-2 min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl transition-all mx-10 sm:mx-12"
+                    className="card w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all"
                   >
-                    <div className="card2 p-6 text-white min-h-72  ">
-                      <h2 className="card-title font-bold text-sm sm:text-base uppercase p-6 ">
-                        {i + 1}. {game.nameGame}
+                    <div className="flex flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto">
+                      <h2 className="card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full">
+                       {`${i + 1}. ${game.nameGame}`}
                       </h2>
                       <div className="flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4">
                         <Link href={`/pages/modify-page/${game.id}.jsx`}>
@@ -125,21 +129,30 @@ export default function GamesList() {
                         </Link>
                         <DeleteConfirmation gameId={game.id} onDelete={handleDelete} />
                       </div>
+                      <Link className='mt-5 codepen-button uppercase' href={`/pages/pinPage/${game.id}`}>
+                        <span>
+                          Pin del juego
+                        </span>
+                      </Link>
+                      {/* Mostrar la fecha de finalización del juego */}
+                      <p className='text-white mt-2'>
+                        {game.endedAt ? formatDate(game.endedAt) : null}
+                      </p>
                     </div>
                   </div>
                 ))}
               </Carousel>
-            ) : (
-              <div className="flex flex-col justify-center items-center text-center w-full h-full">
-                <h1 className="font-medium">Aún no tienes juegos creados</h1>
+            </>
+          ) : (
+            <div className="flex flex-col justify-center items-center text-center w-full h-full mt-16">
+              <div className='mt-16 mb-4'>
+                <CreateButton />
               </div>
-            )}
-          </div>
-        ) : ''
-      }
-
-
+              <h1 className="font-bold">Aún no tienes juegos creados</h1>
+            </div>
+          )}
+        </div>
+      ) : ''}
     </>
   );
 }
-

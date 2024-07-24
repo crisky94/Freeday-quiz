@@ -1,8 +1,15 @@
+:root {
+  --bg-button:#ff4545;
+  --bg-button-hover:#ff4545;
+  --shadow-button:#0000002a;
+  --svgIcon-fill: #ffffff;
+}
+
 .button {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: rgb(255, 69, 69);
+  background-color: var(--bg-button);
   border: none;
   margin: 0;
   font-weight: 600;
@@ -10,7 +17,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+  box-shadow: 0px 0px 20px var(--shadow-button);
   cursor: pointer;
   transition-duration: 0.3s;
   overflow: hidden;
@@ -24,14 +31,13 @@
 }
 
 .svgIcon path {
-  fill: white;
+  fill: var(--svgIcon-fill);
 }
 
 .button:hover {
-  width: 140px;
+  width: 130px;
   border-radius: 50px;
   transition-duration: 0.3s;
-  background-color: rgb(255, 69, 69);
   align-items: center;
   gap: 0;
 }
@@ -54,9 +60,8 @@
 
 .button::before {
   position: absolute;
-  top: -26px;
+  top: -28px;
   content: "Eliminar";
-  color: white;
   transition-duration: 0.3s;
   font-size: 3px;
 }

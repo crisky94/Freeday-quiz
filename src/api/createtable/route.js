@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { checkAuth } from "../../../lib/authApi";
+import { PrismaClient } from '@prisma/client';
+import { checkAuth } from '../../../lib/authApi';
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
     if (!gameId) {
       // Verifica que gameId esté presente
-      return res.status(400).json({ message: "Game ID es obligatorio" });
+      return res.status(400).json({ message: 'Game ID es obligatorio' });
     }
 
     const game = await prisma.games.findUnique({
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
     if (!game) {
       // Verifica si el juego no fue encontrado
-      return res.status(404).json({ message: "No existe el juego" });
+      return res.status(404).json({ message: 'No existe el juego' });
     }
 
     const tableName = `temp_${game.nameGame}`; // Crea el nombre de la tabla temporal basado en el nombre del juego
@@ -41,12 +41,12 @@ export default async function handler(req, res) {
 
     return res
       .status(200)
-      .json({ message: "Tabla temporal creada", tableName });
+      .json({ message: 'Tabla temporal creada', tableName });
   } catch (error) {
     console.error(error); // Imprime cualquier error en la consola
     return res
       .status(500)
-      .json({ message: "Error del servidor", error: error.message });
+      .json({ message: 'Error del servidor', error: error.message });
   } finally {
     await prisma.$disconnect(); // Desconecta el cliente de Prisma
   }

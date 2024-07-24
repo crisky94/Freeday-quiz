@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Loading from '../../../loading';
-import { useSocket } from '../../../../context/SocketContext';
+import { useSocket } from '@/context/socketContext';
+import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,7 +19,7 @@ export default function GamePage({ params }) {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const socket = useSocket();
   const code = parseInt(params.code);
-
+  const router = useRouter()
   useEffect(() => {
     const playerName = localStorage.getItem('nickname');
     if (playerName) {
@@ -126,17 +127,16 @@ export default function GamePage({ params }) {
       });
     });
   };
-
+   
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
-      window.location.href = '/pages/ranking';
+      router.push('/pages/ranking');
     }
   };
-
 
   if (questions.length === 0) {
     return <Loading />;
@@ -166,12 +166,16 @@ export default function GamePage({ params }) {
   return (
 
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <div className="flex flex-col gap-5 items-center sm:w-full md:w-2/3 lg:w-1/3 xl:w-2/5 rounded-md mt-20 border-8 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-black ">
+      <div className="flex flex-col gap-5 items-center rounded-md mt-20 border-4 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] ">
         <ToastContainer />
-        <div key={currentQuestion.id} className="flex flex-col flex-wrap justify-center items-center h-auto mb-5 py-5 px-5 rounded-md w-full">
-          <p className='text-red-600 text-4xl mt-5 font-bold'>{typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}</p>
+        <div key={currentQuestion.id} className="flex flex-col flex-wrap justify-center items-center h-auto mb-5 py-5 px-32 md:px-56 rounded-md w-full sm:text-base md:text-2xl lg:text-2xl">
+        <div className='flex flex-col items-center justify-center'>
+          <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
+          {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
+          </p>
+        </div>
           <p className='flex flex-col mt-10 mb-10 text-white'>{currentQuestionIndex + 1}. {currentQuestion.ask}</p>
-          <ul className="flex flex-col sm:flex-row sm:flex-wrap gap-10 justify-center items-center mt-5 mb-5 w-auto">
+          <ul className="flex flex-col sm:flex-row sm:flex-wrap gap-10 justify-center items-center mt-5 mb-5 w-fit">
             <li onClick={() => handleAnswerClick('a')} className={`rounded-md h-auto w-auto p-4 cursor-pointer bg-red-600 ${getButtonClass('a')}`}>
               {currentQuestion.a}
             </li>
