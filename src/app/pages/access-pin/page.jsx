@@ -15,6 +15,7 @@ function AccessPin({ gameId }) {
     setCode(parseInt(e.target.value));
   };
 
+ 
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ function AccessPin({ gameId }) {
         toast.error(response.message, {
           autoClose: 2000,
           onClose: () => {
-            window.location.reload();
+            router.refresh();
           },
         });
       }
@@ -45,13 +46,13 @@ function AccessPin({ gameId }) {
   return (
     <div className='flex flex-col items-center justify-center min-h-screen '>
       <div className="flex flex-col p-20 m-5 w-72 sm:w-full items-center border-4 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md">
-        <label className='bg-black uppercase text-xl mb-6'>Introduce el pin</label>
+        <label htmlFor='pin' className='bg-black text-center uppercase lg:text-xl md:text-xl  sm:text-xs mb-10  w-full font-bold'>Introduce el pin</label>
         <input
           type="text"
           placeholder="PIN"
-
           onChange={handleInputChange}
           name="pin"
+          id='pin'
           className="text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
         />
         <ToastContainer />

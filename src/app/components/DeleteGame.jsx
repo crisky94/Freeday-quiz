@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Flip, ToastContainer, toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 import 'react-toastify/dist/ReactToastify.css';
 
 const DeleteConfirmation = ({ gameId, onDelete }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const router = useRouter();
 
   const handleDeleteClick = () => {
     setShowConfirmation(true);
@@ -21,7 +23,7 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
       // Mostrar notificación
       toast('Juego eliminado con éxito.', {
         onClose: () => {
-          window.location.href = '/pages/games';
+          router.refresh() ;
         },
         position: 'bottom-center',
         autoClose: 5000,
