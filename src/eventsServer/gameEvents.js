@@ -25,7 +25,7 @@ export function gameEvents(socket, prisma) {
         c: ask.c, // Opción c
         d: ask.d, // Opción d
         answer: ask.answer, // Respuesta correcta
-        timeLimit: ask.timeLimit,
+        timer: ask.timer,
       }));
 
       // Insertamos las preguntas en la base de datos
@@ -43,10 +43,14 @@ export function gameEvents(socket, prisma) {
   });
 
   // Evento para obtener los juegos
-  socket.on('getGames', async (callback) => {
+  socket.on('getGames', async ({ user }, callback) => {
     try {
-      // Consultamos todos los juegos en la base de datos
+      console.log('Usuario recibido:', user); // Verifica que el usuario sea el esperado
+
       const games = await prisma.games.findMany({
+        where: {
+          nickUser: user,
+        },
         select: {
           id: true,
           nameGame: true,
@@ -54,11 +58,11 @@ export function gameEvents(socket, prisma) {
         },
       });
 
-      // Llamamos al callback con los datos de los juegos obtenidos
+      // console.log('Juegos encontrados:', games); // Verifica que los juegos sean los esperados
+
       callback({ games });
     } catch (e) {
       console.error('error:', e);
-      // Llamamos al callback con un error si algo sale mal
       callback({ error: 'Error al obtener juegos' });
     }
   });

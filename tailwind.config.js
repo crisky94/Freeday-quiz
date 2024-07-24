@@ -12,9 +12,8 @@ module.exports = {
         secundary: '#23FFDD',
       },
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'custom-linear':
+          'linear-gradient(90deg, rgba(28, 255, 228, 1) 0%, rgba(252, 255, 0, 1) 100%)',
       },
     },
   },

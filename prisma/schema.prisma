@@ -38,3 +38,4 @@ model Asks {
   answer    String  @db.VarChar(1)
   timer Int
   game      Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
