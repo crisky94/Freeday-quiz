@@ -21,7 +21,7 @@ export default function CreateGame() {
   const [currentAsk, setCurrentAsk] = useState(''); // Estado para la pregunta actual
   const [answers, setAnswers] = useState(['', '', '', '']); // Estado para las respuestas actuales (cuatro en total)
   const [correctAnswer, setCorrectAnswer] = useState(null); // Estado para la respuesta correcta (índice)
-  const [timeLimit, setTimeLimit] = useState('5'); // Estado para el tiempo límite de la pregunta
+  const [timer, setTimer] = useState('5'); // Estado para el tiempo límite de la pregunta
   const [editIndex, setEditIndex] = useState(null); // Estado para el índice de la pregunta que está siendo editada
   const [pin, setPin] = useState(''); // Estado para el PIN del juego
   const [detailGame, setDetailGame] = useState('');
@@ -35,7 +35,7 @@ export default function CreateGame() {
   useEffect(() => {
     // Recupera los datos almacenados en LocalStorage al cargar el componente
     const storedNameGame = localStorage.getItem('nameGame');
-    const storeTime = localStorage.getItem('time');
+    const storeTime = localStorage.getItem('timer');
     const storeCurrentAsk = localStorage.getItem('currentAsk');
     const storedCorrectAnswer = localStorage.getItem('correctAnswer');
     const storedAnswers = JSON.parse(localStorage.getItem('answers'));
@@ -43,7 +43,7 @@ export default function CreateGame() {
     const storeDetail = localStorage.getItem('detail');
     if (storedNameGame) setNameGame(storedNameGame);
     if (storeCurrentAsk) setCurrentAsk(storeCurrentAsk);
-    if (storeTime) setTimeLimit(storeTime);
+    if (storeTime) setTimer(storeTime);
     if (storedCorrectAnswer !== null)
       setCorrectAnswer(parseInt(storedCorrectAnswer, 10));
     if (storedAnswers) setAnswers(storedAnswers);
@@ -55,12 +55,12 @@ export default function CreateGame() {
     // Guarda los datos en LocalStorage cuando cambian los estados
     localStorage.setItem('nameGame', nameGame);
     localStorage.setItem('currentAsk', currentAsk);
-    localStorage.setItem('time', timeLimit);
+    localStorage.setItem('timer', timer);
     localStorage.setItem('detail', detailGame);
     if (correctAnswer !== null) {
       localStorage.setItem('correctAnswer', correctAnswer.toString());
     }
-  }, [nameGame, currentAsk, timeLimit, correctAnswer, detailGame]);
+  }, [nameGame, currentAsk, timer, correctAnswer, detailGame]);
 
   // Maneja el cambio en el input de las respuestas
   const handleInputChange = (index, value) => {
@@ -82,7 +82,7 @@ export default function CreateGame() {
       !isValidInput(currentAsk) ||
       answers.some((answer) => !isValidInput(answer)) ||
       correctAnswer === null ||
-      !isValidInput(timeLimit)
+      !isValidInput(timer)
     ) {
       toast('Completa todos los campos y marca la respuesta correcta.', {
         position: 'bottom-center',
@@ -99,7 +99,7 @@ export default function CreateGame() {
     }
 
     // Verifica que el tiempo límite esté dentro del rango permitido
-    const numericTimeLimit = parseFloat(timeLimit);
+    const numericTimeLimit = parseFloat(timer);
     if (numericTimeLimit < 3 || numericTimeLimit > 50) {
       toast('El tiempo límite debe estar entre 3 y 50 segundos.', {
         position: 'bottom-center',
@@ -123,7 +123,7 @@ export default function CreateGame() {
       c: answers[2],
       d: answers[3],
       answer: ['A', 'B', 'C', 'D'][correctAnswer],
-      timeLimit: numericTimeLimit,
+      timer: numericTimeLimit,
     };
 
     let updatedAsks;
@@ -142,7 +142,7 @@ export default function CreateGame() {
     setCurrentAsk('');
     setAnswers(['', '', '', '']);
     setCorrectAnswer(null);
-    setTimeLimit('5');
+    setTimer('5');
     localStorage.removeItem('answers');
     localStorage.removeItem('correctAnswer');
   };
@@ -153,7 +153,7 @@ export default function CreateGame() {
     setCurrentAsk(askToEdit.ask);
     setAnswers([askToEdit.a, askToEdit.b, askToEdit.c, askToEdit.d]);
     setCorrectAnswer(['A', 'B', 'C', 'D'].indexOf(askToEdit.answer));
-    setTimeLimit(askToEdit.timeLimit.toString());
+    setTimer(askToEdit.timer.toString());
     setEditIndex(index);
   };
 
@@ -244,7 +244,10 @@ export default function CreateGame() {
   };
 
   return (
-    <form className=' fondo w-screen h-screen  ' onSubmit={handleSubmit}>
+    <form
+      className=' fondo w-screen h-screen mt-20 -mx-2 '
+      onSubmit={handleSubmit}
+    >
       <ToastContainer
         position='bottom-center'
         autoClose={5000}
@@ -282,7 +285,7 @@ export default function CreateGame() {
         <div className='flex justify-center items-center h-2'>
           <Tooltip
             content='Coloca el tiempo para la pregunta'
-            className='bg-primary p-1  rounded-md text-xs'
+            className='bg-primary p-1 text-black rounded-md text-xs'
           >
             <input
               min={3}
@@ -290,20 +293,20 @@ export default function CreateGame() {
               type='number'
               placeholder='50s max'
               className='text-center  text-xs uppercase rounded-md  h-8  w-24 text-black font-bold focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-400'
-              value={timeLimit}
+              value={timer}
               onChange={(e) => {
                 const value = e.target.value;
                 if (isValidInput(value)) {
                   const numericValue = parseFloat(value);
                   if (numericValue < 3) {
-                    setTimeLimit('3');
+                    setTimer('3');
                   } else if (numericValue > 50) {
-                    setTimeLimit('50');
+                    setTimer('50');
                   } else {
-                    setTimeLimit(value);
+                    setTimer(value);
                   }
                 } else {
-                  setTimeLimit('');
+                  setTimer('');
                 }
               }}
             />
@@ -325,14 +328,14 @@ export default function CreateGame() {
         <div className='flex  justify-center gap-5 m-5'>
           <button
             type='button'
-            className='bg-blue-700 text-white p-2  w-48 max-w-48 rounded-lg hover:bg-blue-600 hover:transition duration-200'
+            className='hoverGradiant bg-custom-linear text-black p-2  w-48 max-w-48 rounded-lg  hover:transition duration-200 font-bold text-xs'
             onClick={addOrUpdateAsk}
           >
             {editIndex !== null ? 'Guardar Cambios' : 'Añadir Pregunta'}
           </button>
           <button
             type='submit'
-            className='bg-green-700 text-white p-2 w-48 rounded-lg shadow-xl hover:bg-green-600 hover:transition duration-200'
+            className='hoverGradiant bg-custom-linear text-black p-2 w-48 rounded-lg shadow-xl  hover:transition duration-200 font-bold text-xs'
           >
             Crear Juego
           </button>
@@ -355,7 +358,7 @@ export default function CreateGame() {
             {' '}
             JUEGO CREADO CON ÉXITO
             <br />
-            PIN: <strong className='text-primary'> {pin}</strong>
+            PIN: <strong className='text-secundary'> {pin}</strong>
           </p>
         </div>
       ) : (

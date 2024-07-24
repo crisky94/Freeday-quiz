@@ -32,12 +32,11 @@ app.prepare().then(() => {
   io.on('connection', (socket) => {
     console.log(`socket conectado con id:${socket.id}`);
 
-
     // aqui van los eventos del juego y jugadores
     gameEvents(socket, prisma);
     playerEvents(socket, io, prisma, gamePlayerMap);
 
- //obtener lista de juegos
+    //obtener lista de juegos
     // Escuchar el evento 'getGames'
     socket.on('getGames', async ({ user }, callback) => {
       try {
@@ -64,28 +63,6 @@ app.prepare().then(() => {
     });
 
     //obtener juego por id
-    socket.on('getGamesId', async ({ gameId }, callback) => {
-      try {
-        // Consultamos todos los juegos en la base de datos
-        const game = await prisma.games.findUnique({
-          where: {
-            id: parseInt(gameId),
-          },
-          select: {
-            id: true,
-            nameGame: true,
-            detailGame: true,
-          },
-        });
-
-        // Llamamos al callback con los datos de los juegos obtenidos
-        callback({ game });
-      } catch (e) {
-        console.error('error:', e);
-        // Llamamos al callback con un error si algo sale mal
-        callback({ error: 'Error al obtener juegos' });
-      }
-    });
 
     socket.on('getAsks', async ({ gameId }, callback) => {
       try {
@@ -238,15 +215,11 @@ app.prepare().then(() => {
           },
         });
 
-
         callback({ success: true, asks, game });
-
-
       } catch (error) {
         callback({ success: false, message: 'Error al validar el PIN' });
       }
     });
-
 
     socket.on('insertPlayer', async ({ gameId, playerName, score, data }) => {
       try {
@@ -265,7 +238,6 @@ app.prepare().then(() => {
         socket.emit('insertPlayerResponse', { error: error.message });
       }
     });
-
   });
 
   httpServer.listen(port, (err) => {
