@@ -35,7 +35,7 @@
 }
 
 .button:hover {
-  width: 140px;
+  width: 130px;
   border-radius: 50px;
   transition-duration: 0.3s;
   align-items: center;
@@ -60,7 +60,7 @@
 
 .button::before {
   position: absolute;
-  top: -26px;
+  top: -28px;
   content: "Eliminar";
   transition-duration: 0.3s;
   font-size: 3px;

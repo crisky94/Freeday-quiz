@@ -13,7 +13,6 @@
   background-image: url('../../public/Header.png');
   background-position: center;
   height: 100px;
-
 }
 
 .nav-header {
@@ -34,8 +33,6 @@ body {
     width: 100%;
     font-size: 20px;
   }
-
-
   .logo {
     width: 80px;
   }
@@ -46,10 +43,6 @@ body {
 
   .nav-header {
     display: block;
-  }
-
-  .header {
-    height: 150px;
   }
 }
 

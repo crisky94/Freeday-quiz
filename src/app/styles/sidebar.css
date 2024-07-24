@@ -1,0 +1,12 @@
+:root {
+  --bg-link-sidebar:linear-gradient(to right, #ffcc00,
+    #01ffff);;
+}
+
+.menu {
+  background: var(--bg-link-sidebar);
+}
+
+.signIn-button {
+  text-transform: uppercase;
+}

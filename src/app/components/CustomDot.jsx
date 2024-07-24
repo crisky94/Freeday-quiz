@@ -6,7 +6,7 @@ const CustomDot = ({ onClick, ...rest }) => {
       className={`custom-dot ${active ? 'custom-dot--active' : ''}`}
       onClick={onClick}
     >
-      <span className="dot"></span>
+      <span className="dot bg-black"></span>
     </button>
   );
 };
