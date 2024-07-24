@@ -1,5 +1,12 @@
+:root {
+  --bg-:linear-gradient(to right, #ffcc00, #01ffff);
+  --shadow-:#ffffff;
+  --bg-dot:#ffffff;
+  --bg-dot-active:#ffcc00;
+}
+
 .card {
-  background: linear-gradient(to right, #ffcc00, #01ffff);
+  background: var(--bg-);
   border-radius: 20px;
 }
 
@@ -14,12 +21,10 @@
 }
 
 .card:hover {
-  box-shadow: 0px 0px 30px 1px white
+  box-shadow: 0px 0px 30px 1px var(--shadow-)
 }
 
-/* Carrousel */
-
-
+/*Carrousel */
 
 /* DOTS*/
 .custom-dot {
@@ -31,11 +36,11 @@
 .custom-dot .dot {
   width: 10px;
   height: 10px;
-  background-color: white;
+  background-color: var(--bg-dot);
   border-radius: 50%;
   display: inline-block;
 }
 
 .custom-dot--active .dot {
-  background-color: white;
+  background-color: var(--bg-dot-active);
 }
