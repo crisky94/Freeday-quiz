@@ -29,7 +29,7 @@ const NickNameForm = ({ params }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (nickname) {
-//  localStorage.setItem('nickname', nickname);
+      localStorage.setItem('nickname', nickname);
       setPendingNickname(nickname);
       socket.emit('joinRoom', { nickname, code });
     } else {
@@ -51,40 +51,47 @@ const NickNameForm = ({ params }) => {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen'>
-      <form className='flex flex-col p-20 m-5 w-72 sm:w-full items-center border-4 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md' onSubmit={handleSubmit}>
-        <label htmlFor='nickName' className='bg-black uppercase text-3xl mb-4'>Introduce el Nick</label>
-
-        <input
-          className=' text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent'
-          type="text"
-          id= 'nickName'
-          placeholder='NICKNAME'
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          required
-        />
-        <div className='flex flex-row  flex-wrap justify-center items-center  w-72'>
-          <button className="border text-white w-40 h-10 mt-5 font-bold rounded-md hover:shadow-lg hover:shadow-yellow-400" type="submit">Ingresar</button>
-        </div>
-      </form>
-
+    <div className='h-screen w-full flex items-center justify-center'>
+      <div className='bg-custom-linear p-1'>
+        <form
+          className='bg-black flex flex-col gap-5 w-72 justify-center text-center  p-10 items-center shadow-xl rounded-md text-slate-700'
+          onSubmit={handleSubmit}
+        >
+          <label className='text-white text-xl'>Introduce tu nickname</label>
+          <input
+            className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+            type='text'
+            placeholder='NICKNAME'
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            required
+          />
+          <div className='flex flex-row flex-wrap justify-center items-center w-72'>
+            <button
+              className=' text-black bg-custom-linear hoverGradiant w-40 h-10 mt-5 font-bold rounded-md '
+              type='submit'
+            >
+              Ingresar
+            </button>
+          </div>
+        </form>
+      </div>
       {isModalOpen && (
         <div className='fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50'>
-          <div className='bg-white p-5 rounded-md shadow-lg'>
-            <h2 className='text-lg font-bold mb-4'>
+          <div className='bg-white text-black p-5 rounded-md shadow-lg'>
+            <h2 className='text-lg font-bold mb-4 '>
               Ya tienes un jugador en esta sala
             </h2>
             <p className='mb-4'>¿Quieres reemplazar tu nickname?</p>
             <div className='flex justify-end'>
               <button
-                className='bg-red-500 text-white px-4 py-2 rounded mr-2'
+                className='bg-custom-linear hoverGradiant font-bold text-black px-4 py-2 rounded mr-2'
                 onClick={handleCloseModal}
               >
                 Cancelar
               </button>
               <button
-                className='bg-blue-500 text-white px-4 py-2 rounded'
+                className='bg-custom-linear hoverGradiant font-bold text-black px-4 py-2 rounded'
                 onClick={handleReplaceNickname}
               >
                 Reemplazar

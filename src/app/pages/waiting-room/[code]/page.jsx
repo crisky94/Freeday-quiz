@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
+import { getAvatar } from '@/lib/fetchAvatar';
+import Image from 'next/image';
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -11,13 +13,13 @@ const WaitingRoom = ({ params }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
+  const apiKey = process.env.apikey;
 
   useEffect(() => {
-    if (socket) {
-      setSocketId(socket.id);
-    }
     if (!socket) {
       router.push('/');
+    } else {
+      setSocketId(socket.id);
     }
   }, [socket, router]);
 
@@ -50,8 +52,9 @@ const WaitingRoom = ({ params }) => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewPlayer = (newPlayer) => {
-      setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
+    const handleNewPlayer = async (newPlayer) => {
+      const avatar = await getAvatar(newPlayer.playerName, apiKey);
+      setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
     };
 
     const handleExitPlayer = (removedPlayerId) => {
@@ -60,13 +63,15 @@ const WaitingRoom = ({ params }) => {
       );
     };
 
-    const handleUpdatePlayer = (updatedPlayer) => {
+    const handleUpdatePlayer = async (updatedPlayer) => {
+      const avatar = await getAvatar(updatedPlayer.playerName, apiKey);
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
-          player.id === updatedPlayer.id ? updatedPlayer : player
+          player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
         )
       );
     };
+
     socket.on('updatePlayer', handleUpdatePlayer);
     socket.on('newPlayer', handleNewPlayer);
     socket.on('exitPlayer', handleExitPlayer);
@@ -76,25 +81,32 @@ const WaitingRoom = ({ params }) => {
       socket.off('exitPlayer', handleExitPlayer);
       socket.off('updatePlayer', handleUpdatePlayer);
     };
-  }, [socket]);
+  }, [socket, apiKey]);
 
   useEffect(() => {
     if (!socket) return;
 
     const fetchPlayers = () => {
-      socket.emit('getPlayers', { code }, (response) => {
+      socket.emit('getPlayers', { code }, async (response) => {
         if (response.error) {
           console.error(response.error);
         } else {
-          setPlayers(response.players);
+          const playersWithAvatars = await Promise.all(
+            response.players.map(async (player) => {
+              const avatar = await getAvatar(player.playerName, apiKey);
+              return { ...player, avatar };
+            })
+          );
+          setPlayers(playersWithAvatars);
         }
       });
     };
-
+    socket.on('connect', fetchPlayers); // Re-fetch players on reconnect
     fetchPlayers();
 
     return () => {
       socket.off('getPlayers');
+      socket.off('connect', fetchPlayers);
     };
   }, [socket, code]);
 
@@ -126,33 +138,49 @@ const WaitingRoom = ({ params }) => {
         console.error(response.error);
       } else {
         console.log('Player eliminado con éxito');
-        router.push('/'); // Redirigir a la página principal después de eliminar al jugador
+        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
   };
+
   return (
-    <div className='w-screen h-screen bg-slate-400'>
-      <div>
-        <h1 className='text-center text-black text-2xl font-bold mt-10'>
+    <div className='w-screen h-screen bgroom'>
+      <div className='h-48 flex flex-col mt-10 flex-wrap mx-5'>
+        <h1 className='text-primary font-extrabold text-4xl uppercase'>
           {title}
         </h1>
-        <p>{description}</p>
+        <p className='text-wrap break-words w-full'>{description}</p>
       </div>
 
-      <ul className='mt-5'>
+      <div className='flex flex-wrap '>
         {players.map((player) => (
-          <li key={player.id} className='text-center text-xl'>
-            {player.playerName}
-          </li>
+          <div
+            key={player.id}
+            className={`w-14 flex flex-col items-center p-1 mx-8 ${
+              player.socketId === socketId ? 'text-secundary' : 'text-white'
+            }`}
+          >
+            <div className='text-center flex flex-col items-center p-1 gap-1'>
+              <Image
+                width={40}
+                height={40}
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                  player.avatar
+                )}`}
+                alt={`${player.playerName}'s avatar`}
+              />
+              <p>{player.playerName}</p>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
       {socketId && (
         <div className='flex justify-center mt-10'>
           <button
             onClick={deletePlayer}
-            className='bg-red-500 text-white px-2 py-1 rounded'
+            className='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-900'
           >
-            Eliminarme
+            Salir
           </button>
         </div>
       )}

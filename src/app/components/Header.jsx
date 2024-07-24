@@ -18,7 +18,6 @@ export default function Header() {
     if (typeof window !== 'undefined') {
       const storedNickname = localStorage.getItem('nickname');
       if (storedNickname) {
-
         setNickname(storedNickname);
         setMostrarAvatar(!mostrarAvatar);
       }
@@ -34,16 +33,14 @@ export default function Header() {
   }, [nickname]);
 
   return (
-
-    <nav className="header fixed top-0 w-full flex justify-between items-center pl-8 shadow-md shadow-slate-200 z-50 h-24">
-      <Link href="/">
+    <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 shadow-md shadow-slate-200 z-50 h-24'>
+      <Link href='/'>
         <Image
           src={'/Logotipo_Logotipo.png'}
           width={50}
           height={60}
-          className="logo"
-          alt="Logo"
-
+          className='logo'
+          alt='Logo'
         />
       </Link>
         {user ? (
@@ -63,13 +60,13 @@ export default function Header() {
               {mostrarAvatar && !nickname && (
                 <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />                        
               )}
-
             </div>
             <div className='flex flex-row justify-end items-end text-end w-full sm:w-auto mr-20'>
               <SignInButton className='signIn-button' />
             </div>
           </div>
         )}
+      </div>
     </nav>
   );
 }

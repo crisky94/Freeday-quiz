@@ -39,6 +39,7 @@ app.prepare().then(() => {
     socket.on('disconnect', () => {
       console.log('socket desconectado 😐');
     });
+
   });
   
   httpServer.listen(port, (err) => {

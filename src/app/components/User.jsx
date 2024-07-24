@@ -14,7 +14,7 @@ export default function User() {
         setNickname(storedNickname);
       }
       if (user) {
-        localStorage.removeItem('nickname')
+        localStorage.removeItem('nickname');
       }
     }
   }, [user, nickname]);

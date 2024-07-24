@@ -17,7 +17,7 @@ export default function ModalComponent({ value, onChange }) {
     <>
       <button
         type='button'
-        className='bgGradiant text-black px-5 text-xs h-12 rounded-lg hover:bg-blue-600 hover:transition duration-200'
+        className='hoverGradiant bg-custom-linear text-black px-5 text-xs h-12 rounded-lg hover:transition duration-200 font-bold'
         onClick={toggleModal}
       >
         Añadir descripción
@@ -38,13 +38,13 @@ export default function ModalComponent({ value, onChange }) {
               <button
                 type='button'
                 onClick={handleSave}
-                className='bgGradiant text-black px-4 py-1 mx-2 rounded-lg shadow hover:bg-purple-700 hover:transition duration-200'
+                className='hoverGradiant bg-custom-linear text-black px-4 py-1 mx-2 rounded-lg shadow  hover:transition duration-200'
               >
                 Guardar
               </button>
               <button
                 type='button'
-                className='bgGradiant text-black px-4 py-1 mx-2 rounded-lg shadow hover:bg-secundary hover:transition duration-200'
+                className='hoverGradiant bg-custom-linear text-black px-4 py-1 mx-2 rounded-lg shadow  hover:transition duration-200'
                 onClick={toggleModal}
               >
                 Cerrar

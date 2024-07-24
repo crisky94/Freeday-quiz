@@ -7,6 +7,18 @@
   --number-of-characters: 21;
 }
 
+.bgroom {
+  background: rgb(28, 255, 228);
+  background: linear-gradient(
+    346deg,
+    rgba(28, 255, 228, 1) 0%,
+    rgba(17, 17, 17, 1) 20%,
+    rgba(17, 17, 17, 1) 42%,
+    rgba(17, 17, 17, 1) 79%,
+    rgba(252, 255, 0, 1) 100%
+  );
+}
+
 /* Header */
 
 .header {
@@ -21,6 +33,7 @@
 
 /* Body */
 body {
+  overflow-x: hidden;
   background-image: url('../../public/Background.png');
   background-color: black;
   background-size: cover;
@@ -53,35 +66,57 @@ body {
     font-size: 22px;
   }
 }
+/* hover para botoness */
 
-/* !LOADER */
-.loader {
-  display: inline-flex;
-  gap: 10px;
+.hoverGradiant:hover {
+  color: white;
+  box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.54) inset;
+  -webkit-box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.54) inset;
+  -moz-box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.54) inset;
 }
 
-.loader:before,
-.loader:after {
+/* !LOADING*/
+.spinner {
+  --size: 30px;
+  --first: #005bba;
+  --second: #fed500;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  animation: spin 2s linear infinite;
+}
+
+.spinner::before,
+.spinner::after {
   content: '';
-  height: 80px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(farthest-side, #000 95%, #0000) 35% 35%/6px 6px no-repeat #fff;
-  transform: scaleX(var(--s, 1)) rotate(0deg);
-  animation: l6 1s infinite linear;
+  width: var(--size);
+  height: var(--size);
+  background: var(--first);
+  border-radius: 100%;
+  position: absolute;
+  top: 10%;
+  transform: translateY(-50%);
+  animation: bounce 1s ease-in-out alternate infinite;
 }
 
-.loader:after {
-  --s: -1;
-  animation-delay: -0.1s;
+.spinner::after {
+  background: var(--second);
+
+  animation: bounce 1s 0.5s ease-in-out alternate infinite;
 }
 
-@keyframes l6 {
-  100% {
-    transform: scaleX(var(--s, 1)) rotate(360deg);
+@keyframes bounce {
+  50% {
+    transform: translateX(-50%);
   }
-
 }
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* logo */
 .logo {
   animation: bounce-in-top 1.1s both;
@@ -163,4 +198,3 @@ body {
     animation-timing-function: ease-out;
   }
 }
-

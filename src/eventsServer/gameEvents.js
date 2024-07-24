@@ -59,7 +59,7 @@ export function gameEvents(socket, prisma) {
           endedAt: true,
         },
       });
-
+      
       callback({ games });
     } catch (e) {
       console.error('error:', e);
