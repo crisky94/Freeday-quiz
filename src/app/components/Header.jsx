@@ -5,26 +5,14 @@ import Link from 'next/link';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import User from './User';
+import useAvatar from '../../lib/fetchAvatar';
+import '../styles/header.css'
 
 export default function Header() {
   const { user } = useUser();
   const [nickname, setNickname] = useState('');
-  const [avatar, setAvatar] = useState('');
+  const { avatar, avatars } = useAvatar();
   const [mostrarAvatar, setMostrarAvatar] = useState(false);
-  const apikey = process.env.apikey;
-
-  const avatars = async () => {
-    try {
-      const response = await fetch(`https://api.multiavatar.com/${nickname}.svg?apikey=${apikey}`);
-      const svg = await response.text();
-      const adjustedSvg = svg.replace('<svg ', '<svg width="50" height="50" ');
-      setAvatar(adjustedSvg);
-    } catch (error) {
-      console.error('Error fetching avatar:');
-    }
-  };
-
-  avatars();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -42,6 +30,7 @@ export default function Header() {
         setMostrarAvatar(mostrarAvatar);
       }
     }
+    avatars('nickname');
   }, [nickname]);
 
   return (
@@ -58,23 +47,16 @@ export default function Header() {
         />
       </Link>
         {user ? (
-          <div className="nav-header flex justify-between w-full pr-4 mt-6 text-white">
-            <div className='w-full flex items-center justify-center text-center gap-6 bg-[#111] h-12 rounded-md '>
-              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/demo-game'}>Demo game</Link>
-              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/control-quiz'}>Control Quiz</Link>
-              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/'}>Game Page</Link>
-              <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/start-quiz'}>Start Quiz</Link>
-            <Link className='hover:border-[#dfe524] hover:border-2 rounded-md p-2' href={'/pages/create-quiz'}>Create Quiz</Link>
-            </div>
+          <div className="nav-header flex justify-between w-full text-white mb-4">
             <User />
           </div>
         ) : (
 
-          <div className='flex flex-col sm:flex-row items-center w-full justify-around'>
+          <div className='nav-header flex flex-col sm:flex-row items-center w-full justify-around'>
             <div className='flex flex-row flex-wrap justify-center items-center text-center gap-4 mb-4 sm:mb-0 sm:w-auto'>
               {!mostrarAvatar && nickname && (
                   <>
-                    <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
+                  <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
                     <p className="flex flex-row items-center bg-black h-8 px-2 rounded-md">{nickname}</p>
                   </>
               )}
@@ -83,8 +65,8 @@ export default function Header() {
               )}
 
             </div>
-            <div className='flex flex-row justify-end items-end text-end w-full sm:w-auto'>
-              <SignInButton />
+            <div className='flex flex-row justify-end items-end text-end w-full sm:w-auto mr-20'>
+              <SignInButton className='signIn-button' />
             </div>
           </div>
         )}

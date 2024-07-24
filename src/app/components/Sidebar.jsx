@@ -2,13 +2,14 @@
 
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
-
+import useAvatar from '../../lib/fetchAvatar';
+import Link from 'next/link';
 import User from './User';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [nickname, setNickname] = useState('');
-  const [avatar, setAvatar] = useState('');
+  const { avatar, avatars } = useAvatar();
   const [mostrarAvatar, setMostrarAvatar] = useState(false);
   const { user } = useUser();
   const apikey = process.env.apikey
@@ -16,21 +17,6 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-
-
-
-  const avatars = async () => {
-    try {
-      const response = await fetch(`https://api.multiavatar.com/${nickname}.svg?apikey=${apikey}`
-        + JSON.stringify(nickname));
-      const svg = await response.text();
-      const adjustedSvg = svg.replace('<svg ', '<svg width="70" height="70" ');
-      setAvatar(adjustedSvg);
-    } catch (error) {
-      console.error('Error fetching avatar:', error);
-    }
-  };
-  avatars();
 
 
   useEffect(() => {
@@ -48,6 +34,7 @@ const Sidebar = () => {
         setMostrarAvatar(mostrarAvatar)
       }
     }
+    avatars('nickname');
   }, [nickname]);
 
   return (
@@ -75,7 +62,6 @@ const Sidebar = () => {
           {user ? (
             <div className='ml-8'>
               <User />
-
             </div>
           ) : (
             <div className='flex flex-col justify-center items-center text-center w-full h-full gap-2'>
@@ -88,7 +74,7 @@ const Sidebar = () => {
                 <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
               }
               <p className='flex flex-row gap-2 justify-center items-center'>{nickname}</p>
-              <SignInButton />
+                <SignInButton className='signIn-button' />
             </div>
           )}
         </nav>
