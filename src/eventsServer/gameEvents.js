@@ -13,6 +13,7 @@ export function gameEvents(socket, prisma) {
           nickUser: gamedata.nickUser, // Nombre del usuario
           nameGame: gamedata.nameGame, // Nombre del juego
           codeGame: codeGame, // Código del juego
+          endedAt: endedAt ? new Date(endedAt) : null,//Fecha creado
         },
       });
 
@@ -55,6 +56,7 @@ export function gameEvents(socket, prisma) {
           id: true,
           nameGame: true,
           detailGame: true,
+          endedAt: true,
         },
       });
 
@@ -124,7 +126,7 @@ export function gameEvents(socket, prisma) {
   socket.on('updateGame', async ({ formData, gameId }, callback) => {
     try {
       // Preparamos las promesas de actualización de las preguntas
-      const updateAsksPromises = formData.asks.map((ask, index) => {
+      const updateAsksPromises = formData.asks.map((ask) => {
         return prisma.asks.update({
           where: {
             id: ask.id, // asumiendo que cada ask tiene un id único
@@ -149,6 +151,7 @@ export function gameEvents(socket, prisma) {
         data: {
           nameGame: formData.gameName,
           detailGame: formData.gameDetail,
+          endedAt: new Date(),
         },
       });
 
