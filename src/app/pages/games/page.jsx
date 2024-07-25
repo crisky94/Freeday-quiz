@@ -129,7 +129,7 @@ export default function GamesList() {
                         </Link>
                         <DeleteConfirmation gameId={game.id} onDelete={handleDelete} />
                       </div>
-                      <Link className='mt-5 codepen-button uppercase' href={`/pages/pinPage/${game.id}`}>
+                      <Link className='mt-5 codepen-button uppercase' href={`/pages/game/${game.id}`}>
                         <span>
                           Pin del juego
                         </span>

@@ -13,7 +13,7 @@ export function gameEvents(socket, prisma) {
           nickUser: gamedata.nickUser, // Nombre del usuario
           nameGame: gamedata.nameGame, // Nombre del juego
           codeGame: codeGame, // Código del juego
-          endedAt: endedAt ? new Date(endedAt) : null,//Fecha creado
+          endedAt: new Date(),//Fecha creado
         },
       });
 
