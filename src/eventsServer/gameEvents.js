@@ -79,6 +79,7 @@ export function gameEvents(socket, prisma) {
           id: true,
           nameGame: true,
           detailGame: true,
+          codeGame: true,
         },
       });
 

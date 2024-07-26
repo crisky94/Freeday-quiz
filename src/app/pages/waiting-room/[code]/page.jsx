@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
-import { getAvatar } from '@/lib/fetchAvatar';
+import useAvatar from '../../../../lib/fetchAvatar';
 import Image from 'next/image';
 
 const WaitingRoom = ({ params }) => {
@@ -14,6 +14,8 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const apiKey = process.env.apikey;
+
+  const { avatars } = useAvatar();
 
   useEffect(() => {
     if (!socket) {
@@ -53,7 +55,7 @@ const WaitingRoom = ({ params }) => {
     if (!socket) return;
 
     const handleNewPlayer = async (newPlayer) => {
-      const avatar = await getAvatar(newPlayer.playerName, apiKey);
+      const avatar = await avatars(newPlayer.playerName);
       setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
     };
 
@@ -64,7 +66,7 @@ const WaitingRoom = ({ params }) => {
     };
 
     const handleUpdatePlayer = async (updatedPlayer) => {
-      const avatar = await getAvatar(updatedPlayer.playerName, apiKey);
+      const avatar = await avatars(updatedPlayer.playerName);
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
           player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
@@ -81,7 +83,7 @@ const WaitingRoom = ({ params }) => {
       socket.off('exitPlayer', handleExitPlayer);
       socket.off('updatePlayer', handleUpdatePlayer);
     };
-  }, [socket, apiKey]);
+  }, [socket, avatars]);
 
   useEffect(() => {
     if (!socket) return;
@@ -93,7 +95,7 @@ const WaitingRoom = ({ params }) => {
         } else {
           const playersWithAvatars = await Promise.all(
             response.players.map(async (player) => {
-              const avatar = await getAvatar(player.playerName, apiKey);
+              const avatar = await avatars(player.playerName);
               return { ...player, avatar };
             })
           );
@@ -108,7 +110,7 @@ const WaitingRoom = ({ params }) => {
       socket.off('getPlayers');
       socket.off('connect', fetchPlayers);
     };
-  }, [socket, code]);
+  }, [socket, code, avatars]);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
