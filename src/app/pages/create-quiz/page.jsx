@@ -153,7 +153,7 @@ export default function CreateGame() {
     setCurrentAsk(askToEdit.ask);
     setAnswers([askToEdit.a, askToEdit.b, askToEdit.c, askToEdit.d]);
     setCorrectAnswer(['a', 'b', 'c', 'd'].indexOf(askToEdit.answer));
-    setTimeLimit(askToEdit.timer.toString());
+    setTimer(askToEdit.timer.toString());
     setEditIndex(index);
   };
 
@@ -264,6 +264,7 @@ export default function CreateGame() {
       <div className='w-full h-14 flex  items-center'>
         <ModalComponent value={detailGame} onChange={setDetailGame} />
         <input
+          maxLength={100}
           placeholder='Coloca un título'
           className=' text-center truncate p-2 md:mx-28  text-md placeholder-slate-500 uppercase rounded-md h-12 w-2/3 mx-5   text-black font-bold focus:outline-none focus:ring-2 focus:ring-primary'
           type='text'
@@ -274,6 +275,7 @@ export default function CreateGame() {
       <div className='w-full h-full '>
         <div className='flex justify-center w-full'>
           <input
+            maxLength={200}
             type='text'
             placeholder='Escribe tu pregunta'
             className=' text-center text-md uppercase rounded-md mt-4 h-14 m-5 w-full text-black  focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-500'

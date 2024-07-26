@@ -195,7 +195,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
 
       const asks = await prisma.asks.findMany({
         where: {
-          gameId: game.id
+          gameId: game.id,
         },
         select: {
           id: true,
@@ -210,7 +210,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       });
 
       callback({ success: true, asks, game });
-
     } catch (error) {
       callback({ success: false, message: 'Error al validar el PIN' });
     }
@@ -234,5 +233,4 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       socket.emit('insertPlayerResponse', { error: error.message });
     }
   });
-  
 }

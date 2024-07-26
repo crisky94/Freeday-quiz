@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
 import { getAvatar } from '@/lib/fetchAvatar';
 import Image from 'next/image';
-
+// import '@/app/styles/Room/animationRoom.css';
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
   const socket = useSocket();
@@ -13,7 +13,6 @@ const WaitingRoom = ({ params }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
-  const apiKey = process.env.apikey;
 
   useEffect(() => {
     if (!socket) {
@@ -53,7 +52,7 @@ const WaitingRoom = ({ params }) => {
     if (!socket) return;
 
     const handleNewPlayer = async (newPlayer) => {
-      const avatar = await getAvatar(newPlayer.playerName, apiKey);
+      const avatar = await getAvatar(newPlayer.playerName);
       setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
     };
 
@@ -64,7 +63,7 @@ const WaitingRoom = ({ params }) => {
     };
 
     const handleUpdatePlayer = async (updatedPlayer) => {
-      const avatar = await getAvatar(updatedPlayer.playerName, apiKey);
+      const avatar = await getAvatar(updatedPlayer.playerName);
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
           player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
@@ -81,7 +80,7 @@ const WaitingRoom = ({ params }) => {
       socket.off('exitPlayer', handleExitPlayer);
       socket.off('updatePlayer', handleUpdatePlayer);
     };
-  }, [socket, apiKey]);
+  }, [socket]);
 
   useEffect(() => {
     if (!socket) return;
@@ -93,7 +92,7 @@ const WaitingRoom = ({ params }) => {
         } else {
           const playersWithAvatars = await Promise.all(
             response.players.map(async (player) => {
-              const avatar = await getAvatar(player.playerName, apiKey);
+              const avatar = await getAvatar(player.playerName);
               return { ...player, avatar };
             })
           );
@@ -145,14 +144,14 @@ const WaitingRoom = ({ params }) => {
 
   return (
     <div className='w-screen h-screen bgroom'>
-      <div className='h-48 flex flex-col mt-10 flex-wrap mx-5'>
+      <div className='h-60 flex flex-col mt-14 flex-wrap mx-5'>
         <h1 className='text-primary font-extrabold text-4xl uppercase'>
           {title}
         </h1>
         <p className='text-wrap break-words w-full'>{description}</p>
       </div>
 
-      <div className='flex flex-wrap '>
+      <div className='flex flex-wrap -mt-9 '>
         {players.map((player) => (
           <div
             key={player.id}
@@ -175,7 +174,7 @@ const WaitingRoom = ({ params }) => {
         ))}
       </div>
       {socketId && (
-        <div className='flex justify-center mt-10'>
+        <div className='flex justify-center mt-4'>
           <button
             onClick={deletePlayer}
             className='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-900'
@@ -184,6 +183,10 @@ const WaitingRoom = ({ params }) => {
           </button>
         </div>
       )}
+      <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
+        <p className='pb-2'>Esperando inicio del quiz...</p>
+        <div class='loaderRoom'></div>
+      </div>
     </div>
   );
 };
