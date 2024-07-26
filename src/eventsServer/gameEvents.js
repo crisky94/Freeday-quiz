@@ -57,6 +57,7 @@ export function gameEvents(socket, prisma) {
           nameGame: true,
           detailGame: true,
           endedAt: true,
+          updateAt: true,
         },
       });
       
@@ -151,7 +152,7 @@ export function gameEvents(socket, prisma) {
         data: {
           nameGame: formData.gameName,
           detailGame: formData.gameDetail,
-          endedAt: new Date(),
+          updateAt: new Date(),
         },
       });
 
