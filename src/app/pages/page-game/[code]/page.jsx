@@ -6,10 +6,12 @@ import { useSocket } from '@/context/socketContext';
 import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import '../../../styles/page-game/pageGame.css';
+import { useAvatar } from '../../../../context/avatarContext';
 
-export default function GamePage({ params }) {
+export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
-  const [gameId, setGameId] = useState([]);
+  const [gameId, setGameId] = useState(null);
   const [score, setScore] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -19,21 +21,36 @@ export default function GamePage({ params }) {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const socket = useSocket();
   const code = parseInt(params.code);
-  const router = useRouter()
-  useEffect(() => {
-    const playerName = localStorage.getItem('nickname');
-    if (playerName) {
-      setPlayerName(playerName);
-      console.log(playerName);
-    }
+  const router = useRouter();
+  const [socketId, setSocketId] = useState(''); 
+  const { fetchAvatar } = useAvatar();
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleGetPlayers = (response) => {
+      console.log(response);
+      if (response.error) {
+        console.error(response.error);
+      } else {
+        setSocketId(socket.id);
+        setPlayerName(response.players); // Ajuste: Asegúrate de que 'response.players' contiene un nombre de jugador.
+      }
+    };
+
+    socket.emit('getPlayers', { code }, handleGetPlayers);
+
+    return () => {
+      socket.off('getPlayers', handleGetPlayers);
+    };
+  }, [socket, code]);
+
+  useEffect(() => {
     if (socket) {
       socket.emit('getCodeGame', { code }, (response) => {
-        console.log(response);
         if (response.error) {
           console.error(response.error);
         } else {
-
           setQuestions(response.asks);
           setCurrentQuestionIndex(0);
           setTimeLeft((response.asks[0]?.timer || 0) * 1000); // Convertir a milisegundos
@@ -41,7 +58,7 @@ export default function GamePage({ params }) {
         }
       });
     }
-  }, [socket, code, playerName]);
+  }, [socket, code]);
 
   useEffect(() => {
     if (timeLeft === null) return;
@@ -98,23 +115,21 @@ export default function GamePage({ params }) {
   };
 
   const handleTimeUp = async () => {
-    const currentQuestion = questions[currentQuestionIndex];
     setShowCorrectAnswer(true);
 
     setTimeout(() => {
       setIsCorrect(false);
       setSelectedAnswer(null);
       setShowCorrectAnswer(false);
-      showToast()
-        .then(() => {
-          moveToNextQuestion();
-        });
+      showToast().then(() => {
+        moveToNextQuestion();
+      });
     }, 1000);
   };
 
   const showToast = () => {
     return new Promise((resolve) => {
-      toast(`Puntos: ${score}px  🚀`, {
+      toast(`Puntos: ${score}px 🚀`, {
         toastId: "custom-id-yes",
         position: "bottom-center",
         autoClose: 2000,
@@ -127,14 +142,14 @@ export default function GamePage({ params }) {
       });
     });
   };
-   
+
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
-      router.push('/pages/ranking');
+      // router.push('/pages/ranking');
     }
   };
 
@@ -164,33 +179,32 @@ export default function GamePage({ params }) {
   };
 
   return (
-
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <div className="flex flex-col gap-5 items-center rounded-md mt-20 border-4 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] ">
+      <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
         <ToastContainer />
-        <div key={currentQuestion.id} className="flex flex-col flex-wrap justify-center items-center h-auto mb-5 py-5 px-32 md:px-56 rounded-md w-full sm:text-base md:text-2xl lg:text-2xl">
-        <div className='flex flex-col items-center justify-center'>
-          <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
-          {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
+        <div key={currentQuestion.id} className="game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]">
+          <div className='flex flex-col items-center justify-center'>
+            <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
+              {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
+            </p>
+          </div>
+          <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
+            {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
           </p>
-        </div>
-          <p className='flex flex-col mt-10 mb-10 text-white'>{currentQuestionIndex + 1}. {currentQuestion.ask}</p>
-          <ul className="flex flex-col sm:flex-row sm:flex-wrap gap-10 justify-center items-center mt-5 mb-5 w-fit">
-            <li onClick={() => handleAnswerClick('a')} className={`rounded-md h-auto w-auto p-4 cursor-pointer bg-red-600 ${getButtonClass('a')}`}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
+            <div onClick={() => handleAnswerClick('a')} className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass('a')} text-center overflow-wrap break-word`}>
               {currentQuestion.a}
-            </li>
-            <li onClick={() => handleAnswerClick('b')} className={`rounded-md h-auto w-auto p-4 cursor-pointer bg-blue-600 ${getButtonClass('b')}`}>
+            </div>
+            <div onClick={() => handleAnswerClick('b')} className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass('b')} text-center overflow-wrap break-word`}>
               {currentQuestion.b}
-            </li>
-          </ul>
-          <ul className="flex flex-col sm:flex-row sm:flex-wrap gap-10 justify-center items-center mt-5 mb-5 w-auto">
-            <li onClick={() => handleAnswerClick('c')} className={`rounded-md h-auto w-auto p-4 cursor-pointer bg-green-600 ${getButtonClass('c')}`}>
+            </div>
+            <div onClick={() => handleAnswerClick('c')} className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass('c')} text-center overflow-wrap break-word`}>
               {currentQuestion.c}
-            </li>
-            <li onClick={() => handleAnswerClick('d')} className={`rounded-md h-auto w-auto p-4 cursor-pointer bg-yellow-600 ${getButtonClass('d')}`}>
+            </div>
+            <div onClick={() => handleAnswerClick('d')} className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass('d')} text-center overflow-wrap break-word`}>
               {currentQuestion.d}
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

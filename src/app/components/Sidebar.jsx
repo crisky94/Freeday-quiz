@@ -78,7 +78,7 @@ const Sidebar = () => {
           ) : (
             <div className='flex flex-col justify-center items-center text-center w-full h-full gap-2'>
               {players.map(player => (
-                <div key={player.id} className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto'>
+                <div key={player.id} className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto mt-5'>
                   {avatars[player.id] && player.socketId === socketId && (
                     <>
                       <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatars[player.id] }} />
@@ -86,10 +86,8 @@ const Sidebar = () => {
                     </>
                   )}
                 </div>
-              ))}
-          
-                <SignInButton className='signIn-button mt-10' />
-           
+              ))}             
+                <SignInButton className='signIn-button mt-10' />             
             </div>
           )}
         </nav>

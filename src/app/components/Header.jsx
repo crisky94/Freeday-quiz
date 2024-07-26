@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import User from './User';
 import { useAvatar } from '../../context/avatarContext'; // Nueva importación
 import { useSocket } from '@/context/socketContext'; // Nueva importación
+import User from './User';
 import '../styles/header.css';
 
 export default function Header() {
@@ -16,14 +16,13 @@ export default function Header() {
   const { fetchAvatar } = useAvatar();
   const [players, setPlayers] = useState([]);
   const [avatars, setAvatars] = useState({});
+  const [socketId, setSocketId] = useState('');
   const params = useParams();
   const code = parseInt(params.code);
-  const [socketId, setSocketId] = useState('');
-
 
   useEffect(() => {
     if (!socket) return;
-
+    
     const handleGetPlayers = async (response) => {
       if (response.error) {
         console.error(response.error);
@@ -68,19 +67,16 @@ export default function Header() {
           <div className='flex flex-row justify-between'>
             <div className='flex flex-grow justify-between items-center'>
               {players.map(player => (
-                <div key={player.id} className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto mt-2'>
+                <div key={player.id} className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto'>
                   {avatars[player.id] && player.socketId === socketId && (
                     <>
-
-                    <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatars[player.id] }} />
-                  <p className='flex flex-row items-center bg-black h-8 px-2 rounded-md'>{player.playerName}</p>
+                      <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatars[player.id] }} />
+                      <p className='flex flex-row items-center bg-black h-8  rounded-md'>{player.playerName}</p>
                     </>
                   )}
                 </div>
               ))}
-              
-                <SignInButton className='signIn-button  mt-2 ml-10' />
-              
+              <SignInButton className='signIn-button ml-12' />
             </div>
           </div>
         )}
