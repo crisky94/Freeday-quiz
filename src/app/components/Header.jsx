@@ -1,39 +1,56 @@
-'use client';
+'use client'
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import User from './User';
-import useAvatar from '../../lib/fetchAvatar';
-import '../styles/header.css'
+import { useAvatar } from '../../context/avatarContext'; // Nueva importación
+import { useSocket } from '@/context/socketContext'; // Nueva importación
+import '../styles/header.css';
 
 export default function Header() {
   const { user } = useUser();
-  const [nickname, setNickname] = useState('');
-  const { avatar, avatars } = useAvatar();
-  const [mostrarAvatar, setMostrarAvatar] = useState(false);
+  const socket = useSocket();
+  const { fetchAvatar } = useAvatar();
+  const [players, setPlayers] = useState([]);
+  const [avatars, setAvatars] = useState({});
+  const params = useParams();
+  const code = parseInt(params.code);
+  const [socketId, setSocketId] = useState('');
+
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedNickname = localStorage.getItem('nickname');
-      if (storedNickname) {
-        setNickname(storedNickname);
-        setMostrarAvatar(!mostrarAvatar);
-      }
-      if (user) {
-        localStorage.removeItem('nickname');
-      }
+    if (!socket) return;
 
-      if (user && !nickname) {
-        setMostrarAvatar(mostrarAvatar);
+    const handleGetPlayers = async (response) => {
+      if (response.error) {
+        console.error(response.error);
+      } else {
+        setSocketId(socket.id);
+        setPlayers(response.players);
+        const avatarsData = await Promise.all(response.players.map(async (player) => {
+          const avatar = await fetchAvatar(player.playerName);
+          return { id: player.id, avatar };
+        }));
+        const avatarsMap = {};
+        avatarsData.forEach(({ id, avatar }) => {
+          avatarsMap[id] = avatar;
+        });
+        setAvatars(avatarsMap);
       }
-    }
-    avatars('nickname');
-  }, [nickname]);
+    };
+
+    socket.emit('getPlayers', { code }, handleGetPlayers);
+
+    return () => {
+      socket.off('getPlayers', handleGetPlayers);
+    };
+  }, [socket, fetchAvatar]);
 
   return (
-    <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 shadow-md shadow-slate-200 z-50 h-24'>
+    <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 shadow-md shadow-slate-200 z-50 h-24'>
       <Link href='/'>
         <Image
           src={'/Logotipo_Logotipo.png'}
@@ -43,30 +60,31 @@ export default function Header() {
           alt='Logo'
         />
       </Link>
-        {user ? (
-          <div className="nav-header flex justify-between w-full text-white mb-4">
-            <User />
-          </div>
-        ) : (
 
-          <div className='nav-header flex flex-col sm:flex-row items-center w-full justify-around'>
-            <div className='flex flex-row flex-wrap justify-center items-center text-center gap-4 mb-4 sm:mb-0 sm:w-auto'>
-              {!mostrarAvatar && nickname && (
-                  <>
-                  <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
-                    <p className="flex flex-row items-center bg-black h-8 px-2 rounded-md">{nickname}</p>
-                  
-                  </>
-              )}
-              {mostrarAvatar && !nickname && (
-                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />                        
-              )}
-            </div>
-            <div className='flex flex-row justify-end items-end text-end w-full sm:w-auto mr-20'>
-              <SignInButton className='signIn-button' />
+      <div className='nav-header'>
+        {user ? (
+          <User />
+        ) : (
+          <div className='flex flex-row justify-between'>
+            <div className='flex flex-grow justify-between items-center'>
+              {players.map(player => (
+                <div key={player.id} className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto mt-2'>
+                  {avatars[player.id] && player.socketId === socketId && (
+                    <>
+
+                    <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatars[player.id] }} />
+                  <p className='flex flex-row items-center bg-black h-8 px-2 rounded-md'>{player.playerName}</p>
+                    </>
+                  )}
+                </div>
+              ))}
+              
+                <SignInButton className='signIn-button  mt-2 ml-10' />
+              
             </div>
           </div>
         )}
+      </div>
     </nav>
   );
 }
