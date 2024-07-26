@@ -5,7 +5,7 @@ function CreateButton() {
   return (
     <div className='flex flex-row justify-end items-start'>
       <Link href="/pages/create-quiz">
-        <button className="Btn">
+        <button className="Btn hoverGradiant bg-custom-linear">
           <div className="sign">+</div>
           <div className="text">Crear</div>
         </button>
