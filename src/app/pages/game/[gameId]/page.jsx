@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import io from "socket.io-client";
 import QRCode from "qrcode.react";
 import { Montserrat } from 'next/font/google';
-
-let socket;
+import { useSocket } from '@/context/socketContext';
 
 const monserrat = Montserrat({
   weight: '400',
@@ -17,35 +15,45 @@ const GamePage = () => {
   const [players, setPlayers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [game, setGame] = useState(null);
+  const socket = useSocket();
 
   const params = useParams();
   const gameId = params.gameId;
 
   useEffect(() => {
-    socket = io();
+    if (!socket) return;
+    console.log('Socket initialized:', socket);
 
-    socket.emit("joinGame", { gameId: parseInt(gameId, 10) }, (response) => {
-      if (response.error) {
-        console.error(response.error);
-      }
-    });
+    const fetchGame = async () => {
+      socket.emit("getGamesId", { gameId: parseInt(gameId, 10) }, (response) => {
+        if (response.error) {
+          console.error(response.error);
+        } else {
+          setGame(response.game);
+          console.log('Game data received:', response.game);
 
-    socket.on("playerList", (updatedPlayers) => {
-      setPlayers(updatedPlayers);
-    });
+          socket.emit("joinRoom", { code: response.game.codeGame }, (joinResponse) => {
+            if (joinResponse.error) {
+              console.error(joinResponse.error);
+            } else {
+              console.log('Joined game successfully');
+            }
+          });
+        }
+      });
+    };
 
-    socket.emit("getGamesId", { gameId: parseInt(gameId, 10) }, (response) => {
-      if (response.error) {
-        console.error(response.error);
-      } else {
-        setGame(response.game);
-      }
+    fetchGame();
+
+    socket.on("newPlayer", (newPlayer) => {
+      console.log('New player received:', newPlayer);
+      setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
     });
 
     return () => {
-      socket.disconnect();
+      socket.off("newPlayer");
     };
-  }, [gameId]);
+  }, [gameId, socket]);
 
   const startGame = () => {
     console.log("Juego iniciado");
@@ -62,8 +70,8 @@ const GamePage = () => {
       <QRCode value={`http://localhost:3000/nick-name-form/${gameId}`} className='bg-white p-2 rounded mt-4' />
       <p className='bg-black p-2 rounded mt-4'>PIN: {game.codeGame}</p>
       <div className='flex flex-row justify-between items-center'>
-      <div className='m-5'><button onClick={startGame} className='mt-5 codepen-button'><span>Empezar Juego</span></button></div>
-      <div className='m-5'><button onClick={() => setShowModal(true)} className='mt-5 codepen-button'><span>Ver Jugadores</span></button></div>
+        <div className='m-5'><button onClick={startGame} className='mt-5 codepen-button'><span>Empezar Juego</span></button></div>
+        <div className='m-5'><button onClick={() => setShowModal(true)} className='mt-5 codepen-button'><span>Ver Jugadores</span></button></div>
       </div>
 
       {showModal && (
