@@ -48,6 +48,11 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       console.error('Error al unirse a la sala:', error);
       socket.emit('error', { message: 'Error al unirse a la sala' });
     }
+    socket.on('startGame', (data) => {
+      const { code } = data;
+      console.log(`Emitiendo 'gameStarted' a la sala: ${code}`);
+      io.to(code).emit('gameStarted', { code });
+    });  
   });
 
   socket.on('replaceNickname', async ({ nickname, code }) => {

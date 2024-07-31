@@ -56,6 +56,9 @@ const GamePage = () => {
   }, [gameId, socket]);
 
   const startGame = () => {
+    if (socket) {
+      socket.emit('startGame', { code: game.codeGame });
+    }
     console.log("Juego iniciado");
   };
 

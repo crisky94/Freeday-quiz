@@ -112,6 +112,43 @@ const WaitingRoom = ({ params }) => {
     };
   }, [socket, code, avatars]);
 
+  // Escuha el evento gameStarted
+  useEffect(() => {
+    if (!socket) {
+      console.log('Socket no está definido');
+      return;
+    }
+  
+    const handleGameStarted = () => {
+      console.log('Evento gameStarted recibido');
+      console.log('Código del juego:', code);
+      router.push(`/page-game/${code}`);
+    };
+  
+    const registerGameStartedListener = () => {
+      console.log('Registrando listener para gameStarted en socket', socket.id);
+      socket.on('gameStarted', handleGameStarted);
+    };
+  
+    if (socket.connected) {
+      registerGameStartedListener();
+    } else {
+      socket.on('connect', () => {
+        console.log('Socket conectado:', socket.id);
+        registerGameStartedListener();
+      });
+    }
+  
+    return () => {
+      console.log('Eliminando listener para gameStarted');
+      socket.off('gameStarted', handleGameStarted);
+      socket.off('connect', registerGameStartedListener);
+    };
+  }, [socket, router, code]);
+  
+  
+  
+
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       event.preventDefault();
