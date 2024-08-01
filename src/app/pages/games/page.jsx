@@ -152,7 +152,7 @@ export default function GamesList() {
             </div>
           )}
         </div>
-      ) : ''}
+      ) : <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500]'>Página no autorizada para jugadores, inicia sesión o registrate para que puedas ver tus juegos creados o poder crearlos </h1>}
     </>
   );
 }
