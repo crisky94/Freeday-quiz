@@ -43,6 +43,8 @@ export default function GamesList() {
         console.log(nickUser);
         socket.emit('getGames', { user: nickUser }, (response) => {
           console.log(response);
+          console.log(error);
+
           if (response.error) {
             setError(response.error);
           } else {
@@ -117,7 +119,7 @@ export default function GamesList() {
   return (
     <>
       {user ? (
-        <div className='min-h-screen p-2 md:p-16 lg:p-16'>
+        <div className='min-h-screen p-2 md:p-16 lg:p-16  '>
           {games.length > 0 ? (
             <>
               <div className='mt-10'>
@@ -134,7 +136,7 @@ export default function GamesList() {
                 {games.map((game, i) => (
                   <div
                     key={game.id}
-                    className='card w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all'
+                    className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all'
                   >
                     <div className='flex flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
                       <h2 className='card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
@@ -161,16 +163,16 @@ export default function GamesList() {
                         <span>Pin del juego</span>
                       </Link>
                       {/* Mostrar la fecha de finalización del juego */}
-                      <p className='text-white mt-2'>
+                      {/* <p className='text-white mt-2'>
                         {game.endedAt ? formatDate(game.endedAt) : null}
-                      </p>
+                      </p> */}
 
-                      <p
-                        className='absolute bottom-9 '
+                      <div
+                        className=' w-48 mt-14   cursor-zoom-in p-1 text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
-                        Hover preview
+                        <p className='rounded-md bg-primary'>Vista previa </p>
                         {hoveredQuestions[game.id] && (
                           <div className='bg-transparent '>
                             <DemoPreview
@@ -179,7 +181,7 @@ export default function GamesList() {
                             />
                           </div>
                         )}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 ))}
