@@ -14,6 +14,16 @@
   text-transform: uppercase;
 }
 
-.signIn-button:hover {
+.signUp-button{
+  text-transform: uppercase;
+}
+
+.signIn-button:hover::after {
   color: var(--text-color-sign);
+  content: ' (Iniciar sesión)';
+}
+
+.signUp-button:hover::after {
+  color: var(--text-color-sign);
+  content: ' (Registrarse)';
 }

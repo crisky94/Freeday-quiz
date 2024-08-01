@@ -7,6 +7,20 @@
   background: var(--bg-link-sidebar);
 }
 
-.signIn-button {
+.signIn-button-sidebar {
   text-transform: uppercase;
+}
+
+.signIn-button-sidebar::after {
+  content: " (Iniciar sesión)";
+  color: #fcff00;
+}
+
+.signUp-button-sidebar {
+  text-transform: uppercase;
+}
+
+.signUp-button-sidebar::after {
+  content: " (Registrarse)";
+  color: #fcff00;
 }
