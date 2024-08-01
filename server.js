@@ -26,22 +26,42 @@ app.prepare().then(() => {
   // Inicializamos el servidor de Socket.io sobre el servidor HTTP
   const io = new SocketServer(httpServer);
 
+
+
   const gamePlayerMap = {};
+  let gameState = '';
 
   // Escuchamos cuando un cliente se conecta vía WebSocket
   io.on('connection', (socket) => {
     console.log(`socket conectado con id:${socket.id}`);
 
     // aqui van los eventos del juego y jugadores
-    gameEvents(socket, prisma);
+    gameEvents(socket,io, prisma);
     playerEvents(socket, io, prisma, gamePlayerMap);
 
+    socket.on('pauseGame', () => {
+      gameState = 'paused';
+      io.emit('gameStateUpdate', gameState);
+      io.emit('pauseGame');
+    });
+
+    socket.on('resumeGame', () => {
+      gameState = 'resumed';
+      io.emit('gameStateUpdate', gameState);
+      io.emit('resumeGame');
+    });
+
+    socket.on('stopGame', () => {
+      gameState = 'stopped';
+      io.emit('gameStateUpdate', gameState);
+      io.emit('stopGame');
+    });
     socket.on('disconnect', () => {
       console.log('socket desconectado 😐');
     });
-
   });
   
+
   httpServer.listen(port, (err) => {
     if (err) throw err;
     console.log(`Servidor escuchando en http://localhost:${port}`);

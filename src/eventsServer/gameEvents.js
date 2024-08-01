@@ -1,4 +1,4 @@
-export function gameEvents(socket, prisma) {
+export function gameEvents(socket,io, prisma) {
   // Escuchamos el evento 'createGame' y recibimos los datos del juego (gamedata)
   socket.on('createGame', async (gamedata, callback) => {
     try {
@@ -124,10 +124,190 @@ export function gameEvents(socket, prisma) {
 
 
   //*Actualizar el juego(modify)
+  // socket.on('updateGame', async ({ formData, gameId }, callback) => {
+  //   try {
+  //     // Preparamos las promesas de actualización de las preguntas
+  //     const updateAsksPromises = formData.asks.map((ask) => {
+  //       return prisma.asks.update({
+  //         where: {
+  //           id: ask.id, // asumiendo que cada ask tiene un id único
+  //         },
+  //         data: {
+  //           ask: ask.ask,
+  //           a: ask.a,
+  //           b: ask.b,
+  //           c: ask.c,
+  //           d: ask.d,
+  //           timer: parseInt(ask.timer),
+  //           answer: ask.answer,
+  //         },
+  //       });
+  //     });
+
+  //     // Actualizar el juego (games)
+  //     const updateGamePromise = prisma.games.update({
+  //       where: {
+  //         id: parseInt(gameId),
+  //       },
+  //       data: {
+  //         nameGame: formData.gameName,
+  //         detailGame: formData.gameDetail,
+  //         updateAt: new Date(),
+  //       },
+  //     });
+
+  //     // Esperar a que todas las operaciones de actualización se completen
+  //     await Promise.all([...updateAsksPromises, updateGamePromise]);
+
+  //     // Llamar al callback con éxito
+  //     callback({ success: true });
+  //   } catch (error) {
+  //     console.error('Error al actualizar el juego:', error);
+  //     // Llamar al callback con un mensaje de error si ocurre algún error
+  //     callback({ error: 'Error al actualizar el juego' });
+  //   }
+  // });
+  // *Actualizar el juego(modify)
+  // socket.on('updateGame', async ({ formData, gameId }, callback) => {
+  //   try {
+  //     // Filtrar las preguntas existentes y las nuevas
+  //     const existingAsks = formData.asks.filter(ask => ask.id);
+  //     const newAsks = formData.asks.filter(ask => !ask.id);
+
+  //     // Preparamos las promesas de actualización de las preguntas existentes
+  //     const updateAsksPromises = existingAsks.map((ask) => {
+  //       return prisma.asks.update({
+  //         where: {
+  //           id: ask.id, // asumiendo que cada ask tiene un id único
+  //         },
+  //         data: {
+  //           ask: ask.ask,
+  //           a: ask.a,
+  //           b: ask.b,
+  //           c: ask.c,
+  //           d: ask.d,
+  //           timer: parseInt(ask.timer),
+  //           answer: ask.answer,
+  //         },
+  //       });
+  //     });
+
+  //     // Preparamos las promesas de creación de nuevas preguntas
+  //     const createAsksPromises = newAsks.map((ask) => {
+  //       return prisma.asks.create({
+  //         data: {
+  //           ask: ask.ask,
+  //           a: ask.a,
+  //           b: ask.b,
+  //           c: ask.c,
+  //           d: ask.d,
+  //           timer: parseInt(ask.timer),
+  //           answer: ask.answer,
+  //           gameId: parseInt(gameId), // Relacionar la pregunta con el juego
+  //         },
+  //       });
+  //     });
+
+  //     // Actualizar el juego (games)
+  //     const updateGamePromise = prisma.games.update({
+  //       where: {
+  //         id: parseInt(gameId),
+  //       },
+  //       data: {
+  //         nameGame: formData.gameName,
+  //         detailGame: formData.gameDetail,
+  //         updateAt: new Date(),
+  //       },
+  //     });
+
+  //     // Esperar a que todas las operaciones de actualización y creación se completen
+  //     await Promise.all([...updateAsksPromises, ...createAsksPromises, updateGamePromise]);
+
+  //     // Llamar al callback con éxito
+  //     callback({ success: true });
+  //   } catch (error) {
+  //     console.error('Error al actualizar el juego:', error);
+  //     // Llamar al callback con un mensaje de error si ocurre algún error
+  //     callback({ error: 'Error al actualizar el juego' });
+  //   }
+  // });
+  
+  // socket.on('updateGame', async ({ formData, gameId }, callback) => {
+  //   try {
+  //     // Filtrar las preguntas existentes y las nuevas
+  //     const existingAsks = formData.asks.filter(ask => ask.id);
+  //     const newAsks = formData.asks.filter(ask => !ask.id);
+
+  //     // Preparamos las promesas de actualización de las preguntas existentes
+  //     const updateAsksPromises = existingAsks.map((ask) => {
+  //       return prisma.asks.update({
+  //         where: {
+  //           id: ask.id, // asumiendo que cada ask tiene un id único
+  //         },
+  //         data: {
+  //           ask: ask.ask,
+  //           a: ask.a,
+  //           b: ask.b,
+  //           c: ask.c,
+  //           d: ask.d,
+  //           timer: parseInt(ask.timer),
+  //           answer: ask.answer,
+  //         },
+  //       });
+  //     });
+
+  //     // Preparamos las promesas de creación de nuevas preguntas
+  //     const createAsksPromises = newAsks.map((ask) => {
+  //       return prisma.asks.create({
+  //         data: {
+  //           ask: ask.ask,
+  //           a: ask.a,
+  //           b: ask.b,
+  //           c: ask.c,
+  //           d: ask.d,
+  //           timer: parseInt(ask.timer),
+  //           answer: ask.answer,
+  //           gameId: parseInt(gameId), // Relacionar la pregunta con el juego
+  //         },
+  //       });
+  //     });
+
+      // Actualizar el juego (games)
+  //     const updateGamePromise = prisma.games.update({
+  //       where: {
+  //         id: parseInt(gameId),
+  //       },
+  //       data: {
+  //         nameGame: formData.gameName,
+  //         detailGame: formData.gameDetail,
+  //         updateAt: new Date(),
+  //       },
+  //     });
+
+  //     // Esperar a que todas las operaciones de actualización y creación se completen
+  //     await Promise.all([...updateAsksPromises, ...createAsksPromises, updateGamePromise]);
+
+  //     // Notificar a todos los clientes conectados sobre la actualización
+  //     io.to(`page-game/${formData.codeGame}`).emit('updatedAsks', updatedAsks);
+
+  //     // Llamar al callback con éxito
+  //     callback({ success: true });
+  //   } catch (error) {
+  //     console.error('Error al actualizar el juego:', error);
+  //     // Llamar al callback con un mensaje de error si ocurre algún error
+  //     callback({ error: 'Error al actualizar el juego' });
+  //   }
+  // });
+
+
   socket.on('updateGame', async ({ formData, gameId }, callback) => {
     try {
-      // Preparamos las promesas de actualización de las preguntas
-      const updateAsksPromises = formData.asks.map((ask) => {
+      // Filtrar las preguntas existentes y las nuevas
+      const existingAsks = formData.asks.filter(ask => ask.id);
+      const newAsks = formData.asks.filter(ask => !ask.id);
+
+      // Preparamos las promesas de actualización de las preguntas existentes
+      const updateAsksPromises = existingAsks.map((ask) => {
         return prisma.asks.update({
           where: {
             id: ask.id, // asumiendo que cada ask tiene un id único
@@ -144,6 +324,22 @@ export function gameEvents(socket, prisma) {
         });
       });
 
+      // Preparamos las promesas de creación de nuevas preguntas
+      const createAsksPromises = newAsks.map((ask) => {
+        return prisma.asks.create({
+          data: {
+            ask: ask.ask,
+            a: ask.a,
+            b: ask.b,
+            c: ask.c,
+            d: ask.d,
+            timer: parseInt(ask.timer),
+            answer: ask.answer,
+            gameId: parseInt(gameId), // Relacionar la pregunta con el juego
+          },
+        });
+      });
+
       // Actualizar el juego (games)
       const updateGamePromise = prisma.games.update({
         where: {
@@ -156,8 +352,16 @@ export function gameEvents(socket, prisma) {
         },
       });
 
-      // Esperar a que todas las operaciones de actualización se completen
-      await Promise.all([...updateAsksPromises, updateGamePromise]);
+      // Esperar a que todas las operaciones de actualización y creación se completen
+      await Promise.all([...updateAsksPromises, ...createAsksPromises, updateGamePromise]);
+
+      // Obtener las preguntas actualizadas para notificar a los clientes
+      const updatedAsks = await prisma.asks.findMany({
+        where: { gameId: parseInt(gameId) }
+      });
+
+      // Emitir el evento 'updateQuestions' a todos los clientes conectados
+      io.to(`page-game/${formData.codeGame}`).emit(updatedAsks);
 
       // Llamar al callback con éxito
       callback({ success: true });
@@ -194,4 +398,21 @@ export function gameEvents(socket, prisma) {
     }
   });
 
+  socket.on('deleteAsk', async ({ askId }, callback) => {
+    try {
+      // Eliminar las preguntas
+      await prisma.asks.delete({
+        where: {
+          id: parseInt(askId), // Aseguramos que askId es un entero
+        },
+      });
+
+      // Llamamos al callback con un mensaje de éxito
+      callback({ success: true });
+    } catch (error) {
+      console.error('Error al eliminar la pregunta:', error);
+      // Llamamos al callback con un mensaje de error si ocurre algún problema
+      callback({ error: 'Error al eliminar la pregunta' });
+    }
+  });
 }
