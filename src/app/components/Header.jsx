@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { SignInButton, useUser } from '@clerk/nextjs';
+import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useAvatar } from '../../context/avatarContext'; // Nueva importación
@@ -18,11 +18,11 @@ export default function Header() {
   const [avatars, setAvatars] = useState({});
   const [socketId, setSocketId] = useState('');
   const params = useParams();
-  const code = parseInt(params.code);
+  const code = parseInt(params.code) || 0;
 
   useEffect(() => {
     if (!socket) return;
-    
+
     const handleGetPlayers = async (response) => {
       if (response.error) {
         console.error(response.error);
@@ -46,7 +46,7 @@ export default function Header() {
     return () => {
       socket.off('getPlayers', handleGetPlayers);
     };
-  }, [socket, fetchAvatar]);
+  }, [socket, fetchAvatar, players]);
 
   return (
     <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 shadow-md shadow-slate-200 z-50 h-24'>
@@ -71,12 +71,15 @@ export default function Header() {
                   {avatars[player.id] && player.socketId === socketId && (
                     <>
                       <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatars[player.id] }} />
-                      <p className='flex flex-row items-center bg-black h-8  rounded-md'>{player.playerName}</p>
+                      <p className='flex flex-row items-center bg-black h-8 rounded-md'>{player.playerName}</p>
                     </>
                   )}
                 </div>
               ))}
-              <SignInButton className='signIn-button ml-12' />
+              <div>
+                <SignInButton className='md:text-lg signIn-button ml-12 bg-[#111] rounded-md' /> 
+                <SignUpButton className='md:text-lg signUp-button ml-2 bg-[#111] rounded-md' />
+              </div>
             </div>
           </div>
         )}

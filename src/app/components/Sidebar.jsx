@@ -1,6 +1,6 @@
 'use client';
 
-import { SignInButton, useUser } from '@clerk/nextjs';
+import { SignInButton, SignUpButton ,useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useAvatar } from '../../context/avatarContext';
@@ -17,7 +17,7 @@ const Sidebar = () => {
   const [avatars, setAvatars] = useState({});
   const [socketId, setSocketId] = useState('');
   const params = useParams();
-  const code = parseInt(params.code);
+  const code = parseInt(params.code) || 0;
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -86,8 +86,9 @@ const Sidebar = () => {
                     </>
                   )}
                 </div>
-              ))}             
-                <SignInButton className='signIn-button mt-10' />             
+              ))}            
+                <SignInButton className='signIn-button-sidebar mt-10' />          
+                <SignUpButton className='signUp-button-sidebar mt-2' />             
             </div>
           )}
         </nav>
