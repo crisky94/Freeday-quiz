@@ -13,7 +13,7 @@ export function gameEvents(socket, prisma) {
           nickUser: gamedata.nickUser, // Nombre del usuario
           nameGame: gamedata.nameGame, // Nombre del juego
           codeGame: codeGame, // Código del juego
-          endedAt: new Date(),//Fecha creado
+          endedAt: new Date(), //Fecha creado
         },
       });
 
@@ -59,7 +59,7 @@ export function gameEvents(socket, prisma) {
           endedAt: true,
         },
       });
-      
+
       callback({ games });
     } catch (e) {
       console.error('error:', e);
@@ -79,6 +79,7 @@ export function gameEvents(socket, prisma) {
           id: true,
           nameGame: true,
           detailGame: true,
+          codeGame: true,
         },
       });
 
@@ -90,7 +91,6 @@ export function gameEvents(socket, prisma) {
       callback({ error: 'Error al obtener juegos' });
     }
   });
-
 
   //*Obtener preguntas por id del juego(modify)
   socket.on('getAsks', async ({ gameId }, callback) => {
@@ -120,7 +120,6 @@ export function gameEvents(socket, prisma) {
       callback({ error: 'Error al obtener preguntas' });
     }
   });
-
 
   //*Actualizar el juego(modify)
   socket.on('updateGame', async ({ formData, gameId }, callback) => {
@@ -192,5 +191,44 @@ export function gameEvents(socket, prisma) {
       callback({ error: 'Error al eliminar el juego' });
     }
   });
+  //io.on('connection', (socket) => {
+  //  socket.on('startGame', (data) => {
+  //    const { code } = data;
+  //    io.to(code).emit('gameStarted', { code });
+  //  });
+  //});
 
+  socket.on('getGameDetails', async ({ gameId }, callback) => {
+    try {
+      // Obtener el juego por ID
+      const game = await prisma.games.findUnique({
+        where: {
+          id: parseInt(gameId),
+        },
+        select: {
+          id: true,
+          nameGame: true,
+          detailGame: true,
+          asks: {
+            select: {
+              ask: true,
+              a: true,
+              b: true,
+              c: true,
+              d: true,
+              answer: true,
+              timer: true,
+            },
+          },
+        },
+      });
+
+      // Llamar al callback con los detalles del juego
+      callback({ game });
+    } catch (e) {
+      console.error('Error al obtener detalles del juego:', e);
+      // Llamar al callback con un mensaje de error si ocurre algún problema
+      callback({ error: 'Error al obtener detalles del juego' });
+    }
+  });
 }

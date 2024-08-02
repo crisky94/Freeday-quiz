@@ -3,13 +3,20 @@ import { useState } from 'react';
 
 export default function ModalComponent({ value, onChange }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [localValue, setLocalValue] = useState(value);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
+    if (!isOpen) {
+      setLocalValue(value);
+    } else {
+      setLocalValue('');
+    }
   };
 
   const handleSave = (e) => {
     e.preventDefault();
+    onChange(localValue);
     toggleModal();
   };
 
@@ -25,11 +32,13 @@ export default function ModalComponent({ value, onChange }) {
       {isOpen && (
         <div className='fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center  '>
           <div className='bg-white m-5 p-5 rounded shadow-lg max-w-lg w-full'>
+            <p className='text-gray-500 text-xs'>(opcional)</p>
             <h2 className='text-xl text-black font-bold mb-4'>Descripción:</h2>
             <textarea
+              maxLength={250}
               autoFocus
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
+              value={localValue}
+              onChange={(e) => setLocalValue(e.target.value)}
               className='w-full p-2 border text-black border-black rounded focus:outline-none focus:ring-5  focus:border-'
               rows='5'
               placeholder='Escribe tu descripción aquí...'

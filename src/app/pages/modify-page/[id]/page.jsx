@@ -1,8 +1,8 @@
 'use client';
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
-import { Flip, ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Flip, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 // import User from '../../../components/User';
 import '../../../styles/pageModify.css';
@@ -137,38 +137,57 @@ export default function EditGame({ params }) {
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
-
-
   return (
-    <form className="flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16" onSubmit={handleSubmit}>
-      <div className="card-body w-full border  border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-white bg-opacity-50  rounded-md flex flex-col justify-center text-center items-center mb-5 py-5 px-5 ">
-        <label className=" text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameName">Nombre del Juego:</label>
+    <form
+      className='flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16'
+      onSubmit={handleSubmit}
+    >
+      <div className='card-body w-full border  border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-white bg-opacity-50  rounded-md flex flex-col justify-center text-center items-center mb-5 py-5 px-5 '>
+        <label
+          className=' text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md'
+          htmlFor='gameName'
+        >
+          Nombre del Juego:
+        </label>
         <input
-          className="text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none ring-4  focus:ring-yellow-200 mb-4 w-full"
-          type="text"
-          id="gameName"
-          name="gameName"
+          className='text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none ring-4  focus:ring-yellow-200 mb-4 w-full'
+          type='text'
+          id='gameName'
+          name='gameName'
           value={formData.gameName}
           onChange={handleChange}
         />
 
-        <label className=" text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameDetail">Detalle del Juego:</label>
+        <label
+          className=' text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md'
+          htmlFor='gameDetail'
+        >
+          Detalle del Juego:
+        </label>
         <textarea
-          className="text-slate-500 text-center rounded-md placeholder:text-center focus:outline-none ring-4 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden"
-          id="gameDetail"
-          name="gameDetail"
+          className='text-slate-500 text-center rounded-md placeholder:text-center focus:outline-none ring-4 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden'
+          id='gameDetail'
+          name='gameDetail'
           value={formData.gameDetail}
           onChange={handleChange}
           onInput={handleAutoResize}
         />
       </div>
-      <div className="w-full flex flex-wrap gap-4">
+      <div className='w-full flex flex-wrap gap-4'>
         {formData.asks.map((ask, index) => (
-          <div key={index} className=" border border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-white bg-opacity-50  rounded-md flex flex-col justify-start text-center items-center px-5 py-5 w-full md:w-[calc(50%-0.5rem)]">
-            <div className="flex flex-col text-center items-center card-title w-full">
-              <label className=" text-sm sm:text-base font-bold uppercase mb-4 bg-black w-40 rounded-md" htmlFor={`ask-${index}`}>Pregunta {index + 1}:</label>
+          <div
+            key={index}
+            className=' border border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-white bg-opacity-50  rounded-md flex flex-col justify-start text-center items-center px-5 py-5 w-full md:w-[calc(50%-0.5rem)]'
+          >
+            <div className='flex flex-col text-center items-center card-title w-full'>
+              <label
+                className=' text-sm sm:text-base font-bold uppercase mb-4 bg-black w-40 rounded-md'
+                htmlFor={`ask-${index}`}
+              >
+                Pregunta {index + 1}:
+              </label>
               <textarea
-                className="text-slate-500 text-center rounded-md placeholder:text-center focus:outline-none ring-4 focus:ring-yellow-200 mb-4 p-2 w-full resize-none overflow-hidden"
+                className='text-slate-500 text-center rounded-md placeholder:text-center focus:outline-none ring-4 focus:ring-yellow-200 mb-4 p-2 w-full resize-none overflow-hidden'
                 id={`ask-${index}`}
                 name={`ask-${index}`}
                 value={ask.ask}
@@ -176,19 +195,25 @@ export default function EditGame({ params }) {
                 onInput={handleAutoResize}
               />
             </div>
-            <div className="card-body w-full">
+            <div className='card-body w-full'>
               {['a', 'b', 'c', 'd'].map((option) => (
-                <div className="flex gap-2" key={option}>
-                  <label className=" text-sm sm:text-base mr-4 font-bold uppercase bg-black w-48 h-5 rounded-md" htmlFor={`${option}-${index}`}>Opción {option.toUpperCase()}:</label>
+                <div className='flex gap-2' key={option}>
+                  <label
+                    className=' text-sm sm:text-base mr-4 font-bold uppercase bg-black w-48 h-5 rounded-md'
+                    htmlFor={`${option}-${index}`}
+                  >
+                    Opción {option.toUpperCase()}:
+                  </label>
                   <textarea
-                    className={`${option === "a"
-                      ? 'bg-red-600 focus:ring-red-800'
-                      : option === "b"
+                    className={`${
+                      option === 'a'
+                        ? 'bg-red-600 focus:ring-red-800'
+                        : option === 'b'
                         ? 'bg-blue-600 focus:ring-blue-800'
                         : option === 'c'
-                          ? 'bg-[#00ff01] focus:ring-green-800'
-                          : 'bg-[#fcff00] focus:ring-yellow-600'
-                      } text-black text-center rounded-md h-10 px-2
+                        ? 'bg-[#00ff01] focus:ring-green-800'
+                        : 'bg-[#fcff00] focus:ring-yellow-600'
+                    } text-black text-center rounded-md h-10 px-2
                       placeholder:text-justify
                       focus:outline-none ring-4 ring-yellow-400 mb-4 w-full resize-none overflow-hidden`}
                     id={`${option}-${index}`}
@@ -201,7 +226,7 @@ export default function EditGame({ params }) {
                   />
 
                   <input
-                    type="radio"
+                    type='radio'
                     value={ask[option]}
                     name={`correctAnswer-${index}`}
                     checked={ask.answer === option}
@@ -209,11 +234,16 @@ export default function EditGame({ params }) {
                   />
                 </div>
               ))}
-              <div className="flex flex-col card-title w-full justify-center items-center">
-                <label className=" text-sm sm:text-base font-bold uppercase mb-4 bg-black rounded-md p-2" htmlFor={`timer-${index}`}>Temporizador (segundos):</label>
+              <div className='flex flex-col card-title w-full justify-center items-center'>
+                <label
+                  className=' text-sm sm:text-base font-bold uppercase mb-4 bg-black rounded-md p-2'
+                  htmlFor={`timer-${index}`}
+                >
+                  Temporizador (segundos):
+                </label>
                 <input
-                  className="text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none ring-4 ring-white focus:ring-[#fcff00] mb-4 w-20"
-                  type="number"
+                  className='text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none ring-4 ring-white focus:ring-[#fcff00] mb-4 w-20'
+                  type='number'
                   min={5}
                   max={50}
                   id={`timer-${index}`}
@@ -229,8 +259,11 @@ export default function EditGame({ params }) {
         ))}
       </div>
       <ToastContainer />
-      <div className="flex justify-center mt-10 mb-10">
-        <button type="submit" className="btnfos-5 h-10 w-32  rounded-md text-black">
+      <div className='flex justify-center mt-10 mb-10'>
+        <button
+          type='submit'
+          className='btnfos-5 h-10 w-32  rounded-md text-black'
+        >
           Guardar
         </button>
       </div>
