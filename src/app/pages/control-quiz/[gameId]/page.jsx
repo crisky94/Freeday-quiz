@@ -155,10 +155,10 @@ import { Tooltip } from '@nextui-org/tooltip';
 import { useRouter } from 'next/navigation';
 import { Bounce,  ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loading from '../../loading';
-import '../../styles/page-game/pageGame.css';
+import Loading from '../../../loading'
+import '../../../styles/page-game/pageGame.css';
 
-export default function GameControlPage({}) {
+export default function GameControlPage({params}) {
   const socket = useSocket();
   const router = useRouter();
   const [gameState, setGameState] = useState('resumed');
@@ -170,8 +170,8 @@ export default function GameControlPage({}) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  // const gameId = params.gameId
-  const gameId = 1;
+  const gameId = params.gameId
+  // const gameId = 1;
 
   useEffect(() => {
     if (!socket) return;
