@@ -494,8 +494,8 @@
 'use client';
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
-import { Flip, ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Flip, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
 
@@ -679,18 +679,18 @@ export default function EditGame({ params }) {
           value={formData.gameName}
           onChange={handleChange}
         />
-
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameDetail">Detalle del Juego:</label>
         <textarea
           className="text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden"
           id="gameDetail"
           name="gameDetail"
+
           value={formData.gameDetail}
           onChange={handleChange}
           onInput={handleAutoResize}
         />
       </div>
-      <div className="w-full flex flex-wrap gap-4">
+      <div className='w-full flex flex-wrap gap-4'>
         {formData.asks.map((ask, index) => (
           <div key={index} className="border border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-start text-center items-center px-5 py-5 w-full md:w-[calc(50%-0.5rem)]">
             <div className="flex flex-col text-center items-center card-title w-full">
@@ -704,14 +704,15 @@ export default function EditGame({ params }) {
                 onInput={handleAutoResize}
               />
             </div>
-            <div className="card-body w-full">
+            <div className='card-body w-full'>
               {['a', 'b', 'c', 'd'].map((option) => (
                 <div className="flex gap-2" key={option}>
                   <label className="text-sm sm:text-base mr-4 font-bold uppercase bg-black w-48 h-6 rounded-md" htmlFor={`${option}-${index}`}>Opción {option.toUpperCase()}:</label>
                   <textarea
-                    className={`${option === "a"
-                      ? 'bg-red-600 focus:ring-red-800'
-                      : option === "b"
+                    className={`${
+                      option === 'a'
+                        ? 'bg-red-600 focus:ring-red-800'
+                        : option === 'b'
                         ? 'bg-blue-600 focus:ring-blue-800'
                         : option === 'c'
                           ? 'bg-[#00ff01] focus:ring-green-800'
@@ -730,7 +731,7 @@ export default function EditGame({ params }) {
                   />
 
                   <input
-                    type="radio"
+                    type='radio'
                     value={ask[option]}
                     name={`correctAnswer-${index}`}
                     checked={ask.answer === option}

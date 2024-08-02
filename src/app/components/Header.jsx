@@ -8,6 +8,9 @@ import { useParams } from 'next/navigation';
 import { useAvatar } from '../../context/avatarContext'; // Nueva importación
 import { useSocket } from '@/context/socketContext'; // Nueva importación
 import User from './User';
+
+import useAvatar from '../../lib/fetchAvatar';
+
 import '../styles/header.css';
 
 export default function Header() {
@@ -84,6 +87,7 @@ export default function Header() {
           </div>
         )}
       </div>
+
     </nav>
   );
 }

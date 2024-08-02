@@ -10,7 +10,7 @@
 .bgroom {
   background: rgb(28, 255, 228);
   background: linear-gradient(
-    346deg,
+    200deg,
     rgba(28, 255, 228, 1) 0%,
     rgba(17, 17, 17, 1) 20%,
     rgba(17, 17, 17, 1) 42%,
@@ -85,7 +85,7 @@ body {
   -moz-box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.54) inset;
 }
 
-/* !LOADING*/
+/* !LOADING PRINCIPAL*/
 .spinner {
   --size: 30px;
   --first: #005bba;
@@ -127,7 +127,7 @@ body {
   }
 }
 
-/* logo */
+/* animacion para el logo */
 .logo {
   animation: bounce-in-top 1.1s both;
 }
@@ -176,7 +176,7 @@ body {
   }
 }
 
-/* tarjetas  */
+/* animacion para las tarjetas de createquiz  */
 .bounce-in-bck {
   animation: bounce-in-bck 1.1s both;
 }
@@ -222,5 +222,154 @@ body {
   100% {
     transform: scale(1);
     animation-timing-function: ease-out;
+  }
+}
+
+.loader-wrapper {
+  position: relative;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+}
+
+.loader-wrapper .packman::before {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 25px;
+  background-color: #eff107;
+  border-radius: 100px 100px 0 0;
+  transform: translate(-50%, -50%);
+  animation: pac-top 0.5s linear infinite;
+  transform-origin: center bottom;
+}
+
+.loader-wrapper .packman::after {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 25px;
+  background-color: #eff107;
+  border-radius: 0 0 100px 100px;
+  transform: translate(-50%, 50%);
+  animation: pac-bot 0.5s linear infinite;
+  transform-origin: center top;
+}
+
+@keyframes pac-top {
+  0% {
+    transform: translate(-50%, -50%) rotate(0);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) rotate(-30deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(0);
+  }
+}
+
+@keyframes pac-bot {
+  0% {
+    transform: translate(-50%, 50%) rotate(0);
+  }
+
+  50% {
+    transform: translate(-50%, 50%) rotate(30deg);
+  }
+
+  100% {
+    transform: translate(-50%, 50%) rotate(0);
+  }
+}
+
+/* !animacion para la room */
+.loaderRoom {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 50px;
+  height: 80px;
+  border-top: 5px solid #fff;
+  border-bottom: 5px solid #fff;
+  position: relative;
+  background: linear-gradient(#23ffdd 30px, transparent 0) no-repeat;
+  background-size: 2px 40px;
+  background-position: 50% 0px;
+  animation: spinx 5s linear infinite;
+}
+
+.loaderRoom:before,
+.loaderRoom:after {
+  content: '';
+  width: 40px;
+  left: 50%;
+  height: 35px;
+  position: absolute;
+  top: 0;
+  transform: translatex(-50%);
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 0 0 20px 20px;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-position: 0 0px;
+  animation: lqt 5s linear infinite;
+}
+
+.loaderRoom:after {
+  top: auto;
+  bottom: 0;
+  border-radius: 20px 20px 0 0;
+  animation: lqb 5s linear infinite;
+}
+
+@keyframes lqt {
+  0%,
+  100% {
+    background-image: linear-gradient(#23ffdd 40px, transparent 0);
+    background-position: 0% 0px;
+  }
+
+  50% {
+    background-image: linear-gradient(#23ffdd 40px, transparent 0);
+    background-position: 0% 40px;
+  }
+
+  50.1% {
+    background-image: linear-gradient(#23ffdd 40px, transparent 0);
+    background-position: 0% -40px;
+  }
+}
+
+@keyframes lqb {
+  0% {
+    background-image: linear-gradient(#23ffdd 40px, transparent 0);
+    background-position: 0 40px;
+  }
+
+  100% {
+    background-image: linear-gradient(#23ffdd 40px, transparent 0);
+    background-position: 0 -40px;
+  }
+}
+
+@keyframes spinx {
+  0%,
+  49% {
+    transform: rotate(0deg);
+    background-position: 50% 36px;
+  }
+
+  51%,
+  98% {
+    transform: rotate(180deg);
+    background-position: 50% 4px;
+  }
+
+  100% {
+    transform: rotate(360deg);
+    background-position: 50% 36px;
   }
 }
