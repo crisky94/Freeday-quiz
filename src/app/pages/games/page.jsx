@@ -119,7 +119,7 @@ export default function GamesList() {
                   >
                     <div className="flex flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto">
                       <h2 className="card-title font-bold text-center justify-center uppercase border-b border-b-white w-full">
-                       {`${i + 1}. ${game.nameGame}`}
+                        {`${i + 1}. ${game.nameGame}`}
                       </h2>
                       <div className="flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4">
                         <Link href={`/pages/modify-page/${game.id}.jsx`}>
