@@ -425,6 +425,15 @@ export function gameEvents(socket,io, prisma) {
         },
       });
 
+      // Llamar al callback con los detalles del juego
+      callback({ game });
+    } catch (e) {
+      console.error('Error al obtener detalles del juego:', e);
+      // Llamar al callback con un mensaje de error si ocurre algún problema
+      callback({ error: 'Error al obtener detalles del juego' });
+    }
+  });
+
   socket.on('deleteAsk', async ({ askId }, callback) => {
     try {
       // Eliminar las preguntas
