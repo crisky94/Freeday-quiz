@@ -346,6 +346,49 @@ export default function GameQuizPage({ params }) {
           });
         }
       });
+
+      // socket.on('updateDeleteAsk', (response) => {
+      //   console.log(response);
+      //   if (response.data) {
+      //     setQuestions((prevQuestions) => {
+      //       const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+
+      //       // Actualiza o agrega nuevas preguntas
+      //       response.data.forEach(newAsk => {
+      //         updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
+      //       });
+
+      //       return Array.from(updatedQuestionsMap.values());
+      //     });
+      //   //   console.log(response);
+      //   //   // Combinar las preguntas actuales con las nuevas preguntas
+      //   //   setQuestions((prevQuestions) => {
+      //   //     const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+
+      //   //     // Actualiza o agrega nuevas preguntas
+      //   //     response.data.forEach(newAsk => {
+      //   //       updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
+      //   //     });
+
+      //   //     return Array.from(updatedQuestionsMap.values());
+      //   //   });
+      //   }
+      // }); 
+      socket.on('updateDeleteAsk', (response) => {
+        console.log(response);
+        if (response.data) {
+          setQuestions((prevQuestions) => {
+            // Crear un nuevo Map con las preguntas actuales
+            const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+
+            // Eliminar la pregunta recibida
+            updatedQuestionsMap.delete(response.data.id);
+
+            // Convertir el Map actualizado de nuevo a un array
+            return Array.from(updatedQuestionsMap.values());
+          });
+        }
+      });
  
     }
     return () => {
@@ -354,6 +397,7 @@ export default function GameQuizPage({ params }) {
         socket.off('resumeGame');
         socket.off('stopGame');
         socket.off('updatedAsks');
+        socket.off('updateDeleteAsk');
       }
     };
   }, [socket, code, router]);
