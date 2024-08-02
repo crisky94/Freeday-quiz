@@ -221,13 +221,6 @@ export default function GameControlPage({}) {
 
     socket.on('resumeGame', () => {
       setIsPaused(false);
-      socket.on('updateQuestions', (updatedAsks) => {
-        setFormData((prevData) => ({
-          ...prevData,
-          asks: updatedAsks,
-        }));
-      });
-
     });
 
     socket.on('stopGame', () => {

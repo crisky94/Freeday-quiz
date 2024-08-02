@@ -547,7 +547,7 @@ export default function EditGame({ params }) {
         }
       });
     };
-  
+
     fetchData();
     // Escuchar actualizaciones de preguntas desde el servidor
     socket.on('updateQuestions', (updatedAsks) => {
@@ -605,23 +605,16 @@ export default function EditGame({ params }) {
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
       if (response.success) {
-        toast.success(response.message, {
-          autoClose: 1000,
-          position: 'bottom-center',
-          theme: 'light',
-          transition: Flip,
-          onClose: () => {
-            setFormData((prevData) => ({
-              ...prevData,
-              asks: prevData.asks.filter(ask => ask.id !== askId)
+        router.refresh()
+        setFormData((prevData) => ({
+          ...prevData,
+          asks: prevData.asks.filter(ask => ask.id !== askId)
 
-            }));;
-          },
-        });      
-      } else {      
-        console.error(response.error);      
+        }));;
+      } else {
+        console.error(response.error);
       }
-      
+
     });
   };
 
@@ -660,12 +653,12 @@ export default function EditGame({ params }) {
             });
           },
         });
-     
+
       } else {
         toast.error('No se ha podido actualizar el juego');
       }
     });
-    
+
   };
 
   const handleAutoResize = (e) => {
@@ -676,10 +669,10 @@ export default function EditGame({ params }) {
 
   return (
     <form className="flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16" onSubmit={handleSubmit}>
-      <div className="card-body w-full border border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-white bg-opacity-50 rounded-md flex flex-col justify-center text-center items-center mb-5 py-5 px-5">
+      <div className="card-body w-full border-2 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-center text-center items-center mb-5 py-5 px-5">
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameName">Nombre del Juego:</label>
         <input
-          className="text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full"
+          className="text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full"
           type="text"
           id="gameName"
           name="gameName"
@@ -689,7 +682,7 @@ export default function EditGame({ params }) {
 
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameDetail">Detalle del Juego:</label>
         <textarea
-          className="text-slate-500 text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden"
+          className="text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden"
           id="gameDetail"
           name="gameDetail"
           value={formData.gameDetail}
@@ -698,12 +691,12 @@ export default function EditGame({ params }) {
         />
       </div>
       <div className="w-full flex flex-wrap gap-4">
-        {formData.asks.map((ask, index) => ( 
-          <div key={index} className="border border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-white bg-opacity-50 rounded-md flex flex-col justify-start text-center items-center px-5 py-5 w-full md:w-[calc(50%-0.5rem)]">
+        {formData.asks.map((ask, index) => (
+          <div key={index} className="border border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-start text-center items-center px-5 py-5 w-full md:w-[calc(50%-0.5rem)]">
             <div className="flex flex-col text-center items-center card-title w-full">
               <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black w-40 rounded-md" htmlFor={`ask-${index}`}>Pregunta {index + 1}:</label>
               <textarea
-                className="text-slate-500 text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 p-2 w-full resize-none overflow-hidden"
+                className="text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 p-2 w-full resize-none overflow-hidden"
                 id={`ask-${index}`}
                 name={`ask-${index}`}
                 value={ask.ask}
@@ -744,15 +737,15 @@ export default function EditGame({ params }) {
                     onChange={() => handleCorrectAnswerChange(index, option)}
                     required
                   />
-                  
+
                 </div>
 
-                
+
               ))}
               <div className="flex flex-col card-title w-full justify-center items-center">
                 <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black rounded-md p-2" htmlFor={`timer-${index}`}>Temporizador (segundos):</label>
                 <input
-                  className="text-slate-500 text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#fcff00] mb-4 w-20"
+                  className="text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#fcff00] mb-4 w-20"
                   type="number"
                   min={5}
                   max={50}
@@ -763,10 +756,10 @@ export default function EditGame({ params }) {
                     handleAskChange(index, 'timer', e.target.value)
                   }
                 />
-               
+
               </div>
-             
-       {
+
+              {
                 !ask.id ? (<button
                   type="button"
                   className="btn-clear mt-2 bg-red-600 hover:bg-red-500 text-white rounded-md px-4 py-2"
@@ -775,17 +768,17 @@ export default function EditGame({ params }) {
                   Limpiar
                 </button>
                 ) : <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
-       }
-            
-              
-          
+              }
+
+
+
             </div>
           </div>
         ))}
       </div>
       <button
         type="button"
-        className="btn-add mt-5 bg-green-600 hover:bg-green-500 text-white rounded-md px-4 py-2"
+        className="btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2"
         onClick={handleAddQuestion}
       >
         Añadir Pregunta

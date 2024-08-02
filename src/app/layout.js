@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
                   <link rel="icon" href="/logotipo.png" />
                   <title>{metadata.title}</title>
                 </head>
-                <body className={`${monserrat.className} pt-16`}>
+                <body className={`${monserrat.className} pt-20`}>
                   <Header />
                   <Sidebar />
                   <main className="flex flex-col flex-wrap items-center justify-between gap-8 w-full h-auto min-h-screen md:min-h-[90vh] lg:min-h-[70vh]">

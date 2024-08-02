@@ -272,7 +272,10 @@ export default function GameQuizPage({ params }) {
   useEffect(() => {
     if (socket) {
       // Obtener el estado inicial del juego
+      const fetchQuestions = () => {
+
       socket.emit('getCodeGame', { code }, (response) => {
+        console.log(response, 'getcodeGame');
         if (response.error) {
           console.error(response.error);
         } else {
@@ -282,7 +285,10 @@ export default function GameQuizPage({ params }) {
           setGameId(response.game.id);
         }
       });
+    }
+      fetchQuestions();
 
+    
       // Escuchar eventos de pausa, reanudación y detención
       socket.on('pauseGame', () => {
         setIsPaused(true);
@@ -292,37 +298,67 @@ export default function GameQuizPage({ params }) {
       socket.on('resumeGame', () => {
         setIsPaused(false);
         toast('El juego está en marcha', {
-          position: "bottom-center", autoClose: 2000 });
-        // Escuchar actualizaciones de preguntas desde el servidor
-     
+          position: "bottom-center", autoClose: 2000, });
+      
+        router.refresh();
       });
 
       socket.on('stopGame', () => {
         router.push('/pages/ranking'); // Redirigir al ranking cuando el juego se detenga
       });
 
-      const handleGetAsks = (response) => {
-        console.log(response);
-        if (response.error) {
-          console.error(response.error);
-        } else {
-          setQuestions(response.asks);
+      // socket.on('updatedAsks', (response) => {
+      //   console.log(response);
+      // } );
+      // socket.on('updatedAsks', (response) => {
+      //   setQuestions(response)
+      // } );
+
+      // socket.on('updatedAsks', (response) => {
+      //   console.log(response);
+      //   if (response.asks) {
+      //     // Combinar las preguntas actuales con las nuevas preguntas
+      //     setQuestions((prevQuestions) => {
+      //       const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+
+      //       // Actualiza o agrega nuevas preguntas
+      //       response.updatedAsks.asks.forEach(newAsk => {
+      //         updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
+      //       });
+
+      //       return Array.from(updatedQuestionsMap.values());
+      //     });
+      //   }
+      // });
+      socket.on('updatedAsks', (response) => {
+        if (response.asks) {
+          console.log(response);
+          // Combinar las preguntas actuales con las nuevas preguntas
+          setQuestions((prevQuestions) => {
+            const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+
+            // Actualiza o agrega nuevas preguntas
+            response.asks.forEach(newAsk => {
+              updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
+            });
+
+            return Array.from(updatedQuestionsMap.values());
+          });
         }
-      };
-
-      socket.on('updatedAsks', handleGetAsks );
-
+      });
+ 
     }
-
     return () => {
       if (socket) {
         socket.off('pauseGame');
         socket.off('resumeGame');
         socket.off('stopGame');
-        socket.off('updateQuestions');
+        socket.off('updatedAsks');
       }
     };
   }, [socket, code, router]);
+
+
 
   useEffect(() => {
     if (timeLeft === null || isPaused) return;
@@ -341,10 +377,23 @@ export default function GameQuizPage({ params }) {
     return () => clearInterval(intervalId);
   }, [timeLeft, isPaused]);
 
+
+
+  useEffect(() => {
+    // Guardar el índice actual en localStorage cada vez que cambie
+    localStorage.setItem('indexQuestion', currentQuestionIndex);
+
+    // Configurar el temporizador
+    setTimeLeft((questions[currentQuestionIndex]?.timer || 0) * 1000); // Convertir a milisegundos
+  }, [currentQuestionIndex, questions]);
+
+
   const handleAnswerClick = async (answerKey) => {
     if (selectedAnswer !== null || isPaused) return; // Evita cambiar la respuesta si el juego está pausado
 
     const currentQuestion = questions[currentQuestionIndex];
+    localStorage.setItem('indexQuestion', currentQuestionIndex + 1 )
+    console.log(index);
     setSelectedAnswer(answerKey);
     setIsCorrect(answerKey === currentQuestion.answer.toLowerCase());
 
@@ -406,13 +455,13 @@ export default function GameQuizPage({ params }) {
       });
     });
   };
-
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
+      localStorage.removeItem('indexQuestion');
       router.push('/pages/ranking');
     }
   };
@@ -453,7 +502,7 @@ export default function GameQuizPage({ params }) {
             </p>
           </div>
           <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
-            {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
+            {`${currentQuestionIndex + 1}.${ currentQuestion.ask}`}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
             <div onClick={() => handleAnswerClick('a')} className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}>

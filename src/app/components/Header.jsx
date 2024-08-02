@@ -49,7 +49,7 @@ export default function Header() {
   }, [socket, fetchAvatar, players]);
 
   return (
-    <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 shadow-md shadow-slate-200 z-50 h-24'>
+    <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 shadow-md shadow-slate-200 z-50 h-32'>
       <Link href='/'>
         <Image
           src={'/Logotipo_Logotipo.png'}
