@@ -12,26 +12,25 @@ const Sidebar = () => {
   const { avatar, avatars } = useAvatar();
   const [mostrarAvatar, setMostrarAvatar] = useState(false);
   const { user } = useUser();
-  const apikey = process.env.apikey
+  const apikey = process.env.apikey;
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedNickname = localStorage.getItem('nickname');
       if (storedNickname) {
         setNickname(storedNickname);
-        setMostrarAvatar(!mostrarAvatar)
+        setMostrarAvatar(!mostrarAvatar);
       }
       if (user) {
-        localStorage.removeItem('nickname')
+        localStorage.removeItem('nickname');
       }
 
       if (user && !nickname) {
-        setMostrarAvatar(mostrarAvatar)
+        setMostrarAvatar(mostrarAvatar);
       }
     }
     avatars('nickname');
@@ -50,10 +49,10 @@ const Sidebar = () => {
         ''
       )}
       <div
-
-        className={`fixed top-0 right-0 h-full w-64 bg-black shadow-xl text-white transition-transform transform z-50 ${ // Aumentar z-index aquí
+        className={`fixed top-0 right-0 h-full w-64 bg-[#111] shadow-xl text-white transition-transform transform z-50 ${
+          // Aumentar z-index aquí
           isOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+        }`}
       >
         <button className='p-4 text-white' onClick={toggleSidebar}>
           ✕
@@ -65,16 +64,22 @@ const Sidebar = () => {
             </div>
           ) : (
             <div className='flex flex-col justify-center items-center text-center w-full h-full gap-2'>
-              {
-                !mostrarAvatar && nickname &&
-                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
-              }
-              {
-                mostrarAvatar && !nickname &&
-                <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatar }} />
-              }
-              <p className='flex flex-row gap-2 justify-center items-center'>{nickname}</p>
-                <SignInButton className='signIn-button' />
+              {!mostrarAvatar && nickname && (
+                <div
+                  className='border-2 border-white rounded-full'
+                  dangerouslySetInnerHTML={{ __html: avatar }}
+                />
+              )}
+              {mostrarAvatar && !nickname && (
+                <div
+                  className='border-2 border-white rounded-full'
+                  dangerouslySetInnerHTML={{ __html: avatar }}
+                />
+              )}
+              <p className='flex flex-row gap-2 justify-center items-center'>
+                {nickname}
+              </p>
+              <SignInButton className='signIn-button' />
             </div>
           )}
         </nav>

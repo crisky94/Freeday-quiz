@@ -5,7 +5,7 @@ import { AuthProvider } from '@/context/authContext';
 import { SocketProvider } from '@/context/socketContext';
 import './globals.css';
 import { Montserrat } from 'next/font/google';
-import { neobrutalism } from '@clerk/themes';
+import { dark } from '@clerk/themes';
 
 export const metadata = {
   title: 'HACK A BOSS | FreedayQuiz ⭐️',
@@ -21,7 +21,10 @@ export default function RootLayout({ children }) {
     <SocketProvider>
       <ClerkProvider
         appearance={{
-          baseTheme: [neobrutalism],
+          baseTheme: [dark],
+          variables: {
+            colorPrimary: 'yellow',
+          },
         }}
       >
         <AuthProvider>
