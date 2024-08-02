@@ -227,6 +227,38 @@ export default function GameControlPage({params}) {
       router.push('/pages/pinPage')
     });
 
+    socket.on('updatedAsks', (response) => {
+      if (response.asks) {
+        console.log(response);
+        // Combinar las preguntas actuales con las nuevas preguntas
+        setQuestions((prevQuestions) => {
+          const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+
+          // Actualiza o agrega nuevas preguntas
+          response.asks.forEach(newAsk => {
+            updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
+          });
+
+          return Array.from(updatedQuestionsMap.values());
+        });
+      }
+    });
+    socket.on('updateDeleteAsk', (response) => {
+      console.log(response);
+      if (response.data) {
+        setQuestions((prevQuestions) => {
+          // Crear un nuevo Map con las preguntas actuales
+          const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+
+          // Eliminar la pregunta recibida
+          updatedQuestionsMap.delete(response.data.id);
+
+          // Convertir el Map actualizado de nuevo a un array
+          return Array.from(updatedQuestionsMap.values());
+        });
+      }
+    });
+
 
     return () => {
       socket.off('gameStateUpdate', handleGameStateUpdate);
@@ -352,30 +384,15 @@ export default function GameControlPage({params}) {
             Modificar juego
           </Link>
         </Tooltip>
+          <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
+            <p>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
+            <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
+            <div className='text-xl font-bold text-center mt-4 text-red-500'>
+              Tiempo restante: {formatTime(timeLeft)}
+            </div>
+          </div>
       </div>
     </div>
-
-      <div className="game flex flex-col items-center justify-center  w-full">
-        <div className='bg-custom-linear flex mb-10'>
-          <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
-        <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
-        <div className='text-xl font-bold text-center mt-4 text-red-500'>
-          Tiempo restante: {formatTime(timeLeft)}
-        </div>
-            <div className='grid grid-cols-1 sm:grid-cols-2 w-full"'>
-          {['a', 'b', 'c', 'd'].map((key) => (
-            <button
-              key={key}
-              onClick={() => handleAnswerClick(key)}
-              className={`p-2 m-2 text-white rounded ${getButtonClass(key)} ${getButtonColor(key)}`}
-            >
-              {currentQuestion[key]}
-            </button>
-          ))}
-        </div>
-      </div>
- </div>
- </div>
       <ToastContainer/>
     </div>
   );
