@@ -38,6 +38,7 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
   };
 
   return (
+    <>
     <div className='left-0'>
       <button onClick={handleDeleteClick} className="button">
         <svg
@@ -100,8 +101,9 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
           </div>
         </div>
       )}
-      <ToastContainer />
     </div>
+      <ToastContainer />
+    </>
   );
 };
 

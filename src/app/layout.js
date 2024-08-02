@@ -3,9 +3,12 @@ import Sidebar from '@/app/components/Sidebar';
 import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from '@/context/authContext';
 import { SocketProvider } from '@/context/socketContext';
+import { AvatarProvider } from '@/context/avatarContext';
+import { PlayerProvider } from '@/context/playerContext';
 import './globals.css';
 import { Montserrat } from 'next/font/google';
 import { dark } from '@clerk/themes';
+
 
 export const metadata = {
   title: 'HACK A BOSS | FreedayQuiz ⭐️',

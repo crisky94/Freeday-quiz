@@ -14,6 +14,7 @@ model Games {
   codeGame     Int       @unique
   detailGame   String?   @db.VarChar(255)
   endedAt      DateTime? // Nueva columna para registrar la fecha de finalización del juego
+  updateAt     DateTime?
   players      Players[]
   asks         Asks[]
 }

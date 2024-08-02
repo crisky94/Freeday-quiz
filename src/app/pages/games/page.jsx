@@ -128,10 +128,12 @@ export default function GamesList() {
               <Carousel
                 responsive={responsive}
                 customDot={<CustomDot />}
-                arrows
-                swipeable
-                draggable
-                showDots
+                swipeable = {true}
+                arrows={true}
+                keyBoardControl={true}
+                removeArrowOnDeviceType={["tablet", "mobile"]}
+                draggable = {true}
+                showDots = {true}
               >
                 {games.map((game, i) => (
                   <div
@@ -141,6 +143,7 @@ export default function GamesList() {
                     <div className='flex flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
                       <h2 className='truncate card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
                         {`${i + 1}. ${game.nameGame}`}
+
                       </h2>
                       <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
                         <Link href={`/pages/modify-page/${game.id}.jsx`}>
@@ -155,6 +158,14 @@ export default function GamesList() {
                           onDelete={handleDelete}
                         />
                       </div>
+
+                      <Link className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase' href={`/pages/pinPage/${game.id}`}>
+                        <span>
+                          Seleccionar
+                        </span>
+                      </Link>
+                      {/* Mostrar la fecha de finalización del juego */}
+                      {game.updateAt ? <p>Actualizado: {formatDate(game.updateAt)}</p> : <p>Creado: {formatDate(game.endedAt)}</p>}                     
 
                       <Link
                         className='mt-5 codepen-button uppercase'
@@ -196,9 +207,8 @@ export default function GamesList() {
             </div>
           )}
         </div>
-      ) : (
-        ''
-      )}
+      ) : <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500]'>Página no autorizada para jugadores, inicia sesión o registrate para que puedas ver tus juegos creados o poder crearlos </h1>}
+
     </>
   );
 }
