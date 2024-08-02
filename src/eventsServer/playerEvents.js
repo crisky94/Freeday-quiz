@@ -6,30 +6,39 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       });
 
       if (game) {
-        const existingPlayer = await prisma.players.findFirst({
-          where: {
-            gameId: game.id,
-            socketId: socket.id,
-          },
-        });
-
-        if (existingPlayer) {
-          socket.emit('nicknameConflict', {
-            message: 'Ya tienes un player en esta sala',
-          });
-        } else {
-          const player = await prisma.players.create({
-            data: {
-              playerName: nickname,
+        if (nickname) {
+          // Es un jugador que se une
+          const existingPlayer = await prisma.players.findFirst({
+            where: {
               gameId: game.id,
-              score: 0,
               socketId: socket.id,
             },
           });
 
+          if (existingPlayer) {
+            socket.emit('nicknameConflict', {
+              message: 'Ya tienes un player en esta sala',
+            });
+          } else {
+            const player = await prisma.players.create({
+              data: {
+                playerName: nickname,
+                gameId: game.id,
+                score: 0,
+                socketId: socket.id,
+              },
+            });
+
+            socket.join(`game-${code}`);
+            io.to(`game-${code}`).emit('newPlayer', player);
+            console.log('New player emitted:', player);
+            gamePlayerMap[code] = socket.id;
+            socket.emit('joinSuccess');
+          }
+        } else {
+          // Es el administrador que se une
           socket.join(`game-${code}`);
-          io.to(`game-${code}`).emit('newPlayer', player);
-          gamePlayerMap[code] = socket.id;
+          console.log('Admin joined the game:', code);
           socket.emit('joinSuccess');
         }
       } else {
@@ -38,6 +47,24 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     } catch (error) {
       console.error('Error al unirse a la sala:', error);
       socket.emit('error', { message: 'Error al unirse a la sala' });
+    }
+  });
+
+  socket.on('startGame', async ({ code }) => {
+    try {
+      const game = await prisma.games.findUnique({
+        where: { codeGame: code },
+      });
+
+      if (game) {
+        io.to(`game-${code}`).emit('gameStarted', { code });
+        console.log(`Game started for code: ${code}`);
+      } else {
+        socket.emit('error', { message: 'Juego no encontrado' });
+      }
+    } catch (error) {
+      console.error('Error al iniciar el juego:', error);
+      socket.emit('error', { message: 'Error al iniciar el juego' });
     }
   });
 
@@ -95,7 +122,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-  // Obtener los jugadores del juego por código del juego
   socket.on('getPlayers', async ({ code }, callback) => {
     try {
       const game = await prisma.games.findUnique({
@@ -124,7 +150,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       callback({ error: 'Error al obtener jugadores' });
     }
   });
-  // Escuchamos cuando el cliente se desconecta
+
   socket.on('disconnect', async () => {
     console.log(`Socket desconectado: ${socket.id} y eliminado `);
     try {
@@ -153,7 +179,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-  //*Validar el codigo/pin del juego(access-pin)
   socket.on('correctCodeGame', async ({ code }, callback) => {
     try {
       const game = await prisma.games.findUnique({
@@ -177,7 +202,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-  //*Obtener el juego por el code(page-game)
   socket.on('getCodeGame', async ({ code }, callback) => {
     try {
       const game = await prisma.games.findUnique({
@@ -215,7 +239,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-  //*Insertar datos jugador en la tabla players(page-game)
   socket.on('insertPlayer', async ({ gameId, playerName, score, data }) => {
     try {
       const data = {

@@ -35,7 +35,7 @@ const NickNameForm = ({ params }) => {
     } else {
       toast.error('Por favor, ingresa un nickname.', {
         onClose: () => {
-          router.refresh();
+          window.location.reload();
         },
       });
     }
@@ -76,6 +76,7 @@ const NickNameForm = ({ params }) => {
           </div>
         </form>
       </div>
+
       {isModalOpen && (
         <div className='fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50'>
           <div className='bg-white text-black p-5 rounded-md shadow-lg'>

@@ -79,6 +79,7 @@ export function gameEvents(socket, prisma) {
           id: true,
           nameGame: true,
           detailGame: true,
+          codeGame: true,
         },
       });
 
@@ -190,6 +191,12 @@ export function gameEvents(socket, prisma) {
       callback({ error: 'Error al eliminar el juego' });
     }
   });
+  //io.on('connection', (socket) => {
+  //  socket.on('startGame', (data) => {
+  //    const { code } = data;
+  //    io.to(code).emit('gameStarted', { code });
+  //  });
+  //});
 
   socket.on('getGameDetails', async ({ gameId }, callback) => {
     try {
