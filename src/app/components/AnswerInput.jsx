@@ -11,6 +11,7 @@ export default function AnswerInput({
   return (
     <div className={`${colorClass} flex items-center p-4 rounded-lg`}>
       <input
+        maxLength={100}
         type='text'
         placeholder={`Añadir respuesta ${index + 1}`}
         className='h-full w-full bg-transparent border-none placeholder-slate-600 focus:outline-none text-black '

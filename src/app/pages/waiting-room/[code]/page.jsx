@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
+import { getAvatar } from '../../../../lib/fetchAvatar';
 import Image from 'next/image';
-import { useAvatar } from '../../../../context/avatarContext';
+// import '@/app/styles/Room/animationRoom.css';
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -14,6 +15,10 @@ const WaitingRoom = ({ params }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
+  const [countdown, setCountdown] = useState(null);
+
+  // const { avatars } = useAvatar();
+
 
   useEffect(() => {
     if (!socket) {
@@ -53,7 +58,7 @@ const WaitingRoom = ({ params }) => {
     if (!socket) return;
 
     const handleNewPlayer = async (newPlayer) => {
-      const avatar = await fetchAvatar(newPlayer.playerName);
+      const avatar = await getAvatar(newPlayer.playerName);
       setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
     };
 
@@ -64,24 +69,44 @@ const WaitingRoom = ({ params }) => {
     };
 
     const handleUpdatePlayer = async (updatedPlayer) => {
-      const avatar = await fetchAvatar(updatedPlayer.playerName);
+      const avatar = await getAvatar(updatedPlayer.playerName);
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
           player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
         )
       );
     };
+    socket.on('gameStarted', ({ code }) => {
+      router.push(`/pages/page-game/${code}`);
+    });
+
+    // socket.on('countdown', (time) => {
+    //   setCountdown(time);
+    //   const interval = setInterval(() => {
+    //     setCountdown((prev) => {
+    //       if (prev === 1) {
+    //         clearInterval(interval);
+    //         router.push(`/pages/page-game/${code}`);
+    //       }
+    //       return prev - 1;
+    //     });
+    //   }, 3000);
+    // });
 
     socket.on('updatePlayer', handleUpdatePlayer);
     socket.on('newPlayer', handleNewPlayer);
     socket.on('exitPlayer', handleExitPlayer);
 
     return () => {
+      // socket.off('countdown');
+
+      socket.off('gameStarted');
       socket.off('newPlayer', handleNewPlayer);
       socket.off('exitPlayer', handleExitPlayer);
       socket.off('updatePlayer', handleUpdatePlayer);
     };
-  }, [socket, fetchAvatar]);
+
+  }, [socket]);
 
   useEffect(() => {
     if (!socket) return;
@@ -93,7 +118,7 @@ const WaitingRoom = ({ params }) => {
         } else {
           const playersWithAvatars = await Promise.all(
             response.players.map(async (player) => {
-              const avatar = await fetchAvatar(player.playerName);
+              const avatar = await getAvatar(player.playerName);
               return { ...player, avatar };
             })
           );
@@ -101,7 +126,7 @@ const WaitingRoom = ({ params }) => {
         }
       });
     };
-    socket.on('connect', fetchPlayers); // Re-fetch players on reconnect
+    socket.on('connect', fetchPlayers);
     fetchPlayers();
 
     return () => {
@@ -145,14 +170,14 @@ const WaitingRoom = ({ params }) => {
 
   return (
     <div className='w-screen h-screen bgroom'>
-      <div className='h-48 flex flex-col mt-10 flex-wrap mx-5'>
+      <div className='h-60 flex flex-col mt-14 flex-wrap mx-5'>
         <h1 className='text-primary font-extrabold text-4xl uppercase'>
           {title}
         </h1>
         <p className='text-wrap break-words w-full'>{description}</p>
       </div>
 
-      <div className='flex flex-wrap '>
+      <div className='flex flex-wrap -mt-9 '>
         {players.map((player) => (
           <div
             key={player.id}
@@ -174,7 +199,7 @@ const WaitingRoom = ({ params }) => {
         ))}
       </div>
       {socketId && (
-        <div className='flex justify-center mt-10'>
+        <div className='flex justify-center mt-4'>
           <button
             onClick={deletePlayer}
             className='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-900'
@@ -183,6 +208,17 @@ const WaitingRoom = ({ params }) => {
           </button>
         </div>
       )}
+      <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
+        <p className='pb-2'>Esperando inicio del quiz...</p>
+        {/* {countdown !== null && (
+          <div className=' text-center mt-4 text-xl'>
+            <h2 className='text-2xl font-bold'>
+              El juego comienza en {countdown}...
+            </h2>
+          </div>
+        )} */}
+        <div class='loaderRoom'></div>
+      </div>
     </div>
   );
 };

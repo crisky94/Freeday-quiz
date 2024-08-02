@@ -13,7 +13,7 @@ export function gameEvents(socket,io, prisma) {
           nickUser: gamedata.nickUser, // Nombre del usuario
           nameGame: gamedata.nameGame, // Nombre del juego
           codeGame: codeGame, // Código del juego
-          endedAt: new Date(),//Fecha creado
+          endedAt: new Date(), //Fecha creado
         },
       });
 
@@ -60,7 +60,7 @@ export function gameEvents(socket,io, prisma) {
           updateAt: true,
         },
       });
-      
+
       callback({ games });
     } catch (e) {
       console.error('error:', e);
@@ -80,6 +80,7 @@ export function gameEvents(socket,io, prisma) {
           id: true,
           nameGame: true,
           detailGame: true,
+          codeGame: true,
         },
       });
 
@@ -91,7 +92,6 @@ export function gameEvents(socket,io, prisma) {
       callback({ error: 'Error al obtener juegos' });
     }
   });
-
 
   //*Obtener preguntas por id del juego(modify)
   socket.on('getAsks', async ({ gameId }, callback) => {
@@ -121,7 +121,6 @@ export function gameEvents(socket,io, prisma) {
       callback({ error: 'Error al obtener preguntas' });
     }
   });
-
 
   //*Actualizar el juego(modify)
   // socket.on('updateGame', async ({ formData, gameId }, callback) => {
@@ -394,6 +393,37 @@ export function gameEvents(socket,io, prisma) {
       callback({ error: 'Error al eliminar el juego' });
     }
   });
+  //io.on('connection', (socket) => {
+  //  socket.on('startGame', (data) => {
+  //    const { code } = data;
+  //    io.to(code).emit('gameStarted', { code });
+  //  });
+  //});
+
+  socket.on('getGameDetails', async ({ gameId }, callback) => {
+    try {
+      // Obtener el juego por ID
+      const game = await prisma.games.findUnique({
+        where: {
+          id: parseInt(gameId),
+        },
+        select: {
+          id: true,
+          nameGame: true,
+          detailGame: true,
+          asks: {
+            select: {
+              ask: true,
+              a: true,
+              b: true,
+              c: true,
+              d: true,
+              answer: true,
+              timer: true,
+            },
+          },
+        },
+      });
 
   socket.on('deleteAsk', async ({ askId }, callback) => {
     try {
@@ -413,5 +443,4 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
-  
 }

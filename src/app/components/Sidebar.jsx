@@ -24,6 +24,7 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
+
     if (!socket) return;
 
     const handleGetPlayers = async (response) => {
@@ -64,8 +65,11 @@ const Sidebar = () => {
         ''
       )}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-black shadow-xl text-white transition-transform transform z-50 ${isOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+        className={`fixed top-0 right-0 h-full w-64 bg-[#111] shadow-xl text-white transition-transform transform z-50 ${
+          // Aumentar z-index aquí
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+
       >
         <button className='p-4 text-white' onClick={toggleSidebar}>
           ✕
@@ -88,7 +92,7 @@ const Sidebar = () => {
                 </div>
               ))}            
                 <SignInButton className='signIn-button-sidebar mt-10' />          
-                <SignUpButton className='signUp-button-sidebar mt-2' />             
+                <SignUpButton className='signUp-button-sidebar mt-2' />         
             </div>
           )}
         </nav>
