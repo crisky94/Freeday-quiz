@@ -2,23 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import QRCode from 'qrcode.react';
-import { Montserrat } from 'next/font/google';
 import { useSocket } from '@/context/socketContext';
+import { useAuth } from '@/context/authContext';
+import User from '../../../components/User';
 
-const monserrat = Montserrat({
-  weight: '400',
-  subsets: ['latin'],
-});
-
-const GamePage = () => {
+const PinPage = () => {
   const [players, setPlayers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [game, setGame] = useState(null);
   const socket = useSocket();
-
   const params = useParams();
   const gameId = params.gameId;
+  const router = useRouter();
+  const { user } = useAuth(User);
 
   useEffect(() => {
     if (!socket) return;
@@ -63,10 +61,19 @@ const GamePage = () => {
     };
   }, [gameId, socket]);
 
+  
+
   const startGame = () => {
     if (!socket || !game) return;
     socket.emit('startGame', { code: game.codeGame });
     // socket.emit('countdown', { code: game.codeGame });
+    if (players){
+      router.push(`/pages/page-game/${game.codeGame}`)
+    }
+    if (user) {
+      router.push(`/pages/control-quiz/${game.id}`)
+    }
+    
   };
 
   if (!game) {
@@ -75,12 +82,12 @@ const GamePage = () => {
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>
-      <h1 className={`${monserrat.className} text-4xl uppercase bold`}>
+      <h1 className={`text-4xl uppercase bold`}>
         {game.nameGame}
       </h1>
       <p>{game.detailGame}</p>
       <QRCode
-        value={`http://localhost:3000/nick-name-form/${gameId}`}
+        value={`http://localhost:3000/nick-name-form/${game.codeGame}`}
         className='bg-white p-2 rounded mt-4'
       />
       <p className='bg-black p-2 rounded mt-4'>PIN: {game.codeGame}</p>
@@ -120,4 +127,4 @@ const GamePage = () => {
   );
 };
 
-export default GamePage;
+export default PinPage;

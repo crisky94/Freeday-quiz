@@ -36,7 +36,7 @@ export default function User() {
         </SignedIn>
         {user ? (
           <div className='flex items-center'>
-            <p className=' mr-12 font-bold text-xs text-center bg-black h-6 p-1  rounded-md'>
+            <p className=' mr-12 font-bold text-sm text-center bg-black h-6 p-1  rounded-md'>
               {user.firstName} {user.lastName} ({user.username})
             </p>
           </div>

@@ -1,4 +1,5 @@
 export function gameEvents(socket,io, prisma) {
+  let gameState = '';
   // Escuchamos el evento 'createGame' y recibimos los datos del juego (gamedata)
   socket.on('createGame', async (gamedata, callback) => {
     try {
@@ -122,183 +123,6 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
-  //*Actualizar el juego(modify)
-  // socket.on('updateGame', async ({ formData, gameId }, callback) => {
-  //   try {
-  //     // Preparamos las promesas de actualización de las preguntas
-  //     const updateAsksPromises = formData.asks.map((ask) => {
-  //       return prisma.asks.update({
-  //         where: {
-  //           id: ask.id, // asumiendo que cada ask tiene un id único
-  //         },
-  //         data: {
-  //           ask: ask.ask,
-  //           a: ask.a,
-  //           b: ask.b,
-  //           c: ask.c,
-  //           d: ask.d,
-  //           timer: parseInt(ask.timer),
-  //           answer: ask.answer,
-  //         },
-  //       });
-  //     });
-
-  //     // Actualizar el juego (games)
-  //     const updateGamePromise = prisma.games.update({
-  //       where: {
-  //         id: parseInt(gameId),
-  //       },
-  //       data: {
-  //         nameGame: formData.gameName,
-  //         detailGame: formData.gameDetail,
-  //         updateAt: new Date(),
-  //       },
-  //     });
-
-  //     // Esperar a que todas las operaciones de actualización se completen
-  //     await Promise.all([...updateAsksPromises, updateGamePromise]);
-
-  //     // Llamar al callback con éxito
-  //     callback({ success: true });
-  //   } catch (error) {
-  //     console.error('Error al actualizar el juego:', error);
-  //     // Llamar al callback con un mensaje de error si ocurre algún error
-  //     callback({ error: 'Error al actualizar el juego' });
-  //   }
-  // });
-  // *Actualizar el juego(modify)
-  // socket.on('updateGame', async ({ formData, gameId }, callback) => {
-  //   try {
-  //     // Filtrar las preguntas existentes y las nuevas
-  //     const existingAsks = formData.asks.filter(ask => ask.id);
-  //     const newAsks = formData.asks.filter(ask => !ask.id);
-
-  //     // Preparamos las promesas de actualización de las preguntas existentes
-  //     const updateAsksPromises = existingAsks.map((ask) => {
-  //       return prisma.asks.update({
-  //         where: {
-  //           id: ask.id, // asumiendo que cada ask tiene un id único
-  //         },
-  //         data: {
-  //           ask: ask.ask,
-  //           a: ask.a,
-  //           b: ask.b,
-  //           c: ask.c,
-  //           d: ask.d,
-  //           timer: parseInt(ask.timer),
-  //           answer: ask.answer,
-  //         },
-  //       });
-  //     });
-
-  //     // Preparamos las promesas de creación de nuevas preguntas
-  //     const createAsksPromises = newAsks.map((ask) => {
-  //       return prisma.asks.create({
-  //         data: {
-  //           ask: ask.ask,
-  //           a: ask.a,
-  //           b: ask.b,
-  //           c: ask.c,
-  //           d: ask.d,
-  //           timer: parseInt(ask.timer),
-  //           answer: ask.answer,
-  //           gameId: parseInt(gameId), // Relacionar la pregunta con el juego
-  //         },
-  //       });
-  //     });
-
-  //     // Actualizar el juego (games)
-  //     const updateGamePromise = prisma.games.update({
-  //       where: {
-  //         id: parseInt(gameId),
-  //       },
-  //       data: {
-  //         nameGame: formData.gameName,
-  //         detailGame: formData.gameDetail,
-  //         updateAt: new Date(),
-  //       },
-  //     });
-
-  //     // Esperar a que todas las operaciones de actualización y creación se completen
-  //     await Promise.all([...updateAsksPromises, ...createAsksPromises, updateGamePromise]);
-
-  //     // Llamar al callback con éxito
-  //     callback({ success: true });
-  //   } catch (error) {
-  //     console.error('Error al actualizar el juego:', error);
-  //     // Llamar al callback con un mensaje de error si ocurre algún error
-  //     callback({ error: 'Error al actualizar el juego' });
-  //   }
-  // });
-  
-  // socket.on('updateGame', async ({ formData, gameId }, callback) => {
-  //   try {
-  //     // Filtrar las preguntas existentes y las nuevas
-  //     const existingAsks = formData.asks.filter(ask => ask.id);
-  //     const newAsks = formData.asks.filter(ask => !ask.id);
-
-  //     // Preparamos las promesas de actualización de las preguntas existentes
-  //     const updateAsksPromises = existingAsks.map((ask) => {
-  //       return prisma.asks.update({
-  //         where: {
-  //           id: ask.id, // asumiendo que cada ask tiene un id único
-  //         },
-  //         data: {
-  //           ask: ask.ask,
-  //           a: ask.a,
-  //           b: ask.b,
-  //           c: ask.c,
-  //           d: ask.d,
-  //           timer: parseInt(ask.timer),
-  //           answer: ask.answer,
-  //         },
-  //       });
-  //     });
-
-  //     // Preparamos las promesas de creación de nuevas preguntas
-  //     const createAsksPromises = newAsks.map((ask) => {
-  //       return prisma.asks.create({
-  //         data: {
-  //           ask: ask.ask,
-  //           a: ask.a,
-  //           b: ask.b,
-  //           c: ask.c,
-  //           d: ask.d,
-  //           timer: parseInt(ask.timer),
-  //           answer: ask.answer,
-  //           gameId: parseInt(gameId), // Relacionar la pregunta con el juego
-  //         },
-  //       });
-  //     });
-
-      // Actualizar el juego (games)
-  //     const updateGamePromise = prisma.games.update({
-  //       where: {
-  //         id: parseInt(gameId),
-  //       },
-  //       data: {
-  //         nameGame: formData.gameName,
-  //         detailGame: formData.gameDetail,
-  //         updateAt: new Date(),
-  //       },
-  //     });
-
-  //     // Esperar a que todas las operaciones de actualización y creación se completen
-  //     await Promise.all([...updateAsksPromises, ...createAsksPromises, updateGamePromise]);
-
-  //     // Notificar a todos los clientes conectados sobre la actualización
-  //     io.to(`page-game/${formData.codeGame}`).emit('updatedAsks', updatedAsks);
-
-  //     // Llamar al callback con éxito
-  //     callback({ success: true });
-  //   } catch (error) {
-  //     console.error('Error al actualizar el juego:', error);
-  //     // Llamar al callback con un mensaje de error si ocurre algún error
-  //     callback({ error: 'Error al actualizar el juego' });
-  //   }
-  // });
-
-
   socket.on('updateGame', async ({ formData, gameId }, callback) => {
     try {
       // Filtrar las preguntas existentes y las nuevas
@@ -367,8 +191,6 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
-
-
   //*Eliminar juego por id(games)
   socket.on('deleteGame', async ({ gameId }, callback) => {
     try {
@@ -393,12 +215,6 @@ export function gameEvents(socket,io, prisma) {
       callback({ error: 'Error al eliminar el juego' });
     }
   });
-  //io.on('connection', (socket) => {
-  //  socket.on('startGame', (data) => {
-  //    const { code } = data;
-  //    io.to(code).emit('gameStarted', { code });
-  //  });
-  //});
 
   socket.on('getGameDetails', async ({ gameId }, callback) => {
     try {
@@ -425,6 +241,15 @@ export function gameEvents(socket,io, prisma) {
         },
       });
 
+      // Llamar al callback con los detalles del juego
+      callback({ game });
+    } catch (e) {
+      console.error('Error al obtener detalles del juego:', e);
+      // Llamar al callback con un mensaje de error si ocurre algún problema
+      callback({ error: 'Error al obtener detalles del juego' });
+    }
+  });
+
   socket.on('deleteAsk', async ({ askId }, callback) => {
     try {
       // Eliminar las preguntas
@@ -443,4 +268,21 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
+  socket.on('pauseGame', () => {
+    gameState = 'paused';
+    io.emit('gameStateUpdate', gameState);
+    io.emit('pauseGame');
+  });
+
+  socket.on('resumeGame', () => {
+    gameState = 'resumed';
+    io.emit('gameStateUpdate', gameState);
+    io.emit('resumeGame');
+  });
+
+  socket.on('stopGame', () => {
+    gameState = 'stopped';
+    io.emit('gameStateUpdate', gameState);
+    io.emit('stopGame');
+  });
 }
