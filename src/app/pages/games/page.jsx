@@ -108,13 +108,13 @@ export default function GamesList() {
     },
   };
 
-  // const formatDate = (date) => {
-  //   const d = new Date(date);
-  //   const day = d.getDate().toString().padStart(2, '0');
-  //   const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son 0-indexados
-  //   const year = d.getFullYear();
-  //   return `${day}-${month}-${year}`;
-  // };
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   return (
     <>
@@ -158,27 +158,15 @@ export default function GamesList() {
                         />
                       </div>
 
-                      <Link className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase' href={`/pages/pinPage/${game.id}`}>
+                      <Link className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase' href={`/pages/pinPage/${game.id}`} >
                         <span>
                           Seleccionar
                         </span>
                       </Link>
                       {/* Mostrar la fecha de finalización del juego */}
-                      {game.updateAt ? <p>Actualizado: {formatDate(game.updateAt)}</p> : <p>Creado: {formatDate(game.endedAt)}</p>}                     
-
-                      <Link
-                        className='mt-5 codepen-button uppercase'
-                        href={`/pages/pinPage/${game.id}`}
-                      >
-                        <span>Pin del juego</span>
-                      </Link>
-                      {/* Mostrar la fecha de finalización del juego */}
-                      {/* <p className='text-white mt-2'>
-                        {game.endedAt ? formatDate(game.endedAt) : null}
-                      </p> */}
-
+                      {game.updateAt ? <p className='text-sm'>Actualizado: {formatDate(game.updateAt)}</p> : <p className='text-lg'>Creado: {formatDate(game.endedAt)}</p>}                     
                       <div
-                        className=' w-48 mt-14   cursor-zoom-in p-1 text-xs text-black'
+                        className=' w-48 mt-8   cursor-zoom-in p-1 text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
@@ -202,11 +190,11 @@ export default function GamesList() {
               <div className='mt-16 mb-4'>
                 <CreateButton />
               </div>
-              <h1 className='font-bold'>Aún no tienes juegos creados</h1>
+                <h1 className='font-bold  bg-[#111] text-[#fed500]'>Aún no tienes juegos creados</h1>
             </div>
           )}
         </div>
-      ) : <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500]'>Página no autorizada para jugadores, inicia sesión o registrate para que puedas ver tus juegos creados o poder crearlos </h1>}
+      ) : <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>Página no autorizada para jugadores, inicia sesión o registrate para que puedas ver tus juegos creados o poder crearlos </h1>}
 
     </>
   );
