@@ -9,8 +9,6 @@ import { useAvatar } from '../../context/avatarContext'; // Nueva importación
 import { useSocket } from '@/context/socketContext'; // Nueva importación
 import User from './User';
 
-import useAvatar from '../../lib/fetchAvatar';
-
 import '../styles/header.css';
 
 export default function Header() {
@@ -80,7 +78,7 @@ export default function Header() {
                 </div>
               ))}
               <div>
-                <SignInButton className='md:text-lg signIn-button ml-12 bg-[#111] rounded-md' /> 
+                <SignInButton className='md:text-lg signIn-button ml-12 bg-[#111] rounded-md' />
                 <SignUpButton className='md:text-lg signUp-button ml-2 bg-[#111] rounded-md' />
               </div>
             </div>
