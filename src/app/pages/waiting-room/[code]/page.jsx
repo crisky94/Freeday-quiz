@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
-import { getAvatar } from '../../../../lib/fetchAvatar';
+// import { useAvatar  } from '../../../../lib/fetchAvatar';
+import { useAvatar } from '../../../../context/avatarContext';
 import Image from 'next/image';
 // import '@/app/styles/Room/animationRoom.css';
 
@@ -58,7 +59,7 @@ const WaitingRoom = ({ params }) => {
     if (!socket) return;
 
     const handleNewPlayer = async (newPlayer) => {
-      const avatar = await getAvatar(newPlayer.playerName);
+      const avatar = await fetchAvatar(newPlayer.playerName);
       setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
     };
 
@@ -69,7 +70,7 @@ const WaitingRoom = ({ params }) => {
     };
 
     const handleUpdatePlayer = async (updatedPlayer) => {
-      const avatar = await getAvatar(updatedPlayer.playerName);
+      const avatar = await fetchAvatar(updatedPlayer.playerName);
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
           player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
@@ -118,7 +119,7 @@ const WaitingRoom = ({ params }) => {
         } else {
           const playersWithAvatars = await Promise.all(
             response.players.map(async (player) => {
-              const avatar = await getAvatar(player.playerName);
+              const avatar = await fetchAvatar(player.playerName);
               return { ...player, avatar };
             })
           );
