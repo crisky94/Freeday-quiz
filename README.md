@@ -46,7 +46,7 @@ Puedes encontrar más detalles sobre la API y los endpoints en la carpeta de Api
 
 - [Victor Morales](https://github.com/)
 - [Cris Labrador](https://github.com/crisky94/)
-- [Franisco Jose Rivas](https://github.com/)
+- [Francisco Jose Rivas](https://github.com/cyberazul)
 
 
 ## 📞 Contacto
@@ -55,7 +55,7 @@ Si tienes alguna pregunta o comentario, no dudes en ponerte en contacto con noso
 
 - [Victor Morales](https://www.linkedin.com/in/)
 - [Cristina Labrador](https://www.linkedin.com/in/cristina-labrador-ordoñez/)
-- [Franisco Jose Rivas](https://www.linkedin.com/in/)
+- [Francisco Jose Rivas](https://www.linkedin.com/in/fran-rivas)
 
 ¡Esperamos que os guste la aplicación y que la disfrutéis tanto como nosotros haciéndola!
 
