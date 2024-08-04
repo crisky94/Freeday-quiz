@@ -6,7 +6,13 @@ import { useRouter } from 'next/navigation';
 import QRCode from 'qrcode.react';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
+import { Montserrat } from 'next/font/google';
 import User from '../../../components/User';
+
+const monserrat = Montserrat({
+  weight: '400',
+  subsets: ['latin'],
+});
 
 const PinPage = () => {
   const [players, setPlayers] = useState([]);
@@ -82,7 +88,7 @@ const PinPage = () => {
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>
-      <h1 className={`text-4xl uppercase bold`}>
+      <h1 className={`${monserrat.className} text-4xl uppercase bold`}>
         {game.nameGame}
       </h1>
       <p>{game.detailGame}</p>

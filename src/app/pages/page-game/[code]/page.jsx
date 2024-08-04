@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Loading from '../../../loading';
 import { useSocket } from '@/context/socketContext';
 import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import '../../../styles/page-game/pageGame.css';
+import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -151,7 +152,6 @@ export default function GameQuizPage({ params }) {
 
     const currentQuestion = questions[currentQuestionIndex];
     localStorage.setItem('indexQuestion', currentQuestionIndex + 1)
-    console.log(index);
     setSelectedAnswer(answerKey);
     setIsCorrect(answerKey === currentQuestion.answer.toLowerCase());
 
@@ -212,7 +212,7 @@ export default function GameQuizPage({ params }) {
       });
     });
   };
-  
+
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {
@@ -223,6 +223,19 @@ export default function GameQuizPage({ params }) {
       router.push('/pages/ranking');
     }
   };
+
+  const deletePlayer = useCallback(() => {
+    if (!socket) return;
+
+    socket.emit('deletePlayer', { playerName, code }, (response) => {
+      if (response.error) {
+        console.error(response.error);
+      } else {
+        console.log('Player eliminado con éxito');
+        router.push('/pages/access-pin'); // Redirigir a la página de acceso al pin
+      }
+    });
+  }, [socket, playerName, code, router]);
 
   if (questions.length === 0) {
     return <Loading />;
@@ -251,6 +264,7 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} /> {/* Agrega el componente */}
       <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
         <ToastContainer />
         <div key={currentQuestion.id} className="game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]">

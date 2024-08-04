@@ -71,7 +71,7 @@ export default function GameControlPage({params}) {
     });
 
     socket.on('stopGame', () => {
-      router.push('/pages/pinPage')
+      router.push('/')
     });
 
     socket.on('updatedAsks', (response) => {
