@@ -7,28 +7,30 @@ import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
 
 export default function EditGame({ params }) {
+  // Estado para manejar los datos del formulario
   const [formData, setFormData] = useState({
     gameName: '',
     gameDetail: '',
     asks: [],
   });
 
-  const socket = useSocket();
-  const gameId = params.id;
+  const socket = useSocket();// Obtener la instancia del socket desde el contexto
+  const gameId = params.id;// Obtener el ID del juego desde los parámetros de la URL
   const router = useRouter();
-  const [isNew, setIsnew] = useState(false)
 
   useEffect(() => {
     const fetchData = () => {
+      // Emitir evento para obtener preguntas del juego
       socket.emit('getAsks', { gameId }, (response) => {
         console.log('getAsks response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
+          // Actualizar el estado con las preguntas obtenidas
           setFormData((prevData) => ({
             ...prevData,
             asks: response.questions.map((question) => ({
-              id: question.id, // Asegúrate de que cada pregunta existente tenga su id
+              id: question.id,
               ask: question.ask || '',
               a: question.a || '',
               b: question.b || '',
@@ -41,11 +43,13 @@ export default function EditGame({ params }) {
         }
       });
 
+      // Emitir evento para obtener detalles del juego
       socket.emit('getGamesId', { gameId }, (response) => {
         console.log('getGamesId response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
+          // Actualizar el estado con los detalles del juego
           setFormData((prevData) => ({
             ...prevData,
             gameName: response.game.nameGame,
@@ -63,12 +67,12 @@ export default function EditGame({ params }) {
         asks: updatedAsks,
       }));
     });
-
     return () => {
       socket.off('updateQuestions');
     };
   }, [gameId, socket]);
 
+  // Manejar cambios en los campos del formulario
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -77,6 +81,7 @@ export default function EditGame({ params }) {
     }));
   }, []);
 
+  // Manejar cambios al crear las preguntas del juego
   const handleAskChange = useCallback((index, field, value) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -88,6 +93,7 @@ export default function EditGame({ params }) {
     });
   }, []);
 
+  // Manejar la selección de la respuesta correcta para crear una pregunta
   const handleCorrectAnswerChange = useCallback((index, option) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -99,6 +105,7 @@ export default function EditGame({ params }) {
     });
   }, []);
 
+  // Agregar una nueva pregunta al juego
   const handleAddQuestion = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -109,6 +116,7 @@ export default function EditGame({ params }) {
     }));
   };
 
+  // Eliminar una pregunta existente del juego
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
       if (response.success) {
@@ -123,6 +131,7 @@ export default function EditGame({ params }) {
     });
   };
 
+  // Limpiar preguntas nuevas (sin ID) del formulario
   const handleClearNewQuestions = () => {
     setFormData((prevData) => {
       // Filtrar solo las preguntas existentes (con id)
@@ -134,6 +143,7 @@ export default function EditGame({ params }) {
     });
   };
 
+  // Manejar el envío del formulario para actualizar el juego
   const handleSubmit = (e) => {
     e.preventDefault();
     socket.emit('updateGame', { formData, gameId }, (response) => {
@@ -161,6 +171,7 @@ export default function EditGame({ params }) {
 
   };
 
+  // Autoajustar la altura del textarea según su contenido
   const handleAutoResize = (e) => {
     const textarea = e.target;
     textarea.style.height = 'auto';

@@ -72,7 +72,6 @@ export default function GameQuizPage({ params }) {
         toast('El juego está en marcha', {
           position: "bottom-center", autoClose: 2000,
         });
-
         router.refresh();
       });
 
@@ -90,7 +89,6 @@ export default function GameQuizPage({ params }) {
             response.asks.forEach(newAsk => {
               updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
             });
-
             return Array.from(updatedQuestionsMap.values());
           });
         }
@@ -109,7 +107,6 @@ export default function GameQuizPage({ params }) {
           });
         }
       });
-
     }
     return () => {
       if (socket) {
@@ -151,7 +148,6 @@ export default function GameQuizPage({ params }) {
 
     const currentQuestion = questions[currentQuestionIndex];
     localStorage.setItem('indexQuestion', currentQuestionIndex + 1)
-    console.log(index);
     setSelectedAnswer(answerKey);
     setIsCorrect(answerKey === currentQuestion.answer.toLowerCase());
 
