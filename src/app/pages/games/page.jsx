@@ -128,12 +128,12 @@ export default function GamesList() {
               <Carousel
                 responsive={responsive}
                 customDot={<CustomDot />}
-                swipeable = {true}
+                swipeable={true}
                 arrows={true}
                 keyBoardControl={true}
-                removeArrowOnDeviceType={["tablet", "mobile"]}
-                draggable = {true}
-                showDots = {true}
+                removeArrowOnDeviceType={['tablet', 'mobile']}
+                draggable={true}
+                showDots={true}
               >
                 {games.map((game, i) => (
                   <div
@@ -158,13 +158,22 @@ export default function GamesList() {
                         />
                       </div>
 
-                      <Link className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase' href={`/pages/pinPage/${game.id}`} >
-                        <span>
-                          Seleccionar
-                        </span>
+                      <Link
+                        className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase'
+                        href={`/pages/pinPage/${game.id}`}
+                      >
+                        <span>Seleccionar</span>
                       </Link>
                       {/* Mostrar la fecha de finalización del juego */}
-                      {game.updateAt ? <p className='text-sm'>Actualizado: {formatDate(game.updateAt)}</p> : <p className='text-lg'>Creado: {formatDate(game.endedAt)}</p>}                     
+                      {game.updateAt ? (
+                        <p className='text-sm'>
+                          Actualizado: {formatDate(game.updateAt)}
+                        </p>
+                      ) : (
+                        <p className='text-sm'>
+                          Creado: {formatDate(game.endedAt)}
+                        </p>
+                      )}
                       <div
                         className=' w-48 mt-8   cursor-zoom-in p-1 text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
@@ -190,12 +199,18 @@ export default function GamesList() {
               <div className='mt-16 mb-4'>
                 <CreateButton />
               </div>
-                <h1 className='font-bold  bg-[#111] text-[#fed500]'>Aún no tienes juegos creados</h1>
+              <h1 className='font-bold  bg-[#111] text-[#fed500]'>
+                Aún no tienes juegos creados
+              </h1>
             </div>
           )}
         </div>
-      ) : <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>Página no autorizada para jugadores, inicia sesión o registrate para que puedas ver tus juegos creados o poder crearlos </h1>}
-
+      ) : (
+        <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>
+          Página no autorizada para jugadores, inicia sesión o registrate para
+          que puedas ver tus juegos creados o poder crearlos{' '}
+        </h1>
+      )}
     </>
   );
 }

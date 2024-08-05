@@ -40,23 +40,22 @@ function AccessPin({ gameId }) {
     });
   };
   return (
-
-    <div className='flex flex-col items-center justify-center min-h-screen w-full'>
-      <div
-        className='bg-custom-linear flex '>
-        <div className='flex flex-col  p-14 m-1 h-auto w-58 sm:w-full items-center bg-black '>
+    <div className='flex flex-col items-center justify-center min-h-screen w-full   '>
+      <div className='bg-custom-linear flex  '>
+        <div className='flex flex-col p-8 m-1 w-full items-center bg-black '>
           <label className=' uppercase text-xl mb-6'>Introduce el pin</label>
           <input
             type='text'
             placeholder='PIN'
             onChange={handleInputChange}
             name='pin'
-            className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+            className='text-black text-center  rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
           />
           <ToastContainer />
           <button
             className='  text-black w-40 h-10 mt-5 font-bold rounded-md hoverGradiant bg-custom-linear'
-            onClick={handleSubmit}>
+            onClick={handleSubmit}
+          >
             Ingresar
           </button>
         </div>

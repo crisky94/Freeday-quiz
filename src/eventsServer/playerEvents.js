@@ -131,7 +131,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       });
 
       if (game) {
-        const players = await prisma.players.findMany({
+        const players = await prisma.Players.findMany({
           where: {
             gameId: game.id,
           },
@@ -238,22 +238,38 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       callback({ success: false, message: 'Error al validar el PIN' });
     }
   });
-
-  socket.on('insertPlayer', async ({ gameId, playerName, score, data }) => {
+  // Manejo de la actualización de puntajes en el servidor
+  socket.on('insertPlayer', async ({ gameId, playerName, score }, callback) => {
     try {
-      const data = {
-        gameId: gameId,
-        playerName: playerName,
-        score: score,
-      };
+      // Buscar el jugador por gameId y playerName
+      const player = await prisma.Players.findFirst({
+        where: {
+          gameId,
+          playerName,
+        },
+      });
 
-      const result = await prisma.player.create({ data });
+      if (player) {
+        // Sumar el puntaje actual al puntaje existente
+        await prisma.Players.update({
+          where: { id: player.id },
+          data: { score: player.score + score },
+        });
+      } else {
+        // Crear un nuevo registro si el jugador no existe
+        await prisma.Players.create({
+          data: {
+            gameId,
+            playerName,
+            score,
+          },
+        });
+      }
 
-      // Emitir la respuesta al cliente
-      socket.emit('insertPlayerResponse', result);
+      callback({ success: true });
     } catch (error) {
-      // Emitir un error al cliente
-      socket.emit('insertPlayerResponse', { error: error.message });
+      console.error('Error al actualizar el puntaje:', error);
+      callback({ error: 'Failed to update score' });
     }
   });
 }
