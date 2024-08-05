@@ -67,19 +67,15 @@ const PinPage = () => {
     };
   }, [gameId, socket]);
 
-  
-
   const startGame = () => {
     if (!socket || !game) return;
     socket.emit('startGame', { code: game.codeGame });
-    // socket.emit('countdown', { code: game.codeGame });
-    if (players){
-      router.push(`/pages/page-game/${game.codeGame}`)
+    if (players) {
+      router.push(`/pages/page-game/${game.codeGame}`);
     }
     if (user) {
-      router.push(`/pages/control-quiz/${game.id}`)
+      router.push(`/pages/control-quiz/${game.id}`);
     }
-    
   };
 
   if (!game) {
@@ -88,45 +84,48 @@ const PinPage = () => {
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>
-      <h1 className={`${monserrat.className} text-4xl uppercase bold`}>
+      <h1 className={`${monserrat.className} text-4xl uppercase bold bg-hackBlack bg-opacity-90`}>
         {game.nameGame}
       </h1>
-      <p>{game.detailGame}</p>
+      <p className={`${monserrat.className} text-xl uppercase bold bg-hackBlack bg-opacity-90`}>
+        {game.detailGame}
+      </p>
       <QRCode
         value={`http://localhost:3000/nick-name-form/${game.codeGame}`}
         className='bg-white p-2 rounded mt-4'
       />
-      <p className='bg-black p-2 rounded mt-4'>PIN: {game.codeGame}</p>
+      <p className='bg-hackBlack p-2 rounded mt-4'>PIN: {game.codeGame}</p>
       <div className='flex flex-row justify-between items-center'>
-        <div className='m-5'>
-          <button onClick={startGame} className='mt-5 codepen-button'>
+        <div className='m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
+          <button onClick={startGame}>
             <span>Empezar Juego</span>
           </button>
         </div>
-        <div className='m-5'>
-          <button
-            onClick={() => setShowModal(true)}
-            className='mt-5 codepen-button'
-          >
-            <span>Ver Jugadores</span>
+        <div className='m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
+          <button onClick={() => setShowModal(!showModal)}>
+            <span>{showModal ? 'Cerrar Jugadores' : 'Ver Jugadores'}</span>
           </button>
         </div>
       </div>
 
       {showModal && (
-        <div className='modal mt-6 flex flex-col justify-between items-center'>
-          <h2 className='bg-black p-2 rounded'>Jugadores</h2>
+        <div className='modal mt-6 bg-custom-linear p-1 flex flex-col justify-between items-center rounded'>
+          <div className='bg-hackBlack p-2 rounded flex flex-col items-center'>
+          <h2>Jugadores</h2>
           <ul>
             {players.map((player) => (
-              <li key={player.socketId}>{player.playerName}</li>
+              <li key={player.socketId} className="grid grid-cols-3">
+             <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
+               {player.playerName}
+            </div>
+            <div className="col-span-1 w-[60%]  p-4"></div>
+            <div className="col-span-1 w-[20%] p-4">
+            {player.score}
+            </div>
+             </li>
             ))}
           </ul>
-          <button
-            onClick={() => setShowModal(false)}
-            className='mt-5 codepen-button'
-          >
-            <span>Cerrar</span>
-          </button>
+        </div>
         </div>
       )}
     </div>
