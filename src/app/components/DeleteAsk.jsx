@@ -21,12 +21,11 @@ const DeleteAsk = ({ askId, onClick }) => {
     e.preventDefault();
     if (askId) {
       onClick(askId);
-      setShowConfirmation(false);
 
       // Mostrar notificación
       toast('Pregunta eliminada con éxito.', {
         onClose: () => {
-          router.push('/');
+          router.refresh();
         },
         position: 'bottom-center',
         autoClose: 5000,

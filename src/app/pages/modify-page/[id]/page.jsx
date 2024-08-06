@@ -120,7 +120,7 @@ export default function EditGame({ params }) {
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
       if (response.success) {
-        router.refresh()
+      handleSubmit()
         setFormData((prevData) => ({
           ...prevData,
           asks: prevData.asks.filter(ask => ask.id !== askId)
@@ -145,7 +145,7 @@ export default function EditGame({ params }) {
 
   // Manejar el envío del formulario para actualizar el juego
   const handleSubmit = (e) => {
-    e.preventDefault();
+     e.preventDefault();
     socket.emit('updateGame', { formData, gameId }, (response) => {
       if (response.success) {
         toast('Juego actualizado con éxito 🚀', {
@@ -160,7 +160,7 @@ export default function EditGame({ params }) {
           transition: Flip,
           onClose: () => {
             setTimeout(() => {
-              router.push('/');
+              router.refresh();
             });
           },
         });
@@ -179,7 +179,7 @@ export default function EditGame({ params }) {
   };
 
   return (
-    <form className="flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16" onSubmit={handleSubmit}>
+    <form className="flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16 " onSubmit={handleSubmit}>
       <div className="card-body w-full border-2 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-center text-center items-center mb-5 py-5 px-5">
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameName">Nombre del Juego:</label>
         <input
@@ -288,7 +288,7 @@ export default function EditGame({ params }) {
       </button>
       <ToastContainer />
       <div className="flex justify-center mt-10 mb-10">
-        <button className="btnfos-5 hoverGradiant bg-custom-linear rounded-md text-black py-4 px-8">
+        <button onClick={handleSubmit} className="btnfos-5 hoverGradiant bg-custom-linear rounded-md text-black py-4 px-8">
           Guardar Cambios
         </button>
       </div>
