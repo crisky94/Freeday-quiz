@@ -240,6 +240,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Loading from '../../../loading'
 import '../../../styles/page-game/pageGame.css';
 import RankingModal from '../../../components/RankingModal';
+import EndGame from '@/app/components/EndGame';
 
 export default function GameControlPage({ params }) {
   const socket = useSocket();
@@ -256,27 +257,7 @@ export default function GameControlPage({ params }) {
   const [isRankingSent, setIsRankingSent] = useState(false);
   const [players, setPlayers] = useState();
   const [playerId, setPlayerId] = useState();
-  const [deletePlayers, setDeletePlayers] = useState([]);
-  const gameId = params.gameId;
-
-
-  // useEffect(() => {
-  //   if (!socket) return;
-
-  //   const handleGetPlayers = (response) => {
-  //     if (response.error) {
-  //       console.error(response.error);
-  //     } else {
-  //       setPlayers(response.players);
-  //     }
-  //   };
-
-  //   socket.emit('getPlayersByGame', { code }, handleGetPlayers);
-
-  //   return () => {
-  //     socket.off('getPlayers', handleGetPlayers);
-  //   };
-  // }, [socket, code]);
+  const gameId = parseInt(params.gameId);
 
   useEffect(() => {
     if (!socket) return;
@@ -321,7 +302,7 @@ export default function GameControlPage({ params }) {
     socket.on('resumeGame', () => setIsPaused(false));
     socket.on('stopGame', ()=>{router.refresh()});
 
-    // Manejar actualizaciones y eliminaciones de preguntas
+    // Manejar actualizaciones de preguntas
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
         setQuestions((prevQuestions) => {
@@ -333,7 +314,7 @@ export default function GameControlPage({ params }) {
         });
       }
     });
-
+    // Manejar eliminaciones de preguntas
     socket.on('updateDeleteAsk', (response) => {
       if (response.data) {
         setQuestions((prevQuestions) => {
@@ -392,10 +373,10 @@ export default function GameControlPage({ params }) {
         } else {
           setPlayers(response.players);
           setPlayerId(response.players.id)
-          setDeletePlayers(response.players)
         }
       });
     }
+
   };
 
 
@@ -407,6 +388,25 @@ export default function GameControlPage({ params }) {
       setSendmsg('Ranking enviado');
     }
   };
+
+  const handleSendMainScreen = () => {
+    if (socket) {
+      socket.emit('endGame');
+
+      socket.emit('deleteAllPlayers', { gameId }, (response) => {
+        if (response.error) {
+          console.error(response.error);
+        } else {
+          toast('Todos los jugadores han sido eliminados.', {onClose: () =>{
+            router.push('/')
+          }});
+          // Aquí podrías realizar más acciones, como redirigir a los usuarios o actualizar la UI
+        }
+
+      });
+
+    }
+  }
 
   const formatTime = (milliseconds) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -442,14 +442,16 @@ export default function GameControlPage({ params }) {
               setMessage('El juego está en marcha');
             }
           }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
-          <button onClick={() => {
+          {/* <button onClick={() => {
             if (socket) {
               socket.emit('stopGame');
               router.push('/')
               setGameState('stopped');
               setMessage('El juego ha sido finalizado');
             }
-          }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Finalizar</button>
+          }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Finalizar</button> */}
+          <EndGame 
+            onSend={handleSendMainScreen} />
           <Tooltip className='text-[#fcff00] text-base uppercase' content='Sólo modificar preguntas futuras'>
             <Link onClick={() => {
               if (socket) {

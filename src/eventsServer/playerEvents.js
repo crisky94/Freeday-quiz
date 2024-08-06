@@ -282,22 +282,23 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-  //* Evento para obtener los jugadores de un juego específico(ranking)
+//* Eliminar todos los jugadores de un juego en especifico(control-quiz)
 
-   socket.on('getPlayersByGame', async ({ gameId }, callback) => {
-  try {
-    // Obtener todos los jugadores de un juego específico
-    const players = await prisma.Players.findMany({
-      where: { gameId },
-    });
-
-    callback({ success: true, players });
-  } catch (error) {
-    console.error('Error al obtener los jugadores:', error);
-    callback({ error: 'Failed to retrieve players' });
-  }
-});
-
+  socket.on('deleteAllPlayers', async ({ gameId }, callback) => {
+    try {
+      // Eliminar todos los jugadores que pertenecen a un juego específico
+         await prisma.players.deleteMany({
+        where: {
+             gameId,
+        },
+      });
+   
+      callback({ success: true });
+    } catch (error) {
+      console.error('Error al eliminar jugadores:', error.message, error.stack);
+      callback({ error: 'Error al eliminar jugadores' });
+    }
+  });
 
 //* Emitir evento de ranking a los jugadores
   socket.on('playerRanking', ({ ranking }) => {
@@ -305,12 +306,12 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     io.emit('redirectToFinalScreen', { ranking });
   });
 
-  // socket.on('endGame', ({ gameId }) => {
-  //   // Lógica para eliminar a los jugadores del juego y finalizarlo
-  //   endGameForPlayers(gameId);
+  socket.on('endGame', () => {
+    // Lógica para eliminar a los jugadores del juego y finalizarlo
+    
 
-  //   // Emitir a todos los jugadores conectados que deben ir a la pantalla principal
-  //   io.to(gameId).emit('redirectToMainScreen');
-  // });
+    // Emitir a todos los jugadores conectados que deben ir a la pantalla principal
+    io.emit('redirectToMainScreen');
+  });
 
 }

@@ -81,7 +81,7 @@ export default function RankingModal({ ranking, onSend }) {
         Ver Ranking
       </button>
       {isOpen && (
-        <div className='fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center'>
+        <div className='fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center pt-32'>
           <div className='bg-white m-5 p-5 rounded shadow-lg max-w-lg w-full'>
             <h2 className='text-xl text-black font-bold mb-4'>Ranking de Jugadores</h2>
             <table className='w-full text-left text-black border'>
@@ -95,6 +95,7 @@ export default function RankingModal({ ranking, onSend }) {
               <tbody>
                 {ranking
                   .sort((a, b) => b.score - a.score)
+                  .slice(0, 10)
                   .map((player, index) => (
                     <tr key={index}>
                       <td className='py-2 px-4 border-b'>{player.playerName}</td>

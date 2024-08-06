@@ -1,26 +1,28 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Confetti from '../../../../lib/utils';
 import { useSocket } from '@/context/socketContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function RankingPage() {
   const confettiRef = useRef(null);
-  // const router = useRouter()
+  const router = useRouter();
   const [ranking, setRanking] = useState([]);
   const socket = useSocket();
   const [socketId, setSocketId] = useState();
   const [isLoading, setIsLoading] = useState(true);
   // const code =123456;
 
+  
 
   useEffect(() => {
     if (!socket) return;
     setSocketId(socket.id);
     // Listener para recibir el ranking final
     const handleFinalRanking = (response) => {
-      console.log(response);
       if (response.error) {
         console.error(response.error);
       } else {
@@ -31,21 +33,23 @@ function RankingPage() {
 
     socket.on('redirectToFinalScreen', handleFinalRanking);
 
+
+    const handleMainScreen = () => {
+      toast('Redirigiendo a home y eliminando jugador', {
+        onClose: () => {
+          router.push('/')
+        },
+      })
+
+    }
+    socket.on('redirectToMainScreen', handleMainScreen);
+    
     return () => {
       socket.off('redirectToFinalScreen', handleFinalRanking);
+      socket.off('redirectToMainScreen', handleMainScreen);
     };
+
   }, [socket]);
-
-
-  // useEffect(() => {
-  //   socket.on('deletePlayer', (playerId) => {
-  //     setPlayers((prevPlayers) => prevPlayers.filter(player => player.id !== playerId));
-  //   });
-
-  //   return () => {
-  //     socket.off('deletePlayer');
-  //   };
-  // }, [socket]);
 
   if (isLoading) {
  
@@ -69,6 +73,7 @@ function RankingPage() {
           }}
         />
       </div>
+        <ToastContainer />
     </> 
 );
 }
@@ -78,7 +83,7 @@ function RankingPage() {
       <table className='w-full text-left'>
         <tbody className='w-full text-white flex flex-col justify-center items-center'>
           {ranking
-            .slice(0, 8)
+            .slice(0, 10)
             .map((player, index) => (
               <tr
                 key={index}
@@ -95,6 +100,7 @@ function RankingPage() {
             ))}
         </tbody>
       </table>
+      <ToastContainer />
     </div>
 )
 }
