@@ -79,7 +79,8 @@ export default function GameQuizPage({ params }) {
       // Escuchar eventos de pausa, reanudación y detención
       socket.on('pauseGame', () => {
         setIsPaused(true);
-        toast('El juego está pausado', { position: "bottom-center", autoClose: 2000 });
+        toast('El juego está pausado', {
+          position: "bottom-center", autoClose: 2000});
       });
 
       socket.on('resumeGame', () => {
@@ -91,7 +92,11 @@ export default function GameQuizPage({ params }) {
       });
 
       socket.on('stopGame', () => {
-        // deletePlayer();
+        setIsPaused(true);
+        toast('El juego ha sido parado', { position: "bottom-center", autoClose: 2000, onClose: () => {
+           router.push(`/pages/ranking/${code}`)
+        } });
+       
       });
       // const deletePlayer = () => {
       //   if (!socket) return;
@@ -231,8 +236,8 @@ export default function GameQuizPage({ params }) {
         toastId: "custom-id-yes",
         position: "bottom-center",
         autoClose: 2000,
-        closeOnClick: true,
         pauseOnHover: false,
+        closeButton: false,
         draggable: true,
         theme: "light",
         transition: Bounce,

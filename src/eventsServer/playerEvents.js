@@ -307,9 +307,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
   });
 
   socket.on('endGame', () => {
-    // Lógica para eliminar a los jugadores del juego y finalizarlo
-    
-
     // Emitir a todos los jugadores conectados que deben ir a la pantalla principal
     io.emit('redirectToMainScreen');
   });

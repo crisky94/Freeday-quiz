@@ -121,7 +121,6 @@ export default function GamesList() {
 
   return (
     <>
-      {user ? (
         <div className='min-h-screen p-2 md:p-16 lg:p-16  '>
           {games.length > 0 ? (
             <>
@@ -196,7 +195,6 @@ export default function GamesList() {
             </div>
           )}
         </div>
-      ) : <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>Página no autorizada para jugadores, inicia sesión o registrate para que puedas ver tus juegos creados o poder crearlos </h1>}
     </>
   );
 }

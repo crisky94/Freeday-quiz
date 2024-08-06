@@ -1,6 +1,7 @@
 'use client';
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
+import { Tooltip } from '@nextui-org/tooltip';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
@@ -105,6 +106,7 @@ export default function EditGame({ params }) {
     });
   }, []);
 
+  
   // Agregar una nueva pregunta al juego
   const handleAddQuestion = () => {
     setFormData((prevData) => ({
@@ -143,9 +145,40 @@ export default function EditGame({ params }) {
     });
   };
 
+  const validateForm = () => {
+    let hasErrors = false;
+
+    if (!formData.gameName.trim()) {
+      toast.error('El nombre del juego es requerido.');
+      hasErrors = true;
+    }
+    if (!formData.gameDetail.trim()) {
+      toast.error('Los detalles del juego son requeridos.');
+      hasErrors = true;
+    }
+    formData.asks.forEach((ask, index) => {
+      if (!ask.ask.trim()) {
+        toast.error(`La pregunta ${index + 1} es requerida.`);
+        hasErrors = true;
+      }
+      if (ask.answer === null) {
+        toast.error(`Selecciona una respuesta correcta para la pregunta ${index + 1}.`);
+        hasErrors = true;
+      }
+    });
+
+    return hasErrors;
+  };
+
+
   // Manejar el envío del formulario para actualizar el juego
   const handleSubmit = (e) => {
-     e.preventDefault();
+    e.preventDefault();
+    const hasErrors = validateForm();
+    if (hasErrors) {
+      return; // Si hay errores, no continuar con el envío
+    }
+
     socket.emit('updateGame', { formData, gameId }, (response) => {
       if (response.success) {
         toast('Juego actualizado con éxito 🚀', {
@@ -171,6 +204,7 @@ export default function EditGame({ params }) {
 
   };
 
+
   // Autoajustar la altura del textarea según su contenido
   const handleAutoResize = (e) => {
     const textarea = e.target;
@@ -189,7 +223,9 @@ export default function EditGame({ params }) {
           name="gameName"
           value={formData.gameName}
           onChange={handleChange}
+          required
         />
+
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameDetail">Detalle del Juego:</label>
         <textarea
           className="text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden"
@@ -199,6 +235,7 @@ export default function EditGame({ params }) {
           value={formData.gameDetail}
           onChange={handleChange}
           onInput={handleAutoResize}
+          required
         />
       </div>
       <div className='w-full flex flex-wrap gap-4'>
@@ -213,6 +250,7 @@ export default function EditGame({ params }) {
                 value={ask.ask}
                 onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
                 onInput={handleAutoResize}
+                required
               />
             </div>
             <div className='card-body w-full'>
@@ -248,6 +286,7 @@ export default function EditGame({ params }) {
                     onChange={() => handleCorrectAnswerChange(index, option)}
                     required
                   />
+
                 </div>
               ))}
               <div className="flex flex-col card-title w-full justify-center items-center">
@@ -266,13 +305,18 @@ export default function EditGame({ params }) {
                 />
               </div>
               {
-                !ask.id ? (<button
+                !ask.id ? (
+                  <>
+                  <Tooltip className='text-[#ff0000] text-sm' content='Se limpiarán todas las preguntas nuevas'>
+                  <button
                   type="button"
-                  className="btn-clear mt-2 bg-red-600 hover:bg-red-500 text-white rounded-md px-4 py-2"
+                  className="btn-clear mt-4 bg-red-600 hover:bg-red-500 text-white rounded-md px-4 py-2"
                   onClick={handleClearNewQuestions}
                 >
                   Limpiar
                 </button>
+                  </Tooltip>
+                </>
                 ) : <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
               }
             </div>
@@ -288,7 +332,7 @@ export default function EditGame({ params }) {
       </button>
       <ToastContainer />
       <div className="flex justify-center mt-10 mb-10">
-        <button onClick={handleSubmit} className="btnfos-5 hoverGradiant bg-custom-linear rounded-md text-black py-4 px-8">
+        <button onSubmit={handleSubmit} className="btnfos-5 hoverGradiant bg-custom-linear rounded-md text-black py-4 px-8">
           Guardar Cambios
         </button>
       </div>

@@ -35,7 +35,7 @@ function RankingPage() {
 
 
     const handleMainScreen = () => {
-      toast('Redirigiendo a home y eliminando jugador', {
+      toast('Eliminando jugador y redirigiendo a home', {
         onClose: () => {
           router.push('/')
         },
