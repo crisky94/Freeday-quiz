@@ -300,7 +300,7 @@ export default function GameControlPage({ params }) {
 
     socket.on('pauseGame', () => setIsPaused(true));
     socket.on('resumeGame', () => setIsPaused(false));
-    socket.on('stopGame', ()=>{router.refresh()});
+    socket.on('stopGame', () => {});
 
     // Manejar actualizaciones de preguntas
     socket.on('updatedAsks', (response) => {
@@ -379,7 +379,6 @@ export default function GameControlPage({ params }) {
 
   };
 
-
   const handleSendRanking = () => {
     if (socket) {
       socket.emit('playerRanking', { ranking: players });
@@ -442,14 +441,13 @@ export default function GameControlPage({ params }) {
               setMessage('El juego está en marcha');
             }
           }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
-          {/* <button onClick={() => {
+          <button onClick={() => {
             if (socket) {
               socket.emit('stopGame');
-              router.push('/')
               setGameState('stopped');
-              setMessage('El juego ha sido finalizado');
+              setMessage('El juego ha sido parado');
             }
-          }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Finalizar</button> */}
+          }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Parar</button>
           <EndGame 
             onSend={handleSendMainScreen} />
           <Tooltip className='text-[#fcff00] text-base uppercase' content='Sólo modificar preguntas futuras'>
