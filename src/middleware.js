@@ -8,11 +8,11 @@ export default clerkMiddleware((auth, req) => {
     '/pages/create-quiz',
     '/pages/control-quiz',
     '/pages/games',
-  ];
+    ];
 
   // Chequear si la ruta es una de las rutas protegidas o si es una ruta dinámica específica
   const isProtected =
-    protectedRoutes.includes(url) || url.startsWith('/pages/modify-page/');
+    protectedRoutes.includes(url) || url.startsWith('/pages/modify-page/') || url.startsWith('/pages/pinPage/');
 
   if (isProtected) {
     auth().protect();
@@ -30,5 +30,6 @@ export const config = {
     '/pages/control-quiz',
     '/pages/games',
     '/pages/modify-page/:id*', // Ruta dinámica específica
+    '/pages/pinPage/:gameId*', // Ruta dinámica específica
   ],
 };
