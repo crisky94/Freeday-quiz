@@ -1,5 +1,6 @@
-export function gameEvents(socket,io, prisma) {
-  let gameState = '';
+export function gameEvents(socket, io, prisma) {
+
+  //* Crear juego(create-quiz)
   // Escuchamos el evento 'createGame' y recibimos los datos del juego (gamedata)
   socket.on('createGame', async (gamedata, callback) => {
     try {
@@ -44,7 +45,7 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
-  //*Obtener lista de juegos
+  //*Obtener lista de juegos(games)
   socket.on('getGames', async ({ user }, callback) => {
     try {
       console.log('Usuario recibido:', user); // Verifica que el usuario sea el esperado
@@ -123,6 +124,7 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
+  //* Actualizar juego(modify)
   socket.on('updateGame', async ({ formData, gameId }, callback) => {
     try {
       // Filtrar las preguntas existentes y las nuevas
@@ -191,7 +193,7 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
-  //*Eliminar juego por id(games)
+  //* Eliminar juego por id(games)
   socket.on('deleteGame', async ({ gameId }, callback) => {
     try {
       // Eliminar las preguntas relacionadas con el juego
@@ -216,6 +218,7 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
+  //* Obtener juegos vista previa(games)
   socket.on('getGameDetails', async ({ gameId }, callback) => {
     try {
       // Obtener el juego por ID
@@ -250,15 +253,16 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
+  // * Elimnar preguntas(modify)
   socket.on('deleteAsk', async ({ askId }, callback) => {
     try {
       // Eliminar las preguntas
-    const data =   await prisma.asks.delete({
+      const data = await prisma.asks.delete({
         where: {
           id: parseInt(askId), // Aseguramos que askId es un entero
         },
       });
-      io.emit('updateDeleteAsk', {data})
+      io.emit('updateDeleteAsk', { data })
       // Llamamos al callback con un mensaje de éxito
       callback({ success: true });
     } catch (error) {
@@ -268,18 +272,23 @@ export function gameEvents(socket,io, prisma) {
     }
   });
 
+  let gameState = '';
+
+  //* Pausar juego(control-quiz)
   socket.on('pauseGame', () => {
     gameState = 'paused';
     io.emit('gameStateUpdate', gameState);
     io.emit('pauseGame');
   });
 
+  //* Reanudar juego(control-quiz)
   socket.on('resumeGame', () => {
     gameState = 'resumed';
     io.emit('gameStateUpdate', gameState);
     io.emit('resumeGame');
   });
 
+  //* Finalizar juego(control-quiz)
   socket.on('stopGame', () => {
     gameState = 'stopped';
     io.emit('gameStateUpdate', gameState);

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useAvatar } from '../../context/avatarContext'; // Nueva importación
-import { useSocket } from '@/context/socketContext'; // Nueva importación
+import { useAvatar } from '../../context/avatarContext';
+import { useSocket } from '@/context/socketContext';
 import User from './User';
 
 import '../styles/header.css';

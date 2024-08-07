@@ -16,22 +16,37 @@ export default function GameQuizPage({ params }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [playerName, setPlayerName] = useState('');
+  const [socketId, setSocketId] = useState('');
   const [timeLeft, setTimeLeft] = useState(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
   const socket = useSocket();
   const code = parseInt(params.code);
   const router = useRouter();
+  
+  useEffect(() => {
+    if (!socket) {
+      router.push('/');
+    } else {
+      setSocketId(socket.id);
+    }
+  }, [socket, router]);
+
 
   useEffect(() => {
     if (!socket) return;
 
-    // Obtener jugadores
     const handleGetPlayers = (response) => {
       if (response.error) {
         console.error(response.error);
       } else {
-        setPlayerName(response.players);
+        const player = response.players.find(
+          (player) => player.socketId === socket.id
+        );
+        if (player) {
+          setPlayerName(player.playerName);
+        }
+        console.log(response.players);
       }
     };
 
@@ -64,7 +79,8 @@ export default function GameQuizPage({ params }) {
       // Escuchar eventos de pausa, reanudación y detención
       socket.on('pauseGame', () => {
         setIsPaused(true);
-        toast('El juego está pausado', { position: "bottom-center", autoClose: 2000 });
+        toast('El juego está pausado', {
+          position: "bottom-center", autoClose: 2000});
       });
 
       socket.on('resumeGame', () => {
@@ -72,13 +88,34 @@ export default function GameQuizPage({ params }) {
         toast('El juego está en marcha', {
           position: "bottom-center", autoClose: 2000,
         });
-
         router.refresh();
       });
 
       socket.on('stopGame', () => {
-        router.push('/pages/ranking'); // Redirigir al ranking cuando el juego se detenga
+        setIsPaused(true);
+        toast('El juego ha sido parado', { position: "bottom-center", autoClose: 2000, onClose: () => {
+           router.push(`/pages/ranking/${code}`)
+        } });
+       
       });
+      // const deletePlayer = () => {
+      //   if (!socket) return;
+
+      //   const playerId = playerName.find((player) => player.socketId === socketId)?.id;
+      //   if (!playerId) {
+      //     console.error('Player ID not found');
+      //     return;
+      //   }
+
+      //   socket.emit('deletePlayer', { playerId, code }, (response) => {
+      //     if (response.error) {
+      //       console.error(response.error);
+      //     } else {
+      //       console.log('Player eliminado con éxito');
+      //       router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
+      //     }
+      //   });
+      // };
 
       socket.on('updatedAsks', (response) => {
         if (response.asks) {
@@ -90,7 +127,6 @@ export default function GameQuizPage({ params }) {
             response.asks.forEach(newAsk => {
               updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
             });
-
             return Array.from(updatedQuestionsMap.values());
           });
         }
@@ -109,7 +145,6 @@ export default function GameQuizPage({ params }) {
           });
         }
       });
-
     }
     return () => {
       if (socket) {
@@ -120,7 +155,7 @@ export default function GameQuizPage({ params }) {
         socket.off('updateDeleteAsk');
       }
     };
-  }, [socket, code, router]);
+  }, [socket, code, router, playerName]);
 
   useEffect(() => {
     if (timeLeft === null || isPaused) return;
@@ -140,18 +175,15 @@ export default function GameQuizPage({ params }) {
   }, [timeLeft, isPaused]);
 
   useEffect(() => {
-    // Guardar el índice actual en localStorage cada vez que cambie
-    localStorage.setItem('indexQuestion', currentQuestionIndex);
     // Configurar el temporizador
     setTimeLeft((questions[currentQuestionIndex]?.timer || 0) * 1000); // Convertir a milisegundos
   }, [currentQuestionIndex, questions]);
-
+  
   const handleAnswerClick = async (answerKey) => {
     if (selectedAnswer !== null || isPaused) return; // Evita cambiar la respuesta si el juego está pausado
 
     const currentQuestion = questions[currentQuestionIndex];
-    localStorage.setItem('indexQuestion', currentQuestionIndex + 1)
-    console.log(index);
+    localStorage.setItem('indexQuestion', currentQuestionIndex + 1);
     setSelectedAnswer(answerKey);
     setIsCorrect(answerKey === currentQuestion.answer.toLowerCase());
 
@@ -170,7 +202,6 @@ export default function GameQuizPage({ params }) {
   const insertPlayer = (gameId, playerName, score) => {
     return new Promise((resolve, reject) => {
       socket.emit('insertPlayer', { gameId, playerName, score });
-
       socket.on('insertPlayerResponse', (data) => {
         if (data.error) {
           reject(data.error);
@@ -184,6 +215,8 @@ export default function GameQuizPage({ params }) {
       });
     });
   };
+  
+
 
   const handleTimeUp = async () => {
     setShowCorrectAnswer(true);
@@ -203,8 +236,8 @@ export default function GameQuizPage({ params }) {
         toastId: "custom-id-yes",
         position: "bottom-center",
         autoClose: 2000,
-        closeOnClick: true,
         pauseOnHover: false,
+        closeButton: false,
         draggable: true,
         theme: "light",
         transition: Bounce,
@@ -219,8 +252,7 @@ export default function GameQuizPage({ params }) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
-      localStorage.removeItem('indexQuestion');
-      router.push('/pages/ranking');
+      router.push(`/pages/ranking/${code}`);
     }
   };
 

@@ -50,7 +50,7 @@ const Sidebar = () => {
     return () => {
       socket.off('getPlayers', handleGetPlayers);
     };
-  }, [socket, fetchAvatar]);
+  }, [socket, fetchAvatar, players]);
 
   return (
     <div className='sidebar'>

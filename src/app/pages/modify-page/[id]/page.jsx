@@ -1,34 +1,37 @@
 'use client';
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
+import { Tooltip } from '@nextui-org/tooltip';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
 
 export default function EditGame({ params }) {
+  // Estado para manejar los datos del formulario
   const [formData, setFormData] = useState({
     gameName: '',
     gameDetail: '',
     asks: [],
   });
 
-  const socket = useSocket();
-  const gameId = params.id;
+  const socket = useSocket();// Obtener la instancia del socket desde el contexto
+  const gameId = params.id;// Obtener el ID del juego desde los parámetros de la URL
   const router = useRouter();
-  const [isNew, setIsnew] = useState(false)
 
   useEffect(() => {
     const fetchData = () => {
+      // Emitir evento para obtener preguntas del juego
       socket.emit('getAsks', { gameId }, (response) => {
         console.log('getAsks response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
+          // Actualizar el estado con las preguntas obtenidas
           setFormData((prevData) => ({
             ...prevData,
             asks: response.questions.map((question) => ({
-              id: question.id, // Asegúrate de que cada pregunta existente tenga su id
+              id: question.id,
               ask: question.ask || '',
               a: question.a || '',
               b: question.b || '',
@@ -41,11 +44,13 @@ export default function EditGame({ params }) {
         }
       });
 
+      // Emitir evento para obtener detalles del juego
       socket.emit('getGamesId', { gameId }, (response) => {
         console.log('getGamesId response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
+          // Actualizar el estado con los detalles del juego
           setFormData((prevData) => ({
             ...prevData,
             gameName: response.game.nameGame,
@@ -63,12 +68,12 @@ export default function EditGame({ params }) {
         asks: updatedAsks,
       }));
     });
-
     return () => {
       socket.off('updateQuestions');
     };
   }, [gameId, socket]);
 
+  // Manejar cambios en los campos del formulario
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -77,6 +82,7 @@ export default function EditGame({ params }) {
     }));
   }, []);
 
+  // Manejar cambios al crear las preguntas del juego
   const handleAskChange = useCallback((index, field, value) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -88,6 +94,7 @@ export default function EditGame({ params }) {
     });
   }, []);
 
+  // Manejar la selección de la respuesta correcta para crear una pregunta
   const handleCorrectAnswerChange = useCallback((index, option) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -99,6 +106,8 @@ export default function EditGame({ params }) {
     });
   }, []);
 
+  
+  // Agregar una nueva pregunta al juego
   const handleAddQuestion = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -109,10 +118,11 @@ export default function EditGame({ params }) {
     }));
   };
 
+  // Eliminar una pregunta existente del juego
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
       if (response.success) {
-        router.refresh()
+      handleSubmit()
         setFormData((prevData) => ({
           ...prevData,
           asks: prevData.asks.filter(ask => ask.id !== askId)
@@ -123,6 +133,7 @@ export default function EditGame({ params }) {
     });
   };
 
+  // Limpiar preguntas nuevas (sin ID) del formulario
   const handleClearNewQuestions = () => {
     setFormData((prevData) => {
       // Filtrar solo las preguntas existentes (con id)
@@ -134,8 +145,40 @@ export default function EditGame({ params }) {
     });
   };
 
+  const validateForm = () => {
+    let hasErrors = false;
+
+    if (!formData.gameName.trim()) {
+      toast.error('El nombre del juego es requerido.');
+      hasErrors = true;
+    }
+    if (!formData.gameDetail.trim()) {
+      toast.error('Los detalles del juego son requeridos.');
+      hasErrors = true;
+    }
+    formData.asks.forEach((ask, index) => {
+      if (!ask.ask.trim()) {
+        toast.error(`La pregunta ${index + 1} es requerida.`);
+        hasErrors = true;
+      }
+      if (ask.answer === null) {
+        toast.error(`Selecciona una respuesta correcta para la pregunta ${index + 1}.`);
+        hasErrors = true;
+      }
+    });
+
+    return hasErrors;
+  };
+
+
+  // Manejar el envío del formulario para actualizar el juego
   const handleSubmit = (e) => {
     e.preventDefault();
+    const hasErrors = validateForm();
+    if (hasErrors) {
+      return; // Si hay errores, no continuar con el envío
+    }
+
     socket.emit('updateGame', { formData, gameId }, (response) => {
       if (response.success) {
         toast('Juego actualizado con éxito 🚀', {
@@ -150,7 +193,7 @@ export default function EditGame({ params }) {
           transition: Flip,
           onClose: () => {
             setTimeout(() => {
-              router.push('/');
+              router.refresh();
             });
           },
         });
@@ -161,6 +204,8 @@ export default function EditGame({ params }) {
 
   };
 
+
+  // Autoajustar la altura del textarea según su contenido
   const handleAutoResize = (e) => {
     const textarea = e.target;
     textarea.style.height = 'auto';
@@ -168,7 +213,7 @@ export default function EditGame({ params }) {
   };
 
   return (
-    <form className="flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16" onSubmit={handleSubmit}>
+    <form className="flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16 " onSubmit={handleSubmit}>
       <div className="card-body w-full border-2 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-center text-center items-center mb-5 py-5 px-5">
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameName">Nombre del Juego:</label>
         <input
@@ -178,7 +223,9 @@ export default function EditGame({ params }) {
           name="gameName"
           value={formData.gameName}
           onChange={handleChange}
+          required
         />
+
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameDetail">Detalle del Juego:</label>
         <textarea
           className="text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden"
@@ -188,6 +235,7 @@ export default function EditGame({ params }) {
           value={formData.gameDetail}
           onChange={handleChange}
           onInput={handleAutoResize}
+          required
         />
       </div>
       <div className='w-full flex flex-wrap gap-4'>
@@ -202,6 +250,7 @@ export default function EditGame({ params }) {
                 value={ask.ask}
                 onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
                 onInput={handleAutoResize}
+                required
               />
             </div>
             <div className='card-body w-full'>
@@ -237,6 +286,7 @@ export default function EditGame({ params }) {
                     onChange={() => handleCorrectAnswerChange(index, option)}
                     required
                   />
+
                 </div>
               ))}
               <div className="flex flex-col card-title w-full justify-center items-center">
@@ -255,13 +305,18 @@ export default function EditGame({ params }) {
                 />
               </div>
               {
-                !ask.id ? (<button
+                !ask.id ? (
+                  <>
+                  <Tooltip className='text-[#ff0000] text-sm' content='Se limpiarán todas las preguntas nuevas'>
+                  <button
                   type="button"
-                  className="btn-clear mt-2 bg-red-600 hover:bg-red-500 text-white rounded-md px-4 py-2"
+                  className="btn-clear mt-4 bg-red-600 hover:bg-red-500 text-white rounded-md px-4 py-2"
                   onClick={handleClearNewQuestions}
                 >
                   Limpiar
                 </button>
+                  </Tooltip>
+                </>
                 ) : <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
               }
             </div>
@@ -277,7 +332,7 @@ export default function EditGame({ params }) {
       </button>
       <ToastContainer />
       <div className="flex justify-center mt-10 mb-10">
-        <button className="btnfos-5 hoverGradiant bg-custom-linear rounded-md text-black py-4 px-8">
+        <button onSubmit={handleSubmit} className="btnfos-5 hoverGradiant bg-custom-linear rounded-md text-black py-4 px-8">
           Guardar Cambios
         </button>
       </div>
