@@ -14,6 +14,7 @@ export default function EditGame({ params }) {
     gameDetail: '',
     asks: [],
   });
+
   const socket = useSocket();// Obtener la instancia del socket desde el contexto
   const gameId = params.id;// Obtener el ID del juego desde los parámetros de la URL
   const router = useRouter();
@@ -104,7 +105,6 @@ export default function EditGame({ params }) {
       return { ...prevData, asks: newAsks };
     });
   }, []);
-
 
   // Agregar una nueva pregunta al juego
   const handleAddQuestion = () => {
@@ -206,7 +206,6 @@ export default function EditGame({ params }) {
 
   };
 
-
   // Autoajustar la altura del textarea según su contenido
   const handleAutoResize = (e) => {
     const textarea = e.target;
@@ -224,21 +223,15 @@ export default function EditGame({ params }) {
           id="gameName"
           name="gameName"
           value={formData.gameName}
-          onChange={handleChange}
-
-        />
-
+          onChange={handleChange}/>
         <label className="text-sm sm:text-base font-bold uppercase mb-4 bg-black p-2 rounded-md" htmlFor="gameDetail">Detalle del Juego:</label>
         <textarea
           className="text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden"
           id="gameDetail"
           name="gameDetail"
-
           value={formData.gameDetail}
           onChange={handleChange}
-          onInput={handleAutoResize}
-
-        />
+          onInput={handleAutoResize}/>
       </div>
       <div className='w-full flex flex-wrap gap-4'>
         {formData.asks.map((ask, index) => (
@@ -251,9 +244,7 @@ export default function EditGame({ params }) {
                 name={`ask-${index}`}
                 value={ask.ask}
                 onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
-                onInput={handleAutoResize}
-
-              />
+                onInput={handleAutoResize}/>
             </div>
             <div className='card-body w-full'>
               {['a', 'b', 'c', 'd'].map((option) => (
@@ -276,19 +267,13 @@ export default function EditGame({ params }) {
                     onChange={(e) =>
                       handleAskChange(index, option, e.target.value)
                     }
-                    onInput={handleAutoResize}
-
-                  />
-
+                    onInput={handleAutoResize}/>
                   <input
                     type='radio'
                     value={ask[option]}
                     name={`correctAnswer-${index}`}
                     checked={ask.answer === option}
-                    onChange={() => handleCorrectAnswerChange(index, option)}
-
-                  />
-
+                    onChange={() => handleCorrectAnswerChange(index, option)}/>
                 </div>
               ))}
               <div className="flex flex-col card-title w-full justify-center items-center">
@@ -302,9 +287,7 @@ export default function EditGame({ params }) {
                   name={`timer-${index}`}
                   value={ask.timer}
                   onChange={(e) =>
-                    handleAskChange(index, 'timer', e.target.value)
-                  }
-                />
+                    handleAskChange(index, 'timer', e.target.value)}/>
               </div>
               {
                 !ask.id ? (
@@ -313,23 +296,21 @@ export default function EditGame({ params }) {
                       <button
                         type="button"
                         className="btn-clear mt-4 bg-red-600 hover:bg-red-500 text-white rounded-md px-4 py-2"
-                        onClick={handleClearNewQuestions}
-                      >
+                        onClick={handleClearNewQuestions}>
                         Limpiar
                       </button>
                     </Tooltip>
                   </>
                 ) : <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
-              }
+                }
             </div>
           </div>
-        ))}
+          ))}
       </div>
       <button
         type="button"
         className="btn-add mt-8 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2"
-        onClick={handleAddQuestion}
-      >
+        onClick={handleAddQuestion}>
         Añadir Pregunta
       </button>
       <ToastContainer />

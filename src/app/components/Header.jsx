@@ -43,7 +43,6 @@ export default function Header() {
     };
 
     socket.emit('getPlayers', { code }, handleGetPlayers);
-
     return () => {
       socket.off('getPlayers', handleGetPlayers);
     };
@@ -60,7 +59,6 @@ export default function Header() {
           alt='Logo'
         />
       </Link>
-
       <div className='nav-header'>
         {user ? (
           <User />
@@ -85,7 +83,6 @@ export default function Header() {
           </div>
         )}
       </div>
-
     </nav>
   );
 }

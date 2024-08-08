@@ -23,7 +23,7 @@ export default function GameQuizPage({ params }) {
   const socket = useSocket();
   const code = parseInt(params.code);
   const router = useRouter();
-  
+
   useEffect(() => {
     if (!socket) {
       router.push('/');
@@ -31,7 +31,6 @@ export default function GameQuizPage({ params }) {
       setSocketId(socket.id);
     }
   }, [socket, router]);
-
 
   useEffect(() => {
     if (!socket) return;
@@ -61,7 +60,6 @@ export default function GameQuizPage({ params }) {
     if (socket) {
       // Obtener el estado inicial del juego
       const fetchQuestions = () => {
-
         socket.emit('getCodeGame', { code }, (response) => {
           console.log(response, 'getcodeGame');
           if (response.error) {
@@ -80,7 +78,8 @@ export default function GameQuizPage({ params }) {
       socket.on('pauseGame', () => {
         setIsPaused(true);
         toast('El juego está pausado', {
-          position: "bottom-center", autoClose: 2000});
+          position: "bottom-center", autoClose: 2000
+        });
       });
 
       socket.on('resumeGame', () => {
@@ -91,10 +90,11 @@ export default function GameQuizPage({ params }) {
       });
 
       socket.on('stopGame', () => {
-        toast('El juego ha sido parado', { position: "bottom-center", autoClose: 2000, onClose: () => {
-           router.push(`/pages/ranking/${code}`)
-        } });
-       
+        toast('El juego ha sido parado', {
+          position: "bottom-center", autoClose: 2000, onClose: () => {
+            router.push(`/pages/ranking/${code}`)
+          }
+        });
       });
 
       socket.on('updatedAsks', (response) => {
@@ -158,7 +158,7 @@ export default function GameQuizPage({ params }) {
     // Configurar el temporizador
     setTimeLeft((questions[currentQuestionIndex]?.timer || 0) * 1000); // Convertir a milisegundos
   }, [currentQuestionIndex, questions]);
-  
+
   const handleAnswerClick = async (answerKey) => {
     if (selectedAnswer !== null || isPaused) return; // Evita cambiar la respuesta si el juego está pausado
 
@@ -195,8 +195,6 @@ export default function GameQuizPage({ params }) {
       });
     });
   };
-  
-
 
   const handleTimeUp = async () => {
     setShowCorrectAnswer(true);
@@ -225,7 +223,7 @@ export default function GameQuizPage({ params }) {
       });
     });
   };
-  
+
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {

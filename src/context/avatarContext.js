@@ -1,8 +1,7 @@
-// AvatarContext.js
 'use client';
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
-const apikey = process.env.REACT_APP_API_KEY; // Asegúrate de usar el prefijo REACT_APP_ para las variables de entorno en create-react-app
+const apikey = process.env.REACT_APP_API_KEY;
 
 const AvatarContext = createContext();
 
