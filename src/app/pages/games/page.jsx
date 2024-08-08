@@ -140,8 +140,8 @@ export default function GamesList() {
                     key={game.id}
                     className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all'
                   >
-                    <div className='flex flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
-                      <h2 className='truncate card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
+                    <div className='flex  flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
+                      <h2 className='truncate  card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
                         {`${i + 1}. ${game.nameGame}`}
                       </h2>
                       <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
@@ -175,11 +175,13 @@ export default function GamesList() {
                         </p>
                       )}
                       <div
-                        className=' w-48 mt-8   cursor-zoom-in p-1 text-xs text-black'
+                        className=' w-44 bottom-7 absolute transition duration-700 ease-in-out transform hover:scale-105  cursor-zoom-in p-1 text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
-                        <p className='rounded-md bg-primary'>Vista previa </p>
+                        <p className='rounded-md w-full  bg-primary'>
+                          Vista previa{' '}
+                        </p>
                         {hoveredQuestions[game.id] && (
                           <div className='bg-transparent '>
                             <DemoPreview

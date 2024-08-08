@@ -2,10 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
-// import { useAvatar  } from '../../../../lib/fetchAvatar';
 import { useAvatar } from '../../../../context/avatarContext';
 import Image from 'next/image';
-// import '@/app/styles/Room/animationRoom.css';
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -16,10 +14,7 @@ const WaitingRoom = ({ params }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
-  const [countdown, setCountdown] = useState(null);
-
-  // const { avatars } = useAvatar();
-
+  // const [countdown, setCountdown] = useState(null);
 
   useEffect(() => {
     if (!socket) {
@@ -106,7 +101,6 @@ const WaitingRoom = ({ params }) => {
       socket.off('exitPlayer', handleExitPlayer);
       socket.off('updatePlayer', handleUpdatePlayer);
     };
-
   }, [socket]);
 
   useEffect(() => {
@@ -182,8 +176,9 @@ const WaitingRoom = ({ params }) => {
         {players.map((player) => (
           <div
             key={player.id}
-            className={`w-14 flex flex-col items-center p-1 mx-8 ${player.socketId === socketId ? 'text-secundary' : 'text-white'
-              }`}
+            className={`w-14 flex flex-col items-center p-1 mx-8 ${
+              player.socketId === socketId ? 'text-secundary' : 'text-white'
+            }`}
           >
             <div className='text-center flex flex-col items-center p-1 gap-1'>
               <Image

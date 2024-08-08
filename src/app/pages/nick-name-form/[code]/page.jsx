@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
+import { toast } from 'react-toastify';
+import { userValidation } from '@/lib/userValidation';
 
 const NickNameForm = ({ params }) => {
   const socket = useSocket();
@@ -11,7 +13,10 @@ const NickNameForm = ({ params }) => {
   const code = parseInt(params.code);
   const router = useRouter();
 
+  userValidation();
+
   useEffect(() => {
+    if (!socket) return;
     socket.on('nicknameConflict', () => {
       setIsModalOpen(true);
     });

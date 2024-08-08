@@ -362,7 +362,7 @@ export default function CreateGame() {
             {' '}
             JUEGO CREADO CON ÉXITO
             <br />
-            PIN: <strong className='text-secundary'> {pin}</strong>
+            PIN: <strong className='text-black'> {pin}</strong>
           </p>
         </div>
       ) : (

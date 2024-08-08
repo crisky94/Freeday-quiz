@@ -10,6 +10,7 @@ function AccessPin({ gameId }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const socket = useSocket();
+  localStorage.setItem('pin', code); // Almacenar el PIN después de la validación
 
   const handleInputChange = (e) => {
     setCode(parseInt(e.target.value));

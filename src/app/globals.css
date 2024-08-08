@@ -88,7 +88,7 @@ body {
 /* !LOADING PRINCIPAL*/
 .spinner {
   --size: 30px;
-  --first: #005bba;
+  --first: #23ffdd;
   --second: #fed500;
   width: 50px;
   height: 50px;

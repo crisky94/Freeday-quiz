@@ -1,24 +1,27 @@
 'use client';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn, user, isLoaded } = useUser();
+  const [loading, setLoading] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
-
-    if (isSignedIn && window.location.pathname === '/') {
-      router.push('/');
-
+    if (isLoaded) {
+      setLoading(false);
+      if (isSignedIn && window.location.pathname === '/') {
+        router.push('/'); // Redirigir a una página específica
+      }
     }
-  }, [user, isSignedIn, router]);
+  }, [isLoaded, isSignedIn, router]);
 
   return (
-    <AuthContext.Provider value={{ isSignedIn, user }}>
+    <AuthContext.Provider value={{ isSignedIn, user, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
+import { userValidation } from '@/lib/userValidation';
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -23,6 +24,7 @@ export default function GameQuizPage({ params }) {
   const code = parseInt(params.code);
   const router = useRouter();
 
+  userValidation();
   // !PARA EL RANKING DE PLAYERS TIENES QUE MANEJAR OTRO EVENTO QUE INICIE EN UN ARRAY, NO TE OLVIDES DE LIMPIAR LA TABLA CON UN BOTON DE FINALIZAR JUEGO Y QUE LOS MANDE A TODOS A / Y TAMBIEN QUE SI ESTAN JUGANDO CUANDO ALGUIEN RECARGUE LA PAGINA SALGA EL MISMO AVISO DE LA ROOM YA QUE SI SE RECARGA TIENE QUE VOLVER A / POR QUE ESTA ELIMINADO DE LA BD
 
   useEffect(() => {
@@ -168,6 +170,7 @@ export default function GameQuizPage({ params }) {
     const currentQuestion = questions[currentQuestionIndex];
     localStorage.setItem('indexQuestion', currentQuestionIndex + 1);
     setSelectedAnswer(answerKey);
+    console.log(isCorrect);
     setIsCorrect(answerKey === currentQuestion.answer.toLowerCase());
 
     if (answerKey === currentQuestion.answer.toLowerCase()) {
@@ -217,12 +220,13 @@ export default function GameQuizPage({ params }) {
         toastId: 'custom-id-yes',
         position: 'bottom-center',
         autoClose: 2000,
-        closeOnClick: true,
+        closeButton: false,
         pauseOnHover: false,
         draggable: true,
         theme: 'light',
         transition: Bounce,
         onClose: resolve,
+        pauseOnFocusLoss: false,
       });
     });
   };
