@@ -399,7 +399,6 @@ export default function GameControlPage({ params }) {
           toast('Todos los jugadores han sido eliminados.', {onClose: () =>{
             router.push('/')
           }});
-          // Aquí podrías realizar más acciones, como redirigir a los usuarios o actualizar la UI
         }
 
       });
@@ -449,14 +448,9 @@ export default function GameControlPage({ params }) {
             }
           }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Parar</button>
           <EndGame 
-            onSend={handleSendMainScreen} />
-          <Tooltip className='text-[#fcff00] text-base uppercase' content='Sólo modificar preguntas futuras'>
-            <Link onClick={() => {
-              if (socket) {
-               
-                setMessage('El juego esta siendo modificado');
-              }
-            }} className='mt-5 text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
+          onSend={handleSendMainScreen} />
+          <Tooltip className='text-[#fcff00] text-base uppercase' content='Sólo Eliminar preguntas futuras'>
+            <Link onClick={() => {}} className='mt-5 text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
               Modificar juego
             </Link>
           </Tooltip>
