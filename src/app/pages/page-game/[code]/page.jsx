@@ -227,12 +227,18 @@ export default function GameQuizPage({ params }) {
   const deletePlayer = useCallback(() => {
     if (!socket) return;
 
-    socket.emit('deletePlayer', { playerName, code }, (response) => {
+    const playerId = players.find((player) => player.socketId === socketId)?.id;
+    if (!playerId) {
+      console.error('Player ID not found');
+      return;
+    }
+
+    socket.emit('deletePlayer', { playerId, code }, (response) => {
       if (response.error) {
         console.error(response.error);
       } else {
         console.log('Player eliminado con éxito');
-        router.push('/pages/access-pin'); // Redirigir a la página de acceso al pin
+        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
   }, [socket, playerName, code, router]);

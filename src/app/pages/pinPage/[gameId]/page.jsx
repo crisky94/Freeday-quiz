@@ -74,13 +74,14 @@ const PinPage = () => {
       router.push(`/pages/page-game/${game.codeGame}`);
     }
     if (user) {
-      router.push(`/pages/control-quiz/${game.id}`);
-    }
-  };
+    router.push(`/pages/control-quiz/${game.id}`);
+   };
+  }
 
   if (!game) {
     return <div>Cargando...</div>;
   }
+
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>

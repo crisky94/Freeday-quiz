@@ -5,6 +5,7 @@ import { useSocket } from '@/context/socketContext';
 import { useAvatar } from '../../../../context/avatarContext';
 import Image from 'next/image';
 import BeforeUnloadHandler from '../../../components/closePage';
+import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -15,8 +16,7 @@ const WaitingRoom = ({ params }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
-  const [countdown, setCountdown] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(10); // Tiempo restante para la cuenta regresiva
+  const [countdown, setCountdown] = useState(false);
 
   useEffect(() => {
     if (!socket) {
@@ -119,20 +119,6 @@ const WaitingRoom = ({ params }) => {
     };
   }, [socket, code, fetchAvatar]);
 
-  useEffect(() => {
-    if (!countdown) return;
-
-    if (timeLeft === 0) {
-      router.push(`/pages/page-game/${code}`);
-    }
-
-    const timerId = setInterval(() => {
-      setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
-    }, 1000);
-
-    return () => clearInterval(timerId);
-  }, [countdown, timeLeft, router, code]);
-
   const deletePlayer = useCallback(() => {
     if (!socket) return;
 
@@ -151,6 +137,10 @@ const WaitingRoom = ({ params }) => {
       }
     });
   }, [socket, players, socketId, code, router]);
+
+  const handleCountdownFinish = () => {
+    router.push(`/pages/page-game/${code}`);
+  };
 
   return (
     <div className='w-screen h-screen bgroom'>
@@ -195,9 +185,7 @@ const WaitingRoom = ({ params }) => {
       )}
       <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
         {countdown ? (
-          <>
-            <p className='pb-2'>El juego comenzará en {timeLeft} segundos...</p>
-          </>
+          <PacManCountdown onCountdownFinish={handleCountdownFinish} />
         ) : (
           <>
             <p className='pb-2'>Esperando inicio del juego...</p>
