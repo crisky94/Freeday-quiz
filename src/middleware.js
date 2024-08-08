@@ -12,7 +12,7 @@ export default clerkMiddleware((auth, req) => {
 
   // Chequear si la ruta es una de las rutas protegidas o si es una ruta dinámica específica
   const isProtected =
-    protectedRoutes.includes(url) || url.startsWith('/pages/modify-page/');
+    protectedRoutes.includes(url) || url.startsWith('/pages/modify-page/') || url.startsWith('/pages/control-quiz/');
 
   if (isProtected) {
     auth().protect();
@@ -27,7 +27,7 @@ export const config = {
     '/(api|trpc)(.*)',
     // Especificar rutas protegidas directamente en el matcher
     '/pages/create-quiz',
-    '/pages/control-quiz',
+    '/pages/control-quiz/:gameId*',
     '/pages/games',
     '/pages/modify-page/:id*', // Ruta dinámica específica
   ],

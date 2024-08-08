@@ -17,6 +17,7 @@ export default function GameQuizPage({ params }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [playerName, setPlayerName] = useState('');
+  const [socketId, setSocketId] = useState('');
   const [timeLeft, setTimeLeft] = useState(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
@@ -26,6 +27,14 @@ export default function GameQuizPage({ params }) {
 
   userValidation();
   // !PARA EL RANKING DE PLAYERS TIENES QUE MANEJAR OTRO EVENTO QUE INICIE EN UN ARRAY, NO TE OLVIDES DE LIMPIAR LA TABLA CON UN BOTON DE FINALIZAR JUEGO Y QUE LOS MANDE A TODOS A / Y TAMBIEN QUE SI ESTAN JUGANDO CUANDO ALGUIEN RECARGUE LA PAGINA SALGA EL MISMO AVISO DE LA ROOM YA QUE SI SE RECARGA TIENE QUE VOLVER A / POR QUE ESTA ELIMINADO DE LA BD
+
+  useEffect(() => {
+    if (!socket) {
+      router.push('/');
+    } else {
+      setSocketId(socket.id);
+    }
+  }, [socket, router]);
 
   useEffect(() => {
     if (!socket) return;
@@ -77,19 +86,20 @@ export default function GameQuizPage({ params }) {
           autoClose: 2000,
         });
       });
-
       socket.on('resumeGame', () => {
         setIsPaused(false);
         toast('El juego está en marcha', {
           position: 'bottom-center',
           autoClose: 2000,
         });
-
-        router.refresh();
       });
 
       socket.on('stopGame', () => {
-        router.push('/pages/ranking'); // Redirigir al ranking cuando el juego se detenga
+        toast('El juego ha sido parado', {
+          position: "bottom-center", autoClose: 2000, onClose: () => {
+            router.push(`/pages/ranking/${code}`)
+          }
+        });
       });
 
       socket.on('updatedAsks', (response) => {
@@ -107,7 +117,6 @@ export default function GameQuizPage({ params }) {
                 ...newAsk,
               });
             });
-
             return Array.from(updatedQuestionsMap.values());
           });
         }
@@ -138,7 +147,7 @@ export default function GameQuizPage({ params }) {
         socket.off('updateDeleteAsk');
       }
     };
-  }, [socket, code, router]);
+  }, [socket, code, router, playerName]);
 
   useEffect(() => {
     if (timeLeft === null || isPaused) return;
@@ -158,8 +167,6 @@ export default function GameQuizPage({ params }) {
   }, [timeLeft, isPaused]);
 
   useEffect(() => {
-    // Guardar el índice actual en localStorage cada vez que cambie
-    localStorage.setItem('indexQuestion', currentQuestionIndex);
     // Configurar el temporizador
     setTimeLeft((questions[currentQuestionIndex]?.timer || 0) * 1000); // Convertir a milisegundos
   }, [currentQuestionIndex, questions]);
@@ -222,6 +229,7 @@ export default function GameQuizPage({ params }) {
         autoClose: 2000,
         closeButton: false,
         pauseOnHover: false,
+        closeButton: false,
         draggable: true,
         theme: 'light',
         transition: Bounce,
@@ -237,8 +245,7 @@ export default function GameQuizPage({ params }) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
-      localStorage.removeItem('indexQuestion');
-      router.push('/pages/ranking');
+      router.push(`/pages/ranking/${code}`);
     }
   };
 

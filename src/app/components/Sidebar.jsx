@@ -4,7 +4,7 @@ import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useAvatar } from '../../context/avatarContext';
-import { useSocket } from '@/context/socketContext'; // Nueva importación
+import { useSocket } from '@/context/socketContext';
 import User from './User';
 import '../styles/sidebar.css';
 
@@ -51,7 +51,7 @@ const Sidebar = () => {
     return () => {
       socket.off('getPlayers', handleGetPlayers);
     };
-  }, [socket, fetchAvatar]);
+  }, [socket, fetchAvatar, players]);
 
   return (
     <div className='sidebar '>
@@ -62,9 +62,7 @@ const Sidebar = () => {
         >
           ☰
         </button>
-      ) : (
-        ''
-      )}
+      ) : ''}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#111] shadow-xl text-white transition-transform transform z-50 ${
           // Aumentar z-index aquí

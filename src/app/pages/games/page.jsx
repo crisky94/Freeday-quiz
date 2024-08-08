@@ -15,15 +15,15 @@ import '../../styles/games/editButtonGames.css';
 import '../../styles/games/ListCard.css';
 
 export default function GamesList() {
-  const [games, setGames] = useState([]);
-  const [error, setError] = useState();
-  const [nickname, setNickname] = useState('');
-  const [nickUser, setNickUser] = useState('');
-  const { user } = useAuth(User);
-  const socket = useSocket();
-  const [hoveredQuestions, setHoveredQuestions] = useState({});
+  const [games, setGames] = useState([]);// Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
+  const [error, setError] = useState();// Estado para manejar posibles errores.
+  const [nickname, setNickname] = useState('');// Estado para almacenar el apodo del jugador.
+  const [nickUser, setNickUser] = useState('');// Estado para almacenar el nombre del usuario creador.
+  const { user } = useAuth(User);// Obtiene el usuario autenticado del contexto de autenticación.
+  const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
+  const [hoveredQuestions, setHoveredQuestions] = useState({});// Estado para manejar las preguntas que se muestran en la vista previa.
+
   useEffect(() => {
-    console.log(games);
 
     if (user) {
       setNickUser(`${user.firstName} ${user.lastName}`);
@@ -39,12 +39,9 @@ export default function GamesList() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // Usuario autenticado emite un evento al servidor para obtener la lista de juegos del usuario.
       if (nickUser) {
-        console.log(nickUser);
         socket.emit('getGames', { user: nickUser }, (response) => {
-          console.log(response);
-          console.log(error);
-
           if (response.error) {
             setError(response.error);
           } else {
@@ -57,6 +54,7 @@ export default function GamesList() {
     fetchData();
   }, [nickUser, socket]);
 
+  // Maneja la eliminación de un juego.
   const handleDelete = async (gameId) => {
     socket.emit('deleteGame', { gameId }, (response) => {
       if (response.error) {
@@ -66,6 +64,8 @@ export default function GamesList() {
       }
     });
   };
+
+  //  Maneja el evento cuando el usuario pasa el ratón sobre vista previa.
   const handleMouseEnter = async (gameId) => {
     socket.emit('getGameDetails', { gameId }, (response) => {
       if (response.error) {
@@ -81,6 +81,7 @@ export default function GamesList() {
     });
   };
 
+  // Maneja el evento cuando el usuario retira el ratón sobre vista previa.
   const handleMouseLeave = (gameId) => {
     setHoveredQuestions((prev) => {
       const updated = { ...prev };
@@ -89,6 +90,7 @@ export default function GamesList() {
     });
   };
 
+  // Configuración del carrusel para diferentes tamaños de pantalla.
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -108,6 +110,7 @@ export default function GamesList() {
     },
   };
 
+  // Función para formatear la fecha en el formato "DD-MM-YYYY".
   const formatDate = (date) => {
     const d = new Date(date);
     const day = d.getDate().toString().padStart(2, '0');

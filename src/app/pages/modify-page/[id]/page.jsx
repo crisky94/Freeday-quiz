@@ -1,34 +1,37 @@
 'use client';
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
+import { Tooltip } from '@nextui-org/tooltip';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
 
 export default function EditGame({ params }) {
+  // Estado para manejar los datos del formulario
   const [formData, setFormData] = useState({
     gameName: '',
     gameDetail: '',
     asks: [],
   });
 
-  const socket = useSocket();
-  const gameId = params.id;
+  const socket = useSocket();// Obtener la instancia del socket desde el contexto
+  const gameId = params.id;// Obtener el ID del juego desde los parámetros de la URL
   const router = useRouter();
-  const [isNew, setIsnew] = useState(false);
 
   useEffect(() => {
     const fetchData = () => {
+      // Emitir evento para obtener preguntas del juego
       socket.emit('getAsks', { gameId }, (response) => {
         console.log('getAsks response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
+          // Actualizar el estado con las preguntas obtenidas
           setFormData((prevData) => ({
             ...prevData,
             asks: response.questions.map((question) => ({
-              id: question.id, // Asegúrate de que cada pregunta existente tenga su id
+              id: question.id,
               ask: question.ask || '',
               a: question.a || '',
               b: question.b || '',
@@ -41,11 +44,13 @@ export default function EditGame({ params }) {
         }
       });
 
+      // Emitir evento para obtener detalles del juego
       socket.emit('getGamesId', { gameId }, (response) => {
         console.log('getGamesId response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
+          // Actualizar el estado con los detalles del juego
           setFormData((prevData) => ({
             ...prevData,
             gameName: response.game.nameGame,
@@ -63,12 +68,12 @@ export default function EditGame({ params }) {
         asks: updatedAsks,
       }));
     });
-
     return () => {
       socket.off('updateQuestions');
     };
   }, [gameId, socket]);
 
+  // Manejar cambios en los campos del formulario
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -77,6 +82,7 @@ export default function EditGame({ params }) {
     }));
   }, []);
 
+  // Manejar cambios al crear las preguntas del juego
   const handleAskChange = useCallback((index, field, value) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -88,6 +94,7 @@ export default function EditGame({ params }) {
     });
   }, []);
 
+  // Manejar la selección de la respuesta correcta para crear una pregunta
   const handleCorrectAnswerChange = useCallback((index, option) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -99,6 +106,7 @@ export default function EditGame({ params }) {
     });
   }, []);
 
+  // Agregar una nueva pregunta al juego
   const handleAddQuestion = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -109,20 +117,26 @@ export default function EditGame({ params }) {
     }));
   };
 
+  // Eliminar una pregunta existente del juego
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
+      console.log(response);
       if (response.success) {
-        router.refresh();
-        setFormData((prevData) => ({
-          ...prevData,
-          asks: prevData.asks.filter((ask) => ask.id !== askId),
-        }));
+            setFormData(prevData => {
+          // Filtrar las preguntas para eliminar la pregunta con askId
+          const updatedAsks = prevData.asks.filter(ask => ask.id !== askId);
+          return {
+            ...prevData,
+            asks: updatedAsks
+          };
+        });
       } else {
         console.error(response.error);
       }
     });
   };
 
+  // Limpiar preguntas nuevas (sin ID) del formulario
   const handleClearNewQuestions = () => {
     setFormData((prevData) => {
       // Filtrar solo las preguntas existentes (con id)
@@ -133,25 +147,56 @@ export default function EditGame({ params }) {
       };
     });
   };
+  const validateForm = () => {
+    let hasErrors = false;
 
+    if (!formData.gameName.trim()) {
+      toast.error('El nombre del juego es requerido.');
+      hasErrors = true;
+    }
+    if (!formData.gameDetail.trim()) {
+      toast.error('Los detalles del juego son requeridos.');
+      hasErrors = true;
+    }
+    formData.asks.forEach((ask, index) => {
+      if (!ask.ask.trim()) {
+        toast.error(`La pregunta ${index + 1} es requerida.`);
+        hasErrors = true;
+      }
+      if (!ask.a.trim() || !ask.b.trim() || !ask.c.trim() || !ask.d.trim()) {
+        toast.error(`Todas las respuestas para la pregunta ${index + 1} son requeridas.`);
+        hasErrors = true;
+      }
+      if (ask.answer === null) {
+        toast.error(`Selecciona una respuesta correcta para la pregunta ${index + 1}.`);
+        hasErrors = true;
+      }
+    });
+    return hasErrors;
+  };
+
+  // Manejar el envío del formulario para actualizar el juego
   const handleSubmit = (e) => {
     e.preventDefault();
+    const hasErrors = validateForm();
+    if (hasErrors) {
+      return; // No procede si hay errores
+    }
     socket.emit('updateGame', { formData, gameId }, (response) => {
       if (response.success) {
-        toast('Juego actualizado con éxito 🚀', {
+        toast('Juego actualizado con éxito.Redirigiendo a Home🚀', {
           position: 'bottom-center',
-          autoClose: 2000,
           hideProgressBar: false,
-          closeOnClick: true,
+          autoClose: 1000,
+          closeOnClick: false,
           pauseOnHover: true,
           draggable: false,
-          progress: undefined,
+          pauseOnHover: false,
+          closeButton: false,
           theme: 'light',
           transition: Flip,
           onClose: () => {
-            setTimeout(() => {
-              router.push('/');
-            });
+            router.push('/');
           },
         });
       } else {
@@ -160,6 +205,7 @@ export default function EditGame({ params }) {
     });
   };
 
+  // Autoajustar la altura del textarea según su contenido
   const handleAutoResize = (e) => {
     const textarea = e.target;
     textarea.style.height = 'auto';
@@ -198,8 +244,7 @@ export default function EditGame({ params }) {
           name='gameDetail'
           value={formData.gameDetail}
           onChange={handleChange}
-          onInput={handleAutoResize}
-        />
+          onInput={handleAutoResize}/>
       </div>
       <div className='w-full flex flex-wrap gap-4'>
         {formData.asks.map((ask, index) => (
@@ -220,8 +265,7 @@ export default function EditGame({ params }) {
                 name={`ask-${index}`}
                 value={ask.ask}
                 onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
-                onInput={handleAutoResize}
-              />
+                onInput={handleAutoResize}/>
             </div>
             <div className='card-body w-full'>
               {['a', 'b', 'c', 'd'].map((option) => (
@@ -232,7 +276,6 @@ export default function EditGame({ params }) {
                   >
                     {option.toUpperCase()}:
                   </label>
-
                   <div className='flex w-full  relative'>
                     <input
                       className={`${
@@ -244,8 +287,8 @@ export default function EditGame({ params }) {
                           ? 'bg-green-500 focus:ring-green-800'
                           : 'bg-yellow-500 focus:ring-yellow-600'
                       } text-black  text-center truncate rounded-md h-10
-    placeholder:text-justify 
-    focus:outline-none focus:ring-2 ring-yellow-400 mb-2 w-full  resize-none overflow-hidden`}
+                        placeholder:text-justify 
+                        focus:outline-none focus:ring-2 ring-yellow-400 mb-2 w-full  resize-none overflow-hidden`}
                       id={`${option}-${index}`}
                       type='text'
                       name={`${option}-${index}`}
@@ -253,8 +296,7 @@ export default function EditGame({ params }) {
                       onChange={(e) =>
                         handleAskChange(index, option, e.target.value)
                       }
-                      onInput={handleAutoResize}
-                      required
+                      onInput={handleAutoResize}                   
                     />
                     <input
                       className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1  mx-1 h-5'
@@ -284,9 +326,7 @@ export default function EditGame({ params }) {
                   name={`timer-${index}`}
                   value={ask.timer}
                   onChange={(e) =>
-                    handleAskChange(index, 'timer', e.target.value)
-                  }
-                />
+                    handleAskChange(index, 'timer', e.target.value)}/>
               </div>
               {!ask.id ? (
                 <button
@@ -301,9 +341,8 @@ export default function EditGame({ params }) {
               )}
             </div>
           </div>
-        ))}
+          ))}
       </div>
-
       <ToastContainer />
       <div className='flex justify-center mb-4 gap-2'>
         <button

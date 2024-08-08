@@ -1,9 +1,11 @@
 export function playerEvents(socket, io, prisma, gamePlayerMap) {
+  // * Unir jugaodres(waiting-room)
   socket.on('joinRoom', async ({ nickname, code }) => {
     try {
       const game = await prisma.games.findUnique({
         where: { codeGame: code },
       });
+
 
       if (game) {
         if (nickname) {
@@ -50,6 +52,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
+  // * Mandar a los jugadores al juego(pinPage)
   socket.on('startGame', async ({ code }) => {
     try {
       const game = await prisma.games.findUnique({
@@ -105,6 +108,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
+  //* Eliminar jugadores(waiting-room)
   socket.on('deletePlayer', async ({ playerId, code }, callback) => {
     try {
       await prisma.players.delete({
@@ -122,6 +126,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
+  //* Obtener jugadores(header-sidebar-waitingRoom-pageGame)
   socket.on('getPlayers', async ({ code }, callback) => {
     try {
       const game = await prisma.games.findUnique({
@@ -138,6 +143,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
           select: {
             id: true,
             playerName: true,
+            score: true,
             socketId: true,
           },
         });
@@ -179,6 +185,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
+  //* Valiidar el pin(access-pin)
   socket.on('correctCodeGame', async ({ code }, callback) => {
     try {
       const game = await prisma.games.findUnique({
@@ -202,6 +209,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
+  //* Obtener el juego mediante el codigo(page-game)
   socket.on('getCodeGame', async ({ code }, callback) => {
     try {
       const game = await prisma.games.findUnique({
@@ -238,7 +246,8 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       callback({ success: false, message: 'Error al validar el PIN' });
     }
   });
-  // Manejo de la actualización de puntajes en el servidor
+
+  //* Insertar jugadores en la tabla jugadores bd(page-game)
   socket.on('insertPlayer', async ({ gameId, playerName, score }, callback) => {
     try {
       // Buscar el jugador por gameId y playerName
@@ -272,4 +281,34 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       callback({ error: 'Failed to update score' });
     }
   });
+
+//* Eliminar todos los jugadores de un juego en especifico(control-quiz)
+
+  socket.on('deleteAllPlayers', async ({ gameId }, callback) => {
+    try {
+      // Eliminar todos los jugadores que pertenecen a un juego específico
+         await prisma.players.deleteMany({
+        where: {
+             gameId,
+        },
+      });
+   
+      callback({ success: true });
+    } catch (error) {
+      console.error('Error al eliminar jugadores:', error.message, error.stack);
+      callback({ error: 'Error al eliminar jugadores' });
+    }
+  });
+
+//* Emitir evento de ranking a los jugadores
+  socket.on('playerRanking', ({ ranking }) => {
+    // Emitir a todos los jugadores conectados que deben ir a la pantalla final
+    io.emit('redirectToFinalScreen', { ranking });
+  });
+
+  socket.on('endGame', () => {
+    // Emitir a todos los jugadores conectados que deben ir a la pantalla principal
+    io.emit('redirectToMainScreen');
+  });
+
 }
