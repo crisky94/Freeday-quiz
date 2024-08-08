@@ -1,9 +1,12 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
 import { useAvatar } from '../../../../context/avatarContext';
 import Image from 'next/image';
+import BeforeUnloadHandler from '../../../components/closePage';
+import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
+
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -14,7 +17,8 @@ const WaitingRoom = ({ params }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
-  // const [countdown, setCountdown] = useState(null);
+  const [countdown, setCountdown] = useState(false);
+
 
   useEffect(() => {
     if (!socket) {
@@ -72,31 +76,18 @@ const WaitingRoom = ({ params }) => {
         )
       );
     };
-    socket.on('gameStarted', ({ code }) => {
-      router.push(`/pages/page-game/${code}`);
-    });
 
-    // socket.on('countdown', (time) => {
-    //   setCountdown(time);
-    //   const interval = setInterval(() => {
-    //     setCountdown((prev) => {
-    //       if (prev === 1) {
-    //         clearInterval(interval);
-    //         router.push(`/pages/page-game/${code}`);
-    //       }
-    //       return prev - 1;
-    //     });
-    //   }, 3000);
-    // });
+    const handleGameStarted = ({ code }) => {
+      setCountdown(true);
+    };
 
+    socket.on('gameStarted', handleGameStarted);
     socket.on('updatePlayer', handleUpdatePlayer);
     socket.on('newPlayer', handleNewPlayer);
     socket.on('exitPlayer', handleExitPlayer);
 
     return () => {
-      // socket.off('countdown');
-
-      socket.off('gameStarted');
+      socket.off('gameStarted', handleGameStarted);
       socket.off('newPlayer', handleNewPlayer);
       socket.off('exitPlayer', handleExitPlayer);
       socket.off('updatePlayer', handleUpdatePlayer);
@@ -130,21 +121,7 @@ const WaitingRoom = ({ params }) => {
     };
   }, [socket, code, fetchAvatar]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      event.returnValue =
-        '¿Estás seguro de que deseas recargar la página? Se perderán los datos no guardados.';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
-  const deletePlayer = () => {
+  const deletePlayer = useCallback(() => {
     if (!socket) return;
 
     const playerId = players.find((player) => player.socketId === socketId)?.id;
@@ -161,10 +138,15 @@ const WaitingRoom = ({ params }) => {
         router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
+  }, [socket, players, socketId, code, router]);
+
+  const handleCountdownFinish = () => {
+    router.push(`/pages/page-game/${code}`);
   };
 
   return (
     <div className='w-screen h-screen bgroom'>
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
       <div className='h-60 flex flex-col mt-14 flex-wrap mx-5'>
         <h1 className='text-primary font-extrabold text-4xl uppercase'>
           {title}
@@ -205,15 +187,14 @@ const WaitingRoom = ({ params }) => {
         </div>
       )}
       <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
-        <p className='pb-2'>Esperando inicio del quiz...</p>
-        {/* {countdown !== null && (
-          <div className=' text-center mt-4 text-xl'>
-            <h2 className='text-2xl font-bold'>
-              El juego comienza en {countdown}...
-            </h2>
-          </div>
-        )} */}
-        <div class='loaderRoom'></div>
+        {countdown ? (
+          <PacManCountdown onCountdownFinish={handleCountdownFinish} />
+        ) : (
+          <>
+            <p className='pb-2'>Esperando inicio del juego...</p>
+            <div className='loaderRoom'></div>
+          </>
+        )}
       </div>
     </div>
   );

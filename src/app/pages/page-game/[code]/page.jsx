@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Loading from '../../../loading';
 import { useSocket } from '@/context/socketContext';
 import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
+import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
 import { userValidation } from '@/lib/userValidation';
+
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -249,6 +251,25 @@ export default function GameQuizPage({ params }) {
     }
   };
 
+  const deletePlayer = useCallback(() => {
+    if (!socket) return;
+
+    const playerId = players.find((player) => player.socketId === socketId)?.id;
+    if (!playerId) {
+      console.error('Player ID not found');
+      return;
+    }
+
+    socket.emit('deletePlayer', { playerId, code }, (response) => {
+      if (response.error) {
+        console.error(response.error);
+      } else {
+        console.log('Player eliminado con éxito');
+        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
+      }
+    });
+  }, [socket, playerName, code, router]);
+
   if (questions.length === 0) {
     return <Loading />;
   }
@@ -276,7 +297,8 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} /> {/* Agrega el componente */}
+      <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
         <ToastContainer />
         <div
           key={currentQuestion.id}

@@ -288,7 +288,7 @@ export default function CreateGame() {
 
         <div className='flex justify-center items-center h-2'>
           <Tooltip
-            content='Coloca el tiempo para la pregunta'
+            content='Coloca el tiempo para la pregunta (Segundos)'
             className='bg-primary p-1 text-black rounded-md text-xs'
           >
             <input
