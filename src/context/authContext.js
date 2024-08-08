@@ -10,7 +10,6 @@ export function AuthProvider({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-
     if (isSignedIn && window.location.pathname === '/') {
       router.push('/');
 

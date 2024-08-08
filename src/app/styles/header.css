@@ -18,6 +18,11 @@
   text-transform: uppercase;
 }
 
+.signIn-button::after{
+  content: '/';
+  margin-left:6px;
+}
+
 .signIn-button:hover::after {
   color: var(--text-color-sign);
   content: ' (Iniciar sesión)';

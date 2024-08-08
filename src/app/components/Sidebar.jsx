@@ -1,10 +1,10 @@
 'use client';
 
-import { SignInButton, SignUpButton ,useUser } from '@clerk/nextjs';
+import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useAvatar } from '../../context/avatarContext';
-import { useSocket } from '@/context/socketContext'; // Nueva importación
+import { useSocket } from '@/context/socketContext';
 import User from './User';
 import '../styles/sidebar.css';
 
@@ -57,20 +57,13 @@ const Sidebar = () => {
       {!isOpen ? (
         <button
           className='p-4 text-white fixed top-4 right-4 z-50'
-          onClick={toggleSidebar}
-        >
+          onClick={toggleSidebar}>
           ☰
         </button>
-      ) : (
-        ''
-      )}
+      ) : ''}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#111] shadow-xl text-white transition-transform transform z-50 ${
-          // Aumentar z-index aquí
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-
-      >
+          isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <button className='p-4 text-white' onClick={toggleSidebar}>
           ✕
         </button>
@@ -90,9 +83,9 @@ const Sidebar = () => {
                     </>
                   )}
                 </div>
-              ))}            
-                <SignInButton className='signIn-button-sidebar mt-10' />          
-                <SignUpButton className='signUp-button-sidebar mt-2' />         
+              ))}
+              <SignInButton className='signIn-button-sidebar mt-10' />
+              <SignUpButton className='signUp-button-sidebar mt-2' />
             </div>
           )}
         </nav>
