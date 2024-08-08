@@ -12,7 +12,7 @@ export default clerkMiddleware((auth, req) => {
 
   // Chequear si la ruta es una de las rutas protegidas o si es una ruta dinámica específica
   const isProtected =
-    protectedRoutes.includes(url) || url.startsWith('/pages/modify-page/') || url.startsWith('/pages/control-quiz/') || url.startsWith('/pages/games/');
+    protectedRoutes.includes(url) || url.startsWith('/pages/modify-page/') || url.startsWith('/pages/control-quiz/');
 
   if (isProtected) {
     auth().protect();

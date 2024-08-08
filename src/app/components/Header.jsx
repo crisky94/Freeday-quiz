@@ -8,7 +8,6 @@ import { useParams } from 'next/navigation';
 import { useAvatar } from '../../context/avatarContext';
 import { useSocket } from '@/context/socketContext';
 import User from './User';
-
 import '../styles/header.css';
 
 export default function Header() {
@@ -41,7 +40,6 @@ export default function Header() {
         setAvatars(avatarsMap);
       }
     };
-
     socket.emit('getPlayers', { code }, handleGetPlayers);
     return () => {
       socket.off('getPlayers', handleGetPlayers);
