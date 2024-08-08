@@ -30,8 +30,7 @@ export default function User() {
                   userButtonAvatarBox:
                     'w-16 h-16 rounded-full border-2  border-slate-300',
                 },
-              }}
-            />
+              }}/>
           </>
         </SignedIn>
         {user ? (

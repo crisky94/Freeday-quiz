@@ -7,6 +7,7 @@ import Image from 'next/image';
 import BeforeUnloadHandler from '../../../components/closePage';
 import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
 
+
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
   const socket = useSocket();
@@ -17,6 +18,7 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
+
 
   useEffect(() => {
     if (!socket) {
@@ -156,8 +158,9 @@ const WaitingRoom = ({ params }) => {
         {players.map((player) => (
           <div
             key={player.id}
-            className={`w-14 flex flex-col items-center p-1 mx-8 ${player.socketId === socketId ? 'text-secundary' : 'text-white'
-              }`}
+            className={`w-14 flex flex-col items-center p-1 mx-8 ${
+              player.socketId === socketId ? 'text-secundary' : 'text-white'
+            }`}
           >
             <div className='text-center flex flex-col items-center p-1 gap-1'>
               <Image

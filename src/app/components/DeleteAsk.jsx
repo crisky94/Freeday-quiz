@@ -17,26 +17,9 @@ const DeleteAsk = ({ askId, onClick }) => {
     setShowConfirmation(false);
   };
 
-  const handleConfirmDelete = (e) => {
-    e.preventDefault();
+  const handleConfirmDelete = () => {
     if (askId) {
       onClick(askId);
-      setShowConfirmation(false);
-
-      // Mostrar notificación
-      toast('Pregunta eliminada con éxito.', {
-        onClose: () => {
-          router.push('/');
-        },
-        position: 'bottom-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: 'light',
-        transition: Flip,
-      });
     }
   };
 
@@ -48,8 +31,7 @@ const DeleteAsk = ({ askId, onClick }) => {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 69 14"
-            className="svgIcon bin-top"
-          >
+            className="svgIcon bin-top">
             <g clipPath="url(#clip0_35_24)">
               <path
                 fill="black"
@@ -62,18 +44,16 @@ const DeleteAsk = ({ askId, onClick }) => {
               </clipPath>
             </defs>
           </svg>
-
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 69 57"
-            className="svgIcon bin-bottom"
-          >
+            className="svgIcon bin-bottom">
             <g clipPath="url(#clip0_35_22)">
               <path
                 fill="black"
-                d="M20.8232 -16.3727L19.9948 -14.787C19.8224 -14.4569 19.4808 -14.25 19.1085 -14.25H4.92857C2.20246 -14.25 0 -12.1273 0 -9.5C0 -6.8727 2.20246 -4.75 4.92857 -4.75H64.0714C66.7975 -4.75 69 -6.8727 69 -9.5C69 -12.1273 66.7975 -14.25 64.0714 -14.25H49.8915C49.5192 -14.25 49.1776 -14.4569 49.0052 -14.787L48.1768 -16.3727C47.3451 -17.9906 45.6355 -19 43.7719 -19H25.2281C23.3645 -19 21.6549 -17.9906 20.8232 -16.3727ZM64.0023 1.0648C64.0397 0.4882 63.5822 0 63.0044 0H5.99556C5.4178 0 4.96025 0.4882 4.99766 1.0648L8.19375 50.3203C8.44018 54.0758 11.6746 57 15.5712 57H53.4288C57.3254 57 60.5598 54.0758 60.8062 50.3203L64.0023 1.0648Z"
-              ></path>
+                d="M20.8232 -16.3727L19.9948 -14.787C19.8224 -14.4569 19.4808 -14.25 19.1085 -14.25H4.92857C2.20246 -14.25 0 -12.1273 0 -9.5C0 -6.8727 2.20246 -4.75 4.92857 -4.75H64.0714C66.7975 -4.75 69 -6.8727 69 -9.5C69 -12.1273 66.7975 -14.25 64.0714 -14.25H49.8915C49.5192 -14.25 49.1776 -14.4569 49.0052 -14.787L48.1768 -16.3727C47.3451 -17.9906 45.6355 -19 43.7719 -19H25.2281C23.3645 -19 21.6549 -17.9906 20.8232 -16.3727ZM64.0023 1.0648C64.0397 0.4882 63.5822 0 63.0044 0H5.99556C5.4178 0 4.96025 0.4882 4.99766 1.0648L8.19375 50.3203C8.44018 54.0758 11.6746 57 15.5712 57H53.4288C57.3254 57 60.5598 54.0758 60.8062 50.3203L64.0023 1.0648Z">
+              </path>
             </g>
             <defs>
               <clipPath id="clip0_35_22">
@@ -82,7 +62,6 @@ const DeleteAsk = ({ askId, onClick }) => {
             </defs>
           </svg>
         </button>
-
         {showConfirmation && (
           <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-sm w-full text-white">
@@ -91,15 +70,13 @@ const DeleteAsk = ({ askId, onClick }) => {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg mr-2"
-                >
+                  className="text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg mr-2">
                   Cancelar
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmDelete}
-                  className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg"
-                >
+                  className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">
                   Confirmar
                 </button>
               </div>

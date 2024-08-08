@@ -15,15 +15,15 @@ import '../../styles/games/editButtonGames.css';
 import '../../styles/games/ListCard.css';
 
 export default function GamesList() {
-  const [games, setGames] = useState([]);
-  const [error, setError] = useState();
-  const [nickname, setNickname] = useState('');
-  const [nickUser, setNickUser] = useState('');
-  const { user } = useAuth(User);
-  const socket = useSocket();
-  const [hoveredQuestions, setHoveredQuestions] = useState({});
+  const [games, setGames] = useState([]);// Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
+  const [error, setError] = useState();// Estado para manejar posibles errores.
+  const [nickname, setNickname] = useState('');// Estado para almacenar el apodo del jugador.
+  const [nickUser, setNickUser] = useState('');// Estado para almacenar el nombre del usuario creador.
+  const { user } = useAuth(User);// Obtiene el usuario autenticado del contexto de autenticación.
+  const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
+  const [hoveredQuestions, setHoveredQuestions] = useState({});// Estado para manejar las preguntas que se muestran en la vista previa.
+
   useEffect(() => {
-    console.log(games);
 
     if (user) {
       setNickUser(`${user.firstName} ${user.lastName}`);
@@ -39,12 +39,9 @@ export default function GamesList() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // Usuario autenticado emite un evento al servidor para obtener la lista de juegos del usuario.
       if (nickUser) {
-        console.log(nickUser);
         socket.emit('getGames', { user: nickUser }, (response) => {
-          console.log(response);
-          console.log(error);
-
           if (response.error) {
             setError(response.error);
           } else {
@@ -57,6 +54,7 @@ export default function GamesList() {
     fetchData();
   }, [nickUser, socket]);
 
+  // Maneja la eliminación de un juego.
   const handleDelete = async (gameId) => {
     socket.emit('deleteGame', { gameId }, (response) => {
       if (response.error) {
@@ -66,6 +64,8 @@ export default function GamesList() {
       }
     });
   };
+
+  //  Maneja el evento cuando el usuario pasa el ratón sobre vista previa.
   const handleMouseEnter = async (gameId) => {
     socket.emit('getGameDetails', { gameId }, (response) => {
       if (response.error) {
@@ -81,6 +81,7 @@ export default function GamesList() {
     });
   };
 
+  // Maneja el evento cuando el usuario retira el ratón sobre vista previa.
   const handleMouseLeave = (gameId) => {
     setHoveredQuestions((prev) => {
       const updated = { ...prev };
@@ -89,6 +90,7 @@ export default function GamesList() {
     });
   };
 
+  // Configuración del carrusel para diferentes tamaños de pantalla.
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -108,6 +110,7 @@ export default function GamesList() {
     },
   };
 
+  // Función para formatear la fecha en el formato "DD-MM-YYYY".
   const formatDate = (date) => {
     const d = new Date(date);
     const day = d.getDate().toString().padStart(2, '0');
@@ -128,20 +131,20 @@ export default function GamesList() {
               <Carousel
                 responsive={responsive}
                 customDot={<CustomDot />}
-                swipeable = {true}
+                swipeable={true}
                 arrows={true}
                 keyBoardControl={true}
-                removeArrowOnDeviceType={["tablet", "mobile"]}
-                draggable = {true}
-                showDots = {true}
+                removeArrowOnDeviceType={['tablet', 'mobile']}
+                draggable={true}
+                showDots={true}
               >
                 {games.map((game, i) => (
                   <div
                     key={game.id}
                     className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all'
                   >
-                    <div className='flex flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
-                      <h2 className='truncate card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
+                    <div className='flex  flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
+                      <h2 className='truncate  card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
                         {`${i + 1}. ${game.nameGame}`}
                       </h2>
                       <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
@@ -158,19 +161,30 @@ export default function GamesList() {
                         />
                       </div>
 
-                      <Link className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase' href={`/pages/pinPage/${game.id}`} >
-                        <span>
-                          Seleccionar
-                        </span>
+                      <Link
+                        className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase'
+                        href={`/pages/pinPage/${game.id}`}
+                      >
+                        <span>Seleccionar</span>
                       </Link>
                       {/* Mostrar la fecha de finalización del juego */}
-                      {game.updateAt ? <p className='text-sm'>Actualizado: {formatDate(game.updateAt)}</p> : <p className='text-lg'>Creado: {formatDate(game.endedAt)}</p>}                     
+                      {game.updateAt ? (
+                        <p className='text-sm'>
+                          Actualizado: {formatDate(game.updateAt)}
+                        </p>
+                      ) : (
+                        <p className='text-sm'>
+                          Creado: {formatDate(game.endedAt)}
+                        </p>
+                      )}
                       <div
-                        className=' w-48 mt-8   cursor-zoom-in p-1 text-xs text-black'
+                        className=' w-44 bottom-7 absolute transition duration-700 ease-in-out transform hover:scale-105  cursor-zoom-in p-1 text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
-                        <p className='rounded-md bg-primary'>Vista previa </p>
+                        <p className='rounded-md w-full  bg-primary'>
+                          Vista previa{' '}
+                        </p>
                         {hoveredQuestions[game.id] && (
                           <div className='bg-transparent '>
                             <DemoPreview
@@ -190,12 +204,18 @@ export default function GamesList() {
               <div className='mt-16 mb-4'>
                 <CreateButton />
               </div>
-                <h1 className='font-bold  bg-[#111] text-[#fed500]'>Aún no tienes juegos creados</h1>
+              <h1 className='font-bold  bg-[#111] text-[#fed500]'>
+                Aún no tienes juegos creados
+              </h1>
             </div>
           )}
         </div>
-      ) : <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>Página no autorizada para jugadores, inicia sesión o registrate para que puedas ver tus juegos creados o poder crearlos </h1>}
-
+      ) : (
+        <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>
+          Página no autorizada para jugadores, inicia sesión o registrate para
+          que puedas ver tus juegos creados o poder crearlos{' '}
+        </h1>
+      )}
     </>
   );
 }

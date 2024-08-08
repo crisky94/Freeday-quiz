@@ -10,7 +10,9 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    const newSocket = io(
+      process.env.NEXT_PUBLIC_SOCKET_IO || 'http://localhost:3000'
+    );
     setSocket(newSocket);
 
     return () => newSocket.close();

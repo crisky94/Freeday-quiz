@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
+import { toast } from 'react-toastify';
+import { userValidation } from '@/lib/userValidation';
 
 const NickNameForm = ({ params }) => {
   const socket = useSocket();
@@ -11,7 +13,10 @@ const NickNameForm = ({ params }) => {
   const code = parseInt(params.code);
   const router = useRouter();
 
+  userValidation();
+
   useEffect(() => {
+    if (!socket) return;
     socket.on('nicknameConflict', () => {
       setIsModalOpen(true);
     });
@@ -59,7 +64,7 @@ const NickNameForm = ({ params }) => {
         >
           <label className='text-white text-xl'>Introduce tu nickname</label>
           <input
-            className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+            className='text-black w-52  text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
             type='text'
             placeholder='NICKNAME'
             value={nickname}
