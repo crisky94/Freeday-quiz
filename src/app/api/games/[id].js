@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
 // Inicializa el cliente de Prisma
 const prisma = new PrismaClient();
 

@@ -136,7 +136,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       });
 
       if (game) {
-        const players = await prisma.players.findMany({
+        const players = await prisma.Players.findMany({
           where: {
             gameId: game.id,
           },

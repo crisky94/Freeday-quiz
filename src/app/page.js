@@ -1,37 +1,40 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
-
+import { useAuth } from '@/context/authContext';
 import AccesPin from './pages/access-pin/page';
 import GamesList from './pages/games/page';
-
+import Loading from './loading';
 
 function HomePage() {
   const [nickname, setNickname] = useState('');
-  const { user } = useUser();
+  const { user, isSignedIn, loading } = useAuth();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (!loading && !user && !isSignedIn) {
       const storedNickname = localStorage.getItem('nickname');
       if (storedNickname) {
         setNickname(storedNickname);
       }
     }
-  }, [user, nickname]);
+  }, [user, nickname, isSignedIn, loading]);
 
+  if (loading) {
+    return (
+      <div className='h-screen flex items-center'>
+        <Loading />
+      </div>
+    ); // Indicador de carga
+  }
   return (
     <>
-      {!user && !nickname && <AccesPin />}
-      {user && !nickname && (
+      {!isSignedIn && <AccesPin />}
+      {isSignedIn && (
         <div className='w-full min-h-screen md:min-h-[80vh] lg:min-h-[70vh]'>
           <GamesList />
         </div>
       )}
-      {!user && nickname && <AccesPin />}
     </>
-
   );
-
 }
 
 export default HomePage;

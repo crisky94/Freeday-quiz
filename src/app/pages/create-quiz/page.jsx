@@ -25,6 +25,7 @@ export default function CreateGame() {
   const [editIndex, setEditIndex] = useState(null); // Estado para el índice de la pregunta que está siendo editada
   const [pin, setPin] = useState(''); // Estado para el PIN del juego
   const [detailGame, setDetailGame] = useState('');
+  const [gameId, setGameId] = useState(null); // Nuevo estado para el gameId
 
   useEffect(() => {
     if (user) {
@@ -169,7 +170,7 @@ export default function CreateGame() {
   useEffect(() => {
     if (pin) {
       const timer = setTimeout(() => {
-        router.push(`/pages/control-quiz`); // Redirige a la página del juego usando el PIN
+        router.push(`/pages/pinPage/${gameId}`); // Redirige a la página del juego usando el PIN
       }, 5000);
 
       return () => clearTimeout(timer); // Limpia el temporizador si el componente se desmonta antes de que se cumpla el tiempo
@@ -217,6 +218,7 @@ export default function CreateGame() {
     socket.emit('createGame', gameData, (response) => {
       if (response.game.codeGame) {
         setPin(response.game.codeGame); // Setea el PIN del juego
+        setGameId(response.game.id);
         localStorage.removeItem('asks');
         toast.success('Redirigiendo a control quiz ✨', {
           position: 'bottom-center',
@@ -360,7 +362,7 @@ export default function CreateGame() {
             {' '}
             JUEGO CREADO CON ÉXITO
             <br />
-            PIN: <strong className='text-secundary'> {pin}</strong>
+            PIN: <strong className='text-black'> {pin}</strong>
           </p>
         </div>
       ) : (

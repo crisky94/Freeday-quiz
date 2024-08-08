@@ -24,7 +24,6 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-
     if (!socket) return;
 
     const handleGetPlayers = async (response) => {
@@ -33,10 +32,12 @@ const Sidebar = () => {
       } else {
         setSocketId(socket.id);
         setPlayers(response.players);
-        const avatarsData = await Promise.all(response.players.map(async (player) => {
-          const avatar = await fetchAvatar(player.playerName);
-          return { id: player.id, avatar };
-        }));
+        const avatarsData = await Promise.all(
+          response.players.map(async (player) => {
+            const avatar = await fetchAvatar(player.playerName);
+            return { id: player.id, avatar };
+          })
+        );
         const avatarsMap = {};
         avatarsData.forEach(({ id, avatar }) => {
           avatarsMap[id] = avatar;
@@ -53,18 +54,25 @@ const Sidebar = () => {
   }, [socket, fetchAvatar, players]);
 
   return (
-    <div className='sidebar'>
+    <div className='sidebar '>
       {!isOpen ? (
         <button
-          className='p-4 text-white fixed top-4 right-4 z-50'
-          onClick={toggleSidebar}>
+          className='pt-8 px-2  text-white  hover:text-primary fixed top-4 right-4 z-50'
+          onClick={toggleSidebar}
+        >
           ☰
         </button>
       ) : ''}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#111] shadow-xl text-white transition-transform transform z-50 ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <button className='p-4 text-white' onClick={toggleSidebar}>
+          // Aumentar z-index aquí
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <button
+          className='p-4 mt-6 hover:text-primary text-white'
+          onClick={toggleSidebar}
+        >
           ✕
         </button>
         <nav className='flex flex-col text-center gap-2 mt-5'>
@@ -74,12 +82,20 @@ const Sidebar = () => {
             </div>
           ) : (
             <div className='flex flex-col justify-center items-center text-center w-full h-full gap-2'>
-              {players.map(player => (
-                <div key={player.id} className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto mt-5'>
+              {players.map((player) => (
+                <div
+                  key={player.id}
+                  className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto mt-5'
+                >
                   {avatars[player.id] && player.socketId === socketId && (
                     <>
-                      <div className='border-2 border-white rounded-full' dangerouslySetInnerHTML={{ __html: avatars[player.id] }} />
-                      <p className='flex flex-row items-center bg-black h-8 px-2 rounded-md'>{player.playerName}</p>
+                      <div
+                        className='border-2 border-white rounded-full'
+                        dangerouslySetInnerHTML={{ __html: avatars[player.id] }}
+                      />
+                      <p className='flex flex-row items-center bg-black h-8 px-2 rounded-md'>
+                        {player.playerName}
+                      </p>
                     </>
                   )}
                 </div>

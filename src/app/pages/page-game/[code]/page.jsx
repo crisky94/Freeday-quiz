@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import Loading from '../../../loading';
 import { useSocket } from '@/context/socketContext';
 import { useRouter } from 'next/navigation';
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
+import { userValidation } from '@/lib/userValidation';
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -23,6 +24,9 @@ export default function GameQuizPage({ params }) {
   const socket = useSocket();
   const code = parseInt(params.code);
   const router = useRouter();
+
+  userValidation();
+  // !PARA EL RANKING DE PLAYERS TIENES QUE MANEJAR OTRO EVENTO QUE INICIE EN UN ARRAY, NO TE OLVIDES DE LIMPIAR LA TABLA CON UN BOTON DE FINALIZAR JUEGO Y QUE LOS MANDE A TODOS A / Y TAMBIEN QUE SI ESTAN JUGANDO CUANDO ALGUIEN RECARGUE LA PAGINA SALGA EL MISMO AVISO DE LA ROOM YA QUE SI SE RECARGA TIENE QUE VOLVER A / POR QUE ESTA ELIMINADO DE LA BD
 
   useEffect(() => {
     if (!socket) {
@@ -71,21 +75,22 @@ export default function GameQuizPage({ params }) {
             setGameId(response.game.id);
           }
         });
-      }
+      };
       fetchQuestions();
 
       // Escuchar eventos de pausa, reanudación y detención
       socket.on('pauseGame', () => {
         setIsPaused(true);
         toast('El juego está pausado', {
-          position: "bottom-center", autoClose: 2000
+          position: 'bottom-center',
+          autoClose: 2000,
         });
       });
-
       socket.on('resumeGame', () => {
         setIsPaused(false);
         toast('El juego está en marcha', {
-          position: "bottom-center", autoClose: 2000,
+          position: 'bottom-center',
+          autoClose: 2000,
         });
       });
 
@@ -102,10 +107,15 @@ export default function GameQuizPage({ params }) {
           console.log(response);
           // Combinar las preguntas actuales con las nuevas preguntas
           setQuestions((prevQuestions) => {
-            const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+            const updatedQuestionsMap = new Map(
+              prevQuestions.map((q) => [q.id, q])
+            );
             // Actualiza o agrega nuevas preguntas
-            response.asks.forEach(newAsk => {
-              updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
+            response.asks.forEach((newAsk) => {
+              updatedQuestionsMap.set(newAsk.id, {
+                ...updatedQuestionsMap.get(newAsk.id),
+                ...newAsk,
+              });
             });
             return Array.from(updatedQuestionsMap.values());
           });
@@ -117,7 +127,9 @@ export default function GameQuizPage({ params }) {
         if (response.data) {
           setQuestions((prevQuestions) => {
             // Crear un nuevo Map con las preguntas actuales
-            const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+            const updatedQuestionsMap = new Map(
+              prevQuestions.map((q) => [q.id, q])
+            );
             // Eliminar la pregunta recibida
             updatedQuestionsMap.delete(response.data.id);
             // Convertir el Map actualizado de nuevo a un array
@@ -165,6 +177,7 @@ export default function GameQuizPage({ params }) {
     const currentQuestion = questions[currentQuestionIndex];
     localStorage.setItem('indexQuestion', currentQuestionIndex + 1);
     setSelectedAnswer(answerKey);
+    console.log(isCorrect);
     setIsCorrect(answerKey === currentQuestion.answer.toLowerCase());
 
     if (answerKey === currentQuestion.answer.toLowerCase()) {
@@ -211,15 +224,17 @@ export default function GameQuizPage({ params }) {
   const showToast = () => {
     return new Promise((resolve) => {
       toast(`Puntos: ${score}px 🚀`, {
-        toastId: "custom-id-yes",
-        position: "bottom-center",
+        toastId: 'custom-id-yes',
+        position: 'bottom-center',
         autoClose: 2000,
+        closeButton: false,
         pauseOnHover: false,
         closeButton: false,
         draggable: true,
-        theme: "light",
+        theme: 'light',
         transition: Bounce,
         onClose: resolve,
+        pauseOnFocusLoss: false,
       });
     });
   };
@@ -243,12 +258,12 @@ export default function GameQuizPage({ params }) {
   const getButtonClass = (answerKey) => {
     if (showCorrectAnswer) {
       if (answerKey === currentQuestion.answer.toLowerCase()) {
-        return "ring-4 ring-green-500";
+        return 'ring-4 ring-green-500';
       }
-      return answerKey === selectedAnswer ? "ring-4 ring-red-500" : "";
+      return answerKey === selectedAnswer ? 'ring-4 ring-red-500' : '';
     }
     if (answerKey === selectedAnswer) {
-      return "ring-4 ring-white";
+      return 'ring-4 ring-white';
     }
     return '';
   };
@@ -261,9 +276,12 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
+      <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
         <ToastContainer />
-        <div key={currentQuestion.id} className="game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]">
+        <div
+          key={currentQuestion.id}
+          className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
+        >
           <div className='flex flex-col items-center justify-center'>
             <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
               {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
@@ -272,17 +290,37 @@ export default function GameQuizPage({ params }) {
           <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
             {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
-            <div onClick={() => handleAnswerClick('a')} className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 w-full'>
+            <div
+              onClick={() => handleAnswerClick('a')}
+              className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass(
+                'a'
+              )} text-center overflow-wrap break-word text-sm sm:text-base`}
+            >
               {currentQuestion.a}
             </div>
-            <div onClick={() => handleAnswerClick('b')} className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass('b')} text-center overflow-wrap break-word text-sm sm:text-base`}>
+            <div
+              onClick={() => handleAnswerClick('b')}
+              className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass(
+                'b'
+              )} text-center overflow-wrap break-word text-sm sm:text-base`}
+            >
               {currentQuestion.b}
             </div>
-            <div onClick={() => handleAnswerClick('c')} className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass('c')} text-center overflow-wrap break-word text-sm sm:text-base`}>
+            <div
+              onClick={() => handleAnswerClick('c')}
+              className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
+                'c'
+              )} text-center overflow-wrap break-word text-sm sm:text-base`}
+            >
               {currentQuestion.c}
             </div>
-            <div onClick={() => handleAnswerClick('d')} className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass('d')} text-center overflow-wrap break-word text-sm sm:text-base`}>
+            <div
+              onClick={() => handleAnswerClick('d')}
+              className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
+                'd'
+              )} text-center overflow-wrap break-word text-sm sm:text-base`}
+            >
               {currentQuestion.d}
             </div>
           </div>

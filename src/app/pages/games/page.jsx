@@ -121,76 +121,101 @@ export default function GamesList() {
 
   return (
     <>
-      <div className='min-h-screen p-2 md:p-16 lg:p-16  '>
-        {games.length > 0 ? (
-          <>
-            <div className='mt-10'>
-              <CreateButton />
-            </div>
-            <Carousel
-              responsive={responsive}
-              customDot={<CustomDot />}
-              swipeable={true}
-              arrows={true}
-              keyBoardControl={true}
-              removeArrowOnDeviceType={["tablet", "mobile"]}
-              draggable={true}
-              showDots={true}>
-              {games.map((game, i) => (
-                <div
-                  key={game.id}
-                  className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all'>
-                  <div className='flex flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
-                    <h2 className='truncate card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
-                      {`${i + 1}. ${game.nameGame}`}
-                    </h2>
-                    <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
-                      <Link href={`/pages/modify-page/${game.id}.jsx`}>
-                        <button className='edit-button'>
-                          <svg className='edit-svgIcon' viewBox='0 0 512 512'>
-                            <path d='M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z'></path>
-                          </svg>
-                        </button>
+      {user ? (
+        <div className='min-h-screen p-2 md:p-16 lg:p-16  '>
+          {games.length > 0 ? (
+            <>
+              <div className='mt-10'>
+                <CreateButton />
+              </div>
+              <Carousel
+                responsive={responsive}
+                customDot={<CustomDot />}
+                swipeable={true}
+                arrows={true}
+                keyBoardControl={true}
+                removeArrowOnDeviceType={['tablet', 'mobile']}
+                draggable={true}
+                showDots={true}
+              >
+                {games.map((game, i) => (
+                  <div
+                    key={game.id}
+                    className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all'
+                  >
+                    <div className='flex  flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
+                      <h2 className='truncate  card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
+                        {`${i + 1}. ${game.nameGame}`}
+                      </h2>
+                      <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
+                        <Link href={`/pages/modify-page/${game.id}.jsx`}>
+                          <button className='edit-button'>
+                            <svg className='edit-svgIcon' viewBox='0 0 512 512'>
+                              <path d='M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z'></path>
+                            </svg>
+                          </button>
+                        </Link>
+                        <DeleteConfirmation
+                          gameId={game.id}
+                          onDelete={handleDelete}
+                        />
+                      </div>
+
+                      <Link
+                        className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase'
+                        href={`/pages/pinPage/${game.id}`}
+                      >
+                        <span>Seleccionar</span>
                       </Link>
-                      <DeleteConfirmation
-                        gameId={game.id}
-                        onDelete={handleDelete}
-                      />
-                    </div>
-                    <Link className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase' href={`/pages/pinPage/${game.id}`} >
-                      <span>
-                        Seleccionar
-                      </span>
-                    </Link>
-                    {/* Mostrar la fecha de finalización del juego */}
-                    {game.updateAt ? <p className='text-sm'>Actualizado: {formatDate(game.updateAt)}</p> : <p className='text-sm'>Creado: {formatDate(game.endedAt)}</p>}
-                    <div
-                      className=' w-48 mt-8   cursor-zoom-in p-1 text-xs text-black'
-                      onMouseEnter={() => handleMouseEnter(game.id)}
-                      onMouseLeave={() => handleMouseLeave(game.id)}>
-                      <p className='rounded-md bg-primary'>Vista previa </p>
-                      {hoveredQuestions[game.id] && (
-                        <div className='bg-transparent '>
-                          <DemoPreview
-                            question={hoveredQuestions[game.id].question}
-                            timeLeft={hoveredQuestions[game.id].timeLeft} />
-                        </div>
+                      {/* Mostrar la fecha de finalización del juego */}
+                      {game.updateAt ? (
+                        <p className='text-sm'>
+                          Actualizado: {formatDate(game.updateAt)}
+                        </p>
+                      ) : (
+                        <p className='text-sm'>
+                          Creado: {formatDate(game.endedAt)}
+                        </p>
                       )}
+                      <div
+                        className=' w-44 bottom-7 absolute transition duration-700 ease-in-out transform hover:scale-105  cursor-zoom-in p-1 text-xs text-black'
+                        onMouseEnter={() => handleMouseEnter(game.id)}
+                        onMouseLeave={() => handleMouseLeave(game.id)}
+                      >
+                        <p className='rounded-md w-full  bg-primary'>
+                          Vista previa{' '}
+                        </p>
+                        {hoveredQuestions[game.id] && (
+                          <div className='bg-transparent '>
+                            <DemoPreview
+                              question={hoveredQuestions[game.id].question}
+                              timeLeft={hoveredQuestions[game.id].timeLeft}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </Carousel>
-          </>
-        ) : (
-          <div className='flex flex-col justify-center items-center w-full h-full min-h-full'>
-            <div className='mt-16 mb-4'>
-              <CreateButton />
+                ))}
+              </Carousel>
+            </>
+          ) : (
+            <div className='flex flex-col justify-center items-center w-full h-full min-h-full'>
+              <div className='mt-16 mb-4'>
+                <CreateButton />
+              </div>
+              <h1 className='font-bold  bg-[#111] text-[#fed500]'>
+                Aún no tienes juegos creados
+              </h1>
             </div>
-            <h1 className='font-bold  bg-[#111] text-[#fed500]'>Aún no tienes juegos creados</h1>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      ) : (
+        <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>
+          Página no autorizada para jugadores, inicia sesión o registrate para
+          que puedas ver tus juegos creados o poder crearlos{' '}
+        </h1>
+      )}
     </>
   );
 }
