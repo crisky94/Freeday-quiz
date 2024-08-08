@@ -88,34 +88,14 @@ export default function GameQuizPage({ params }) {
         toast('El juego está en marcha', {
           position: "bottom-center", autoClose: 2000,
         });
-        router.refresh();
       });
 
       socket.on('stopGame', () => {
-        setIsPaused(true);
         toast('El juego ha sido parado', { position: "bottom-center", autoClose: 2000, onClose: () => {
            router.push(`/pages/ranking/${code}`)
         } });
        
       });
-      // const deletePlayer = () => {
-      //   if (!socket) return;
-
-      //   const playerId = playerName.find((player) => player.socketId === socketId)?.id;
-      //   if (!playerId) {
-      //     console.error('Player ID not found');
-      //     return;
-      //   }
-
-      //   socket.emit('deletePlayer', { playerId, code }, (response) => {
-      //     if (response.error) {
-      //       console.error(response.error);
-      //     } else {
-      //       console.log('Player eliminado con éxito');
-      //       router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
-      //     }
-      //   });
-      // };
 
       socket.on('updatedAsks', (response) => {
         if (response.asks) {

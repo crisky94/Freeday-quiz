@@ -17,25 +17,12 @@ const DeleteAsk = ({ askId, onClick }) => {
     setShowConfirmation(false);
   };
 
-  const handleConfirmDelete = (e) => {
-    e.preventDefault();
+  const handleConfirmDelete = () => {
     if (askId) {
       onClick(askId);
 
       // Mostrar notificación
-      toast('Pregunta eliminada con éxito.', {
-        onClose: () => {
-          router.refresh();
-        },
-        position: 'bottom-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: 'light',
-        transition: Flip,
-      });
+
     }
   };
 
