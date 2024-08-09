@@ -46,7 +46,7 @@ function RankingPage() {
     socket.on('redirectToFinalScreen', handleFinalRanking);
 
     const handleMainScreen = () => {
-      toast('Eliminando jugador y redirigiendo a home', {
+      toast('Redirigiendo a home.', {
         onClose: () => {
           router.push('/')
         },
@@ -93,6 +93,7 @@ function RankingPage() {
       <table className='w-full text-left'>
         <tbody className='w-full text-white flex flex-col justify-center items-center'>
           {ranking
+            .sort((a, b) => b.score - a.score)
             .slice(0, 10)
             .map((player, index) => (
               <tr

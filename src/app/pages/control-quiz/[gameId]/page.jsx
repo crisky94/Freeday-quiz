@@ -24,6 +24,7 @@ export default function GameControlPage({ params }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [showRankingModal, setShowRankingModal] = useState(false);
+  const [ showEndGame, setShowEndGame ] = useState(false)
   const [isRankingSent, setIsRankingSent] = useState(false);
   const [players, setPlayers] = useState();
   const [playerId, setPlayerId] = useState();
@@ -70,8 +71,6 @@ export default function GameControlPage({ params }) {
 
     socket.on('pauseGame', () => setIsPaused(true));
     socket.on('resumeGame', () => setIsPaused(false));
-    socket.on('stopGame', () => { });
-
     // Manejar actualizaciones de preguntas
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
@@ -131,9 +130,29 @@ export default function GameControlPage({ params }) {
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000);
     } else {
       setShowRankingModal(true);
+      setShowEndGame(true)
       handleReloadPlayersData();
     }
   };
+
+  const moveToLastQuestion = () => {
+    const lastIndex = questions.length -1;
+    setCurrentQuestionIndex(lastIndex);
+    setTimeLeft(0); // Set time to 0 to indicate the game is over
+  };
+  const handleStopGame = () => {
+    if (socket) {
+      socket.emit('stopGame');
+      setGameState('stopped');
+      setMessage('El juego ha sido parado');
+      setTimeout(()=>{
+        setShowEndGame(true);
+      },1000)
+      moveToLastQuestion(); // Move to the last question with time set to 0
+     
+    }
+  };
+
 
   const handleReloadPlayersData = () => {
     if (socket) {
@@ -166,7 +185,7 @@ export default function GameControlPage({ params }) {
         if (response.error) {
           console.error(response.error);
         } else {
-          toast('Todos los jugadores han sido eliminados.', {
+          toast('Redirigiendo a home.', {
             onClose: () => {
               router.push('/')
             }
@@ -210,22 +229,20 @@ export default function GameControlPage({ params }) {
               setMessage('El juego está en marcha');
             }
           }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
-          <button onClick={() => {
-            if (socket) {
-              socket.emit('stopGame');
-              setGameState('stopped');
-              setMessage('El juego ha sido parado');
-            }
-          }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Parar</button>
-          <EndGame
-            onSend={handleSendMainScreen} />
+          <button onClick={handleStopGame}
+          className="text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>
+          {showEndGame && (
+            <EndGame
+              onSend={handleSendMainScreen}
+            />
+          )}  
           <Tooltip className='text-[#fcff00] text-base uppercase' content='Sólo Eliminar preguntas futuras'>
             <Link onClick={() => { }} className='mt-5 text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
               Modificar juego
             </Link>
           </Tooltip>
           <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
-            <p>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
+            <p className='break-word'>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
             <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
             <div className='text-xl font-bold text-center mt-4 text-red-500'>
               Tiempo restante: {formatTime(timeLeft)}

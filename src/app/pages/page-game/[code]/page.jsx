@@ -96,8 +96,8 @@ export default function GameQuizPage({ params }) {
       });
 
       socket.on('stopGame', () => {
-        toast('El juego ha sido parado', {
-          position: "bottom-center", autoClose: 2000, onClose: () => {
+        toast('El juego ha sido detenido', {
+          position: "bottom-center", autoClose: 1000, onClose: () => {
             router.push(`/pages/ranking/${code}`)
           }
         });
@@ -296,7 +296,7 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <BeforeUnloadHandler onBeforeUnload={deletePlayer} /> {/* Agrega el componente */}
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} /> 
       <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
         <ToastContainer />
         <div
