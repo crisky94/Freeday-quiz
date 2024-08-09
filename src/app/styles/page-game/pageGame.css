@@ -2,11 +2,7 @@
   text-align: center;
   margin: 0;
   font-size: 1.25rem;
-  /* Ajusta el tamaño del texto si es necesario */
   overflow-wrap: break-word;
-  /* Ajusta el texto largo */
   word-break: break-word;
-  /* Rompe palabras largas si es necesario */
   width: 100%;
-  /* Asegúrate de que el ancho es el adecuado */
 }
