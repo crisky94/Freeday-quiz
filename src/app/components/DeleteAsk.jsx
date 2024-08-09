@@ -1,14 +1,9 @@
 import { useState } from 'react';
-import { Flip, ToastContainer, toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
-import 'react-toastify/dist/ReactToastify.css';
 import '../styles/games/deleteGame.css'
-
+import { useRouter } from 'next/navigation';
 const DeleteAsk = ({ askId, onClick }) => {
-
+ const router = useRouter()
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const router = useRouter();
-
   const handleDeleteClick = () => {
     setShowConfirmation(true);
   };
@@ -20,6 +15,7 @@ const DeleteAsk = ({ askId, onClick }) => {
   const handleConfirmDelete = () => {
     if (askId) {
       onClick(askId);
+      router.refresh();
     }
   };
 
@@ -65,7 +61,7 @@ const DeleteAsk = ({ askId, onClick }) => {
         {showConfirmation && (
           <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-sm w-full text-white">
-              <p className="text-lg font-semibold mb-4">¿Estás seguro que deseas eliminar este juego?</p>
+              <p className="text-lg font-semibold mb-4">¿Estás seguro que deseas eliminar esta pregunta?</p>
               <div className="flex justify-end">
                 <button
                   type="button"
@@ -84,7 +80,6 @@ const DeleteAsk = ({ askId, onClick }) => {
           </div>
         )}
       </div>
-      <ToastContainer />
     </>
   );
 };

@@ -1,7 +1,6 @@
 'use client';
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
-import { Tooltip } from '@nextui-org/tooltip';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
@@ -167,7 +166,7 @@ export default function EditGame({ params }) {
         toast.error(`Todas las respuestas para la pregunta ${index + 1} son requeridas.`);
         hasErrors = true;
       }
-      if (ask.answer === null) {
+      if (ask.answer === '') {
         toast.error(`Selecciona una respuesta correcta para la pregunta ${index + 1}.`);
         hasErrors = true;
       }
@@ -305,7 +304,6 @@ export default function EditGame({ params }) {
                       name={`correctAnswer-${index}`}
                       checked={ask.answer === option}
                       onChange={() => handleCorrectAnswerChange(index, option)}
-                      required
                     />
                   </div>
                 </div>
@@ -352,7 +350,7 @@ export default function EditGame({ params }) {
         >
           Añadir Pregunta
         </button>
-        <button className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'>
+        <button type="submit" className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'>
           Guardar Cambios
         </button>
       </div>
