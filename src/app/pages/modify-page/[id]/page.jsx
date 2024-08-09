@@ -1,7 +1,6 @@
 'use client';
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
-import { Tooltip } from '@nextui-org/tooltip';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
@@ -15,8 +14,8 @@ export default function EditGame({ params }) {
     asks: [],
   });
 
-  const socket = useSocket();// Obtener la instancia del socket desde el contexto
-  const gameId = params.id;// Obtener el ID del juego desde los parámetros de la URL
+  const socket = useSocket(); // Obtener la instancia del socket desde el contexto
+  const gameId = params.id; // Obtener el ID del juego desde los parámetros de la URL
   const router = useRouter();
 
   useEffect(() => {
@@ -122,12 +121,12 @@ export default function EditGame({ params }) {
     socket.emit('deleteAsk', { askId }, (response) => {
       console.log(response);
       if (response.success) {
-            setFormData(prevData => {
+        setFormData((prevData) => {
           // Filtrar las preguntas para eliminar la pregunta con askId
-          const updatedAsks = prevData.asks.filter(ask => ask.id !== askId);
+          const updatedAsks = prevData.asks.filter((ask) => ask.id !== askId);
           return {
             ...prevData,
-            asks: updatedAsks
+            asks: updatedAsks,
           };
         });
       } else {
@@ -164,11 +163,15 @@ export default function EditGame({ params }) {
         hasErrors = true;
       }
       if (!ask.a.trim() || !ask.b.trim() || !ask.c.trim() || !ask.d.trim()) {
-        toast.error(`Todas las respuestas para la pregunta ${index + 1} son requeridas.`);
+        toast.error(
+          `Todas las respuestas para la pregunta ${index + 1} son requeridas.`
+        );
         hasErrors = true;
       }
       if (ask.answer === null) {
-        toast.error(`Selecciona una respuesta correcta para la pregunta ${index + 1}.`);
+        toast.error(
+          `Selecciona una respuesta correcta para la pregunta ${index + 1}.`
+        );
         hasErrors = true;
       }
     });
@@ -191,7 +194,6 @@ export default function EditGame({ params }) {
           closeOnClick: false,
           pauseOnHover: true,
           draggable: false,
-          pauseOnHover: false,
           closeButton: false,
           theme: 'light',
           transition: Flip,
@@ -244,7 +246,8 @@ export default function EditGame({ params }) {
           name='gameDetail'
           value={formData.gameDetail}
           onChange={handleChange}
-          onInput={handleAutoResize}/>
+          onInput={handleAutoResize}
+        />
       </div>
       <div className='w-full flex flex-wrap gap-4'>
         {formData.asks.map((ask, index) => (
@@ -265,7 +268,8 @@ export default function EditGame({ params }) {
                 name={`ask-${index}`}
                 value={ask.ask}
                 onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
-                onInput={handleAutoResize}/>
+                onInput={handleAutoResize}
+              />
             </div>
             <div className='card-body w-full'>
               {['a', 'b', 'c', 'd'].map((option) => (
@@ -296,7 +300,7 @@ export default function EditGame({ params }) {
                       onChange={(e) =>
                         handleAskChange(index, option, e.target.value)
                       }
-                      onInput={handleAutoResize}                   
+                      onInput={handleAutoResize}
                     />
                     <input
                       className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1  mx-1 h-5'
@@ -326,7 +330,9 @@ export default function EditGame({ params }) {
                   name={`timer-${index}`}
                   value={ask.timer}
                   onChange={(e) =>
-                    handleAskChange(index, 'timer', e.target.value)}/>
+                    handleAskChange(index, 'timer', e.target.value)
+                  }
+                />
               </div>
               {!ask.id ? (
                 <button
@@ -341,7 +347,7 @@ export default function EditGame({ params }) {
               )}
             </div>
           </div>
-          ))}
+        ))}
       </div>
       <ToastContainer />
       <div className='flex justify-center mb-4 gap-2'>
