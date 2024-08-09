@@ -5,28 +5,27 @@ import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
+import DeleteNewAsk from '@/app/components/DeleteNewAsk';
 
 export default function EditGame({ params }) {
-  // Estado para manejar los datos del formulario
   const [formData, setFormData] = useState({
     gameName: '',
     gameDetail: '',
     asks: [],
   });
 
-  const socket = useSocket();// Obtener la instancia del socket desde el contexto
-  const gameId = params.id;// Obtener el ID del juego desde los parámetros de la URL
+  const [selectedAsks, setSelectedAsks] = useState([]);
+
+  const socket = useSocket();
+  const gameId = params.id;
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = () => {
-      // Emitir evento para obtener preguntas del juego
       socket.emit('getAsks', { gameId }, (response) => {
-        console.log('getAsks response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
-          // Actualizar el estado con las preguntas obtenidas
           setFormData((prevData) => ({
             ...prevData,
             asks: response.questions.map((question) => ({
@@ -43,13 +42,10 @@ export default function EditGame({ params }) {
         }
       });
 
-      // Emitir evento para obtener detalles del juego
       socket.emit('getGamesId', { gameId }, (response) => {
-        console.log('getGamesId response:', response);
         if (response.error) {
           console.error(response.error);
         } else {
-          // Actualizar el estado con los detalles del juego
           setFormData((prevData) => ({
             ...prevData,
             gameName: response.game.nameGame,
@@ -60,7 +56,6 @@ export default function EditGame({ params }) {
     };
 
     fetchData();
-    // Escuchar actualizaciones de preguntas desde el servidor
     socket.on('updateQuestions', (updatedAsks) => {
       setFormData((prevData) => ({
         ...prevData,
@@ -72,7 +67,6 @@ export default function EditGame({ params }) {
     };
   }, [gameId, socket]);
 
-  // Manejar cambios en los campos del formulario
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -81,7 +75,6 @@ export default function EditGame({ params }) {
     }));
   }, []);
 
-  // Manejar cambios al crear las preguntas del juego
   const handleAskChange = useCallback((index, field, value) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -93,7 +86,6 @@ export default function EditGame({ params }) {
     });
   }, []);
 
-  // Manejar la selección de la respuesta correcta para crear una pregunta
   const handleCorrectAnswerChange = useCallback((index, option) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -105,7 +97,6 @@ export default function EditGame({ params }) {
     });
   }, []);
 
-  // Agregar una nueva pregunta al juego
   const handleAddQuestion = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -116,12 +107,11 @@ export default function EditGame({ params }) {
     }));
   };
 
-  // Eliminar una pregunta existente del juego
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
       console.log(response);
       if (response.success) {
-            setFormData(prevData => {
+        setFormData(prevData => {
           // Filtrar las preguntas para eliminar la pregunta con askId
           const updatedAsks = prevData.asks.filter(ask => ask.id !== askId);
           return {
@@ -135,17 +125,13 @@ export default function EditGame({ params }) {
     });
   };
 
-  // Limpiar preguntas nuevas (sin ID) del formulario
-  const handleClearNewQuestions = () => {
-    setFormData((prevData) => {
-      // Filtrar solo las preguntas existentes (con id)
-      const newAsks = prevData.asks.filter((ask) => ask.id);
-      return {
-        ...prevData,
-        asks: newAsks,
-      };
-    });
+  const handleRemoveNewQuestion = (index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      asks: prevData.asks.filter((_, i) => i !== index),
+    }));
   };
+
   const validateForm = () => {
     let hasErrors = false;
 
@@ -174,16 +160,15 @@ export default function EditGame({ params }) {
     return hasErrors;
   };
 
-  // Manejar el envío del formulario para actualizar el juego
   const handleSubmit = (e) => {
     e.preventDefault();
     const hasErrors = validateForm();
     if (hasErrors) {
-      return; // No procede si hay errores
+      return;
     }
     socket.emit('updateGame', { formData, gameId }, (response) => {
       if (response.success) {
-        toast('Juego actualizado con éxito.Redirigiendo a Home🚀', {
+        toast('Juego actualizado con éxito. Redirigiendo a Home 🚀', {
           position: 'bottom-center',
           hideProgressBar: false,
           autoClose: 1000,
@@ -204,12 +189,12 @@ export default function EditGame({ params }) {
     });
   };
 
-  // Autoajustar la altura del textarea según su contenido
   const handleAutoResize = (e) => {
     const textarea = e.target;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
+
 
   return (
     <form
@@ -218,7 +203,7 @@ export default function EditGame({ params }) {
     >
       <div className='card-body w-full border-2 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-center text-center mx-14 items-center mb-5 py-5 px-5'>
         <label
-          className='text-sm sm:text-base font-bold uppercase mb-4   p-2 rounded-md'
+          className='text-sm sm:text-base font-bold uppercase mb-4 p-2 rounded-md'
           htmlFor='gameName'
         >
           Nombre del Juego:
@@ -232,7 +217,7 @@ export default function EditGame({ params }) {
           onChange={handleChange}
         />
         <label
-          className='text-sm sm:text-base font-bold uppercase mb-4 s p-2 rounded-md'
+          className='text-sm sm:text-base font-bold uppercase mb-4 p-2 rounded-md'
           htmlFor='gameDetail'
         >
           Detalle del Juego:
@@ -243,7 +228,8 @@ export default function EditGame({ params }) {
           name='gameDetail'
           value={formData.gameDetail}
           onChange={handleChange}
-          onInput={handleAutoResize}/>
+          onInput={handleAutoResize}
+        />
       </div>
       <div className='w-full flex flex-wrap gap-4'>
         {formData.asks.map((ask, index) => (
@@ -253,7 +239,7 @@ export default function EditGame({ params }) {
           >
             <div className='flex flex-col text-center items-center card-title w-full'>
               <label
-                className='text-sm sm:text-base font-bold uppercase mb-2  text-center  w-40 rounded-md'
+                className='text-sm sm:text-base font-bold uppercase mb-4 p-2 rounded-md'
                 htmlFor={`ask-${index}`}
               >
                 Pregunta {index + 1}:
@@ -264,41 +250,37 @@ export default function EditGame({ params }) {
                 name={`ask-${index}`}
                 value={ask.ask}
                 onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
-                onInput={handleAutoResize}/>
+                onInput={handleAutoResize}
+              />
             </div>
             <div className='card-body w-full'>
               {['a', 'b', 'c', 'd'].map((option) => (
-                <div className='flex items-center  ' key={option}>
+                <div className='flex items-center' key={option}>
                   <label
-                    className='text-md p-1  font-bold uppercase mb-4   h-6 rounded-md'
+                    className='text-md p-1 font-bold uppercase mb-4 h-6 rounded-md'
                     htmlFor={`${option}-${index}`}
                   >
                     {option.toUpperCase()}:
                   </label>
-                  <div className='flex w-full  relative'>
+                  <div className='flex w-full relative'>
                     <input
-                      className={`${
-                        option === 'a'
-                          ? 'bg-red-500 focus:ring-red-800'
-                          : option === 'b'
+                      className={`${option === 'a'
+                        ? 'bg-red-500 focus:ring-red-800'
+                        : option === 'b'
                           ? 'bg-blue-500 focus:ring-blue-800'
                           : option === 'c'
-                          ? 'bg-green-500 focus:ring-green-800'
-                          : 'bg-yellow-500 focus:ring-yellow-600'
-                      } text-black  text-center truncate rounded-md h-10
-                        placeholder:text-justify 
-                        focus:outline-none focus:ring-2 ring-yellow-400 mb-2 w-full  resize-none overflow-hidden`}
+                            ? 'bg-green-500 focus:ring-green-800'
+                            : 'bg-yellow-500 focus:ring-yellow-600'
+                        } text-black text-center truncate rounded-md h-10 placeholder:text-justify focus:outline-none focus:ring-2 ring-yellow-400 mb-2 w-full resize-none overflow-hidden`}
                       id={`${option}-${index}`}
                       type='text'
                       name={`${option}-${index}`}
                       value={ask[option]}
-                      onChange={(e) =>
-                        handleAskChange(index, option, e.target.value)
-                      }
-                      onInput={handleAutoResize}                   
+                      onChange={(e) => handleAskChange(index, option, e.target.value)}
+                      onInput={handleAutoResize}
                     />
                     <input
-                      className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1  mx-1 h-5'
+                      className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-5'
                       type='radio'
                       value={ask[option]}
                       name={`correctAnswer-${index}`}
@@ -310,7 +292,7 @@ export default function EditGame({ params }) {
               ))}
               <div className='flex flex-col card-title w-full justify-center items-center'>
                 <label
-                  className='text-sm sm:text-base font-bold uppercase mb-4  rounded-md p-2'
+                  className='text-sm sm:text-base font-bold uppercase mb-4 rounded-md p-2'
                   htmlFor={`timer-${index}`}
                 >
                   Temporizador (segundos):
@@ -323,19 +305,19 @@ export default function EditGame({ params }) {
                   id={`timer-${index}`}
                   name={`timer-${index}`}
                   value={ask.timer}
-                  onChange={(e) =>
-                    handleAskChange(index, 'timer', e.target.value)}/>
+                  onChange={(e) => handleAskChange(index, 'timer', e.target.value)}
+                />
               </div>
-              {!ask.id ? null : (
-                <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
-              )}
+              {!ask.id ?
+                <DeleteNewAsk askId={index} onClick={handleRemoveNewQuestion} /> : (
+                  <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
+                )}
             </div>
           </div>
-          ))}
+        ))}
       </div>
       <ToastContainer />
-      <div className='flex justify-center mb-4 gap-2'>
-    
+      <div className='flex justify-center mb-4 mt-4 gap-4'>
         <button
           type='button'
           className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'
@@ -344,13 +326,9 @@ export default function EditGame({ params }) {
           Añadir Pregunta
         </button>
         <button
-          type='button'
-          className='btn-add mt-5 hoverGradiant bg-red-500 text-black rounded-md px-4 py-2'
-          onClick={handleClearNewQuestions}
+          type='submit'
+          className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'
         >
-          Limpiar Preguntas
-        </button>
-        <button type="submit" className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'>
           Guardar Cambios
         </button>
       </div>
