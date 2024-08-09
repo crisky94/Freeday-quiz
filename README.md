@@ -1,13 +1,4 @@
-# Freeday-quiz
-
-### Comando para inicializar la base de datos:
-
-- npx prisma migrate dev --name init
-
-
 # FreedayQuiz 🕹️
-
-![Logo de FreedayQuiz](/Freeday-quiz/public/logo.png)
 
 Os presentamos FreedayQuiz, aquí podrás compartir tus juegos creados o jugar a otros.
 
@@ -22,10 +13,20 @@ FreedayQuiz es una aplicacion y diseñada para que se puedan crear juegos de pre
 - Introducir pin proporcionado para unirte a una partida.
 - Introducir un nick para ser identificado.
 - Poder salir del juego en cualquier momento.
-- 📝 Registro de usuarios.
+- Registro de usuarios.
 
 ### 🔐 Para usuarios registrados - rol creador
-
+- 📝 Poder crear juegos.
+- Editar los juegos.
+- Borrarlos.
+- Poder invitar a jugadores, mediante pin del juego o QR.
+- Tener totalmente el control del juego =>
+- Pausarlo.
+- Reanudarlo.
+- Pararlo completamente.
+- Modificar o eliminar preguntas durante la partida.
+- Ver el Ranking y enviarlo a los jugadores si se desea.
+- Finalizar la partida por completo y con ello eliminando a los jugadores y enviarlos a home.
 
 ## 🚀 Cómo Empezar
 
