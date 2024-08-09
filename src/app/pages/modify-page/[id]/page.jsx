@@ -326,15 +326,7 @@ export default function EditGame({ params }) {
                   onChange={(e) =>
                     handleAskChange(index, 'timer', e.target.value)}/>
               </div>
-              {!ask.id ? (
-                <button
-                  type='button'
-                  className='btn-clear mt-2 bg-red-600 hover:bg-red-500 text-white rounded-md px-4 py-2'
-                  onClick={handleClearNewQuestions}
-                >
-                  Limpiar
-                </button>
-              ) : (
+              {!ask.id ? null : (
                 <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
               )}
             </div>
@@ -343,12 +335,20 @@ export default function EditGame({ params }) {
       </div>
       <ToastContainer />
       <div className='flex justify-center mb-4 gap-2'>
+    
         <button
           type='button'
           className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'
           onClick={handleAddQuestion}
         >
           Añadir Pregunta
+        </button>
+        <button
+          type='button'
+          className='btn-add mt-5 hoverGradiant bg-red-500 text-black rounded-md px-4 py-2'
+          onClick={handleClearNewQuestions}
+        >
+          Limpiar Preguntas
         </button>
         <button type="submit" className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'>
           Guardar Cambios
