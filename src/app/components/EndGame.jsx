@@ -14,12 +14,12 @@ export default function EndGame({ onSend }) {
   };
 
   return (
-    <div className="mt-3">
+    <div className="">
         <button
           type='button'
           className='hoverGradiant bg-custom-linear text-black px-5 text-sm h-12 rounded-lg hover:transition duration-200 font-bold'
           onClick={toggleModal}>
-          Finalizar Juego
+          Enviar a Home
         </button>
       {isOpen && (
         <div className='fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center'>

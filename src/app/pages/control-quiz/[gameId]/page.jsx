@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useSocket } from '@/context/socketContext';
 import Link from 'next/link';
-import { Tooltip } from '@nextui-org/tooltip';
 import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -228,19 +227,17 @@ export default function GameControlPage({ params }) {
               setGameState('resumed');
               setMessage('El juego está en marcha');
             }
-          }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
+          }} className=' text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
           <button onClick={handleStopGame}
-          className="text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>
+          className=" text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>
           {showEndGame && (
             <EndGame
               onSend={handleSendMainScreen}
             />
           )}  
-          <Tooltip className='text-[#fcff00] text-base uppercase' content='Sólo Eliminar preguntas futuras'>
-            <Link onClick={() => { }} className='mt-5 text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
+            <Link className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
               Modificar juego
             </Link>
-          </Tooltip>
           <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
             <p className='break-word'>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
             <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
