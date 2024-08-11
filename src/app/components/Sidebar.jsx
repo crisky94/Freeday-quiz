@@ -62,7 +62,9 @@ const Sidebar = () => {
         >
           ☰
         </button>
-      ) : ''}
+      ) : (
+        ''
+      )}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#111] shadow-xl text-white transition-transform transform z-50 ${
           // Aumentar z-index aquí
@@ -77,7 +79,7 @@ const Sidebar = () => {
         </button>
         <nav className='flex flex-col text-center gap-2 mt-5'>
           {user ? (
-            <div className='ml-8'>
+            <div className='ml-4'>
               <User />
             </div>
           ) : (

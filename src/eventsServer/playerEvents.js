@@ -6,7 +6,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
         where: { codeGame: code },
       });
 
-
       if (game) {
         if (nickname) {
           // Es un jugador que se une
@@ -278,21 +277,23 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       callback({ success: true });
     } catch (error) {
       console.error('Error al actualizar el puntaje:', error);
-      callback({ error: 'Failed to update score' });
+      if (typeof callback === 'function') {
+        callback({ error: 'Failed to update score' });
+      }
     }
   });
 
-//* Eliminar todos los jugadores de un juego en especifico(control-quiz)
+  //* Eliminar todos los jugadores de un juego en especifico(control-quiz)
 
   socket.on('deleteAllPlayers', async ({ gameId }, callback) => {
     try {
       // Eliminar todos los jugadores que pertenecen a un juego específico
-         await prisma.players.deleteMany({
+      await prisma.players.deleteMany({
         where: {
-             gameId,
+          gameId,
         },
       });
-   
+
       callback({ success: true });
     } catch (error) {
       console.error('Error al eliminar jugadores:', error.message, error.stack);
@@ -300,7 +301,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-//* Emitir evento de ranking a los jugadores
+  //* Emitir evento de ranking a los jugadores
   socket.on('playerRanking', ({ ranking }) => {
     // Emitir a todos los jugadores conectados que deben ir a la pantalla final
     io.emit('redirectToFinalScreen', { ranking });
@@ -310,5 +311,4 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     // Emitir a todos los jugadores conectados que deben ir a la pantalla principal
     io.emit('redirectToMainScreen');
   });
-
 }

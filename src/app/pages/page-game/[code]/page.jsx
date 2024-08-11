@@ -8,8 +8,6 @@ import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
 import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
-import { userValidation } from '@/lib/userValidation';
-
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -20,6 +18,7 @@ export default function GameQuizPage({ params }) {
   const [isCorrect, setIsCorrect] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [socketId, setSocketId] = useState('');
+  const [playerId, setPlayerId] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
@@ -27,13 +26,19 @@ export default function GameQuizPage({ params }) {
   const code = parseInt(params.code);
   const router = useRouter();
 
-  userValidation();
-  // !PARA EL RANKING DE PLAYERS TIENES QUE MANEJAR OTRO EVENTO QUE INICIE EN UN ARRAY, NO TE OLVIDES DE LIMPIAR LA TABLA CON UN BOTON DE FINALIZAR JUEGO Y QUE LOS MANDE A TODOS A / Y TAMBIEN QUE SI ESTAN JUGANDO CUANDO ALGUIEN RECARGUE LA PAGINA SALGA EL MISMO AVISO DE LA ROOM YA QUE SI SE RECARGA TIENE QUE VOLVER A / POR QUE ESTA ELIMINADO DE LA BD
+  useEffect(() => {
+    const userNick = sessionStorage.getItem('nickname');
+    if (!userNick) {
+      router.push('/');
+    }
+  }, [router]);
 
   useEffect(() => {
     if (!socket) {
       router.push('/');
     } else {
+      console.log(socketId);
+
       setSocketId(socket.id);
     }
   }, [socket, router]);
@@ -50,6 +55,7 @@ export default function GameQuizPage({ params }) {
         );
         if (player) {
           setPlayerName(player.playerName);
+          setPlayerId(player.id); // Guarda el playerId aquí
         }
         console.log(response.players);
       }
@@ -98,9 +104,11 @@ export default function GameQuizPage({ params }) {
 
       socket.on('stopGame', () => {
         toast('El juego ha sido parado', {
-          position: "bottom-center", autoClose: 2000, onClose: () => {
-            router.push(`/pages/ranking/${code}`)
-          }
+          position: 'bottom-center',
+          autoClose: 2000,
+          onClose: () => {
+            router.push(`/pages/ranking/${code}`);
+          },
         });
       });
 
@@ -196,12 +204,11 @@ export default function GameQuizPage({ params }) {
 
   const insertPlayer = (gameId, playerName, score) => {
     return new Promise((resolve, reject) => {
-      socket.emit('insertPlayer', { gameId, playerName, score });
-      socket.on('insertPlayerResponse', (data) => {
-        if (data.error) {
-          reject(data.error);
+      socket.emit('insertPlayer', { gameId, playerName, score }, (response) => {
+        if (response.error) {
+          reject(response.error);
         } else {
-          resolve(data);
+          resolve(response);
         }
       });
 
@@ -231,7 +238,6 @@ export default function GameQuizPage({ params }) {
         autoClose: 2000,
         closeButton: false,
         pauseOnHover: false,
-        closeButton: false,
         draggable: true,
         theme: 'light',
         transition: Bounce,
@@ -252,11 +258,8 @@ export default function GameQuizPage({ params }) {
   };
 
   const deletePlayer = useCallback(() => {
-    if (!socket) return;
-
-    const playerId = players.find((player) => player.socketId === socketId)?.id;
-    if (!playerId) {
-      console.error('Player ID not found');
+    if (!socket || !playerId) {
+      console.error('Player ID not found or socket not connected');
       return;
     }
 
@@ -264,11 +267,13 @@ export default function GameQuizPage({ params }) {
       if (response.error) {
         console.error(response.error);
       } else {
+        sessionStorage.clear();
+        localStorage.clear();
         console.log('Player eliminado con éxito');
-        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
+        router.push('/'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
-  }, [socket, playerName, code, router]);
+  }, [socket, code, router, playerId]);
 
   if (questions.length === 0) {
     return <Loading />;
@@ -297,8 +302,9 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <BeforeUnloadHandler onBeforeUnload={deletePlayer} /> {/* Agrega el componente */}
-      <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} />{' '}
+      {/* Agrega el componente */}
+      <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
         <ToastContainer />
         <div
           key={currentQuestion.id}

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
 import { toast } from 'react-toastify';
-import { userValidation } from '@/lib/userValidation';
 
 const NickNameForm = ({ params }) => {
   const socket = useSocket();
@@ -13,7 +12,12 @@ const NickNameForm = ({ params }) => {
   const code = parseInt(params.code);
   const router = useRouter();
 
-  userValidation();
+  useEffect(() => {
+    const userPin = sessionStorage.getItem('pin');
+    if (!userPin) {
+      router.push('/');
+    }
+  }, [router]);
 
   useEffect(() => {
     if (!socket) return;
@@ -35,6 +39,7 @@ const NickNameForm = ({ params }) => {
     e.preventDefault();
     if (nickname) {
       localStorage.setItem('nickname', nickname);
+      sessionStorage.setItem('nickname', nickname);
       setPendingNickname(nickname);
       socket.emit('joinRoom', { nickname, code });
     } else {
