@@ -65,9 +65,9 @@ function RankingPage() {
 
     return (
       <>
-        <div className="relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bg-white bg-opacity-80">
+        <div className="relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bgroom">
           <p className="mb-4 text-center text-lg sm:text-xl md:text-2xl">Haz click en el texto</p>
-          <span className="pointer-events-none whitespace-pre-wrap  bg-clip-text text-center text-4xl font-semibold leading-none text-[#111] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none ">
+          <span className="pointer-events-none whitespace-pre-wrap  bg-clip-text text-center text-4xl font-semibold leading-none text-primary sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none ">
             ¡Juego Completado!
           </span>
           <Confetti
@@ -88,7 +88,7 @@ function RankingPage() {
     );
   }
   return (
-    <div className='flex flex-col p-2 h-auto items-center bg-black text-white w-full pt-20 min-h-screen'>
+    <div className='flex flex-col p-2 h-auto items-center  bgroom text-white w-full pt-24 min-h-screen'>
       <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>Ranking</h1>
       <table className='w-full text-left'>
         <tbody className='w-full text-white flex flex-col justify-center items-center'>
