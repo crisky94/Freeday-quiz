@@ -9,6 +9,7 @@ import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
 import User from '../../../components/User';
 
+
 const monserrat = Montserrat({
   weight: '400',
   subsets: ['latin'],
@@ -74,14 +75,17 @@ const PinPage = () => {
       router.push(`/pages/page-game/${game.codeGame}`);
     }
     if (user) {
-    router.push(`/pages/control-quiz/${game.id}`);
-   };
-  }
+      setTimeout(() => {
+        router.push(`/pages/control-quiz/${game.id}`);
+      }, 10000);
+      
+    }
+    
+  };
 
   if (!game) {
     return <div>Cargando...</div>;
   }
-
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>
@@ -112,24 +116,24 @@ const PinPage = () => {
       {showModal && (
         <div className='modal mt-6 bg-custom-linear p-1 flex flex-col justify-between items-center rounded'>
           <div className='bg-hackBlack p-2 rounded flex flex-col items-center'>
-          <h2>Jugadores</h2>
-          <ul>
-            {players.map((player) => (
-              <li key={player.socketId} className="grid grid-cols-3">
-             <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
-               {player.playerName}
-            </div>
-            <div className="col-span-1 w-[60%]  p-4"></div>
-            <div className="col-span-1 w-[20%] p-4">
-            {player.score}
-            </div>
-             </li>
-            ))}
-          </ul>
-        </div>
+            <h2>Jugadores</h2>
+            <ul>
+              {players.map((player) => (
+                <li key={player.socketId} className="grid grid-cols-3">
+                  <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
+                    {player.playerName}
+                  </div>
+                  <div className="col-span-1 w-[60%]  p-4"></div>
+                  <div className="col-span-1 w-[20%] p-4">
+                    {player.score}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
-    </div>
+      </div>
   );
 };
 
