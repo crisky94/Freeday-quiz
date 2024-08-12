@@ -127,13 +127,18 @@ export function gameEvents(socket, io, prisma) {
   //* Actualizar juego(modify)
   socket.on('updateGame', async ({ formData, gameId }, callback) => {
     try {
-      // Filtrar las preguntas existentes y las nuevas
-      const existingAsks = formData.asks.filter(ask => ask.id);
-      const newAsks = formData.asks.filter(ask => !ask.id);
+      // Agregar un índice de orden a cada pregunta para preservar el orden
+      const existingAsks = formData.asks
+        .filter(ask => ask.id)
+        .map((ask) => ({ ...ask}));
 
-      // Preparamos las promesas de actualización de las preguntas existentes
-      const updateAsksPromises = existingAsks.map((ask) => {
-        return prisma.asks.updateMany({
+      const newAsks = formData.asks
+        .filter(ask => !ask.id)
+        .map((ask) => ({ ...ask}));
+
+      // Actualizar las preguntas existentes de forma secuencial
+      for (const ask of existingAsks) {
+        await prisma.asks.updateMany({
           where: { id: ask.id },
           data: {
             ask: ask.ask,
@@ -145,11 +150,11 @@ export function gameEvents(socket, io, prisma) {
             answer: ask.answer,
           },
         });
-      });
+      }
 
-      // Preparamos las promesas de creación de nuevas preguntas
-      const createAsksPromises = newAsks.map((ask) => {
-        return prisma.asks.create({
+      // Crear nuevas preguntas de forma secuencial
+      for (const ask of newAsks) {
+        await prisma.asks.create({
           data: {
             ask: ask.ask,
             a: ask.a,
@@ -161,7 +166,7 @@ export function gameEvents(socket, io, prisma) {
             gameId: parseInt(gameId),
           },
         });
-      });
+      }
 
       // Actualizar el juego (games)
       const updateGamePromise = prisma.games.update({
@@ -173,12 +178,12 @@ export function gameEvents(socket, io, prisma) {
         },
       });
 
-      // Ejecutar todas las actualizaciones y creaciones
-      await Promise.all([...updateAsksPromises, ...createAsksPromises, updateGamePromise]);
+      await updateGamePromise;
 
-      // Obtener las preguntas actualizadas
+      // Obtener las preguntas actualizadas y ordenarlas por el índice
       const asks = await prisma.asks.findMany({
-        where: { gameId: parseInt(gameId) }
+        where: { gameId: parseInt(gameId) },
+        orderBy: { id: 'asc' }  // Ordenar por el índice de orden
       });
 
       // Emitir el evento 'updatedAsks' a todos los clientes en la sala correspondiente
@@ -192,6 +197,7 @@ export function gameEvents(socket, io, prisma) {
       callback({ error: 'Error al actualizar el juego' });
     }
   });
+
 
   //* Eliminar juego por id(games)
   socket.on('deleteGame', async ({ gameId }, callback) => {

@@ -129,7 +129,7 @@ export default function GameControlPage({ params }) {
   const handleTimeUp = () => {
     setTimeout(() => {
       moveToNextQuestion();
-    }, 4000);
+    }, 2000);
   };
 
   const moveToNextQuestion = () => {

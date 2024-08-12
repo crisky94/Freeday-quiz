@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
 import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
 import { userValidation } from '@/lib/userValidation';
+import Alert from '@/app/components/Alert';
 
 
 export default function GameQuizPage({ params }) {
@@ -23,6 +24,8 @@ export default function GameQuizPage({ params }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('info');
   const socket = useSocket();
   const code = parseInt(params.code);
   const router = useRouter();
@@ -96,8 +99,8 @@ export default function GameQuizPage({ params }) {
       });
 
       socket.on('stopGame', () => {
-        toast('El juego ha sido detenido', {
-          position: "bottom-center", autoClose: 1000, onClose: () => {
+        toast('El juego ha finalizado', {
+          position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
             router.push(`/pages/ranking/${code}`)
           }
         });
@@ -210,34 +213,17 @@ export default function GameQuizPage({ params }) {
     });
   };
 
+
   const handleTimeUp = async () => {
     setShowCorrectAnswer(true);
+    setAlertMessage(`Puntos: ${score}px 🚀`);
+    setAlertType('info');
     setTimeout(() => {
       setIsCorrect(false);
       setSelectedAnswer(null);
-      setShowCorrectAnswer(false);
-      showToast().then(() => {
-        moveToNextQuestion();
-      });
-    }, 1000);
-  };
-
-  const showToast = () => {
-    return new Promise((resolve) => {
-      toast(`Puntos: ${score}px 🚀`, {
-        toastId: 'custom-id-yes',
-        position: 'bottom-center',
-        autoClose: 2000,
-        closeButton: false,
-        pauseOnHover: false,
-        closeButton: false,
-        draggable: true,
-        theme: 'light',
-        transition: Bounce,
-        onClose: resolve,
-        pauseOnFocusLoss: false,
-      });
-    });
+      setShowCorrectAnswer(false);   
+      moveToNextQuestion();
+    }, 3000);
   };
 
   const moveToNextQuestion = () => {
@@ -246,6 +232,7 @@ export default function GameQuizPage({ params }) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
+      socket.emit('stopGame');
       router.push(`/pages/ranking/${code}`);
     }
   };
@@ -297,6 +284,7 @@ export default function GameQuizPage({ params }) {
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} /> 
+      <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
         <ToastContainer />
         {
           currentQuestion && (
