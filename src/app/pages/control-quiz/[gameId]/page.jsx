@@ -94,8 +94,18 @@ export default function GameControlPage({ params }) {
       }
     });
 
+    socket.on('stopGame', () => {
+      toast('El juego para los jugadores, ha finalizado.', {
+        position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
+          setShowEndGame(true);
+          setShowRankingModal(true);
+        }
+      });
+    })
+
     return () => {
       socket.off('gameStateUpdate', handleGameStateUpdate);
+      socket.off('stopGame');
     };
   }, [socket, router]);
 
@@ -128,8 +138,6 @@ export default function GameControlPage({ params }) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000);
     } else {
-      setShowRankingModal(true);
-      setShowEndGame(true)
       handleReloadPlayersData();
     }
   };
@@ -137,21 +145,16 @@ export default function GameControlPage({ params }) {
   const moveToLastQuestion = () => {
     const lastIndex = questions.length -1;
     setCurrentQuestionIndex(lastIndex);
-    setTimeLeft(0); // Set time to 0 to indicate the game is over
+    setTimeLeft(0);
   };
   const handleStopGame = () => {
     if (socket) {
       socket.emit('stopGame');
       setGameState('stopped');
       setMessage('El juego ha sido parado');
-      setTimeout(()=>{
-        setShowEndGame(true);
-      },1000)
-      moveToLastQuestion(); // Move to the last question with time set to 0
-     
+      moveToLastQuestion();    
     }
   };
-
 
   const handleReloadPlayersData = () => {
     if (socket) {
@@ -214,20 +217,26 @@ export default function GameControlPage({ params }) {
           <div className='text-[#1cffe4] font-bold uppercase'>
             {message}
           </div>
-          <button onClick={() => {
-            if (socket) {
-              socket.emit('pauseGame');
-              setGameState('paused');
-              setMessage('El juego está pausado');
-            }
-          }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Pausar</button>
-          <button onClick={() => {
-            if (socket) {
-              socket.emit('resumeGame');
-              setGameState('resumed');
-              setMessage('El juego está en marcha');
-            }
-          }} className=' text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
+          {
+            isPaused ? (
+              <button onClick={() => {
+                if (socket) {
+                  socket.emit('resumeGame');
+                  setGameState('resumed');
+                  setMessage('El juego está en marcha');
+                }
+              }} className=' text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
+            ) : (
+                <button onClick={() => {
+                  if (socket) {
+                    socket.emit('pauseGame');
+                    setGameState('paused');
+                    setMessage('El juego está pausado');
+                  }
+                }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Pausar</button>
+            )
+          }
+     
           <button onClick={handleStopGame}
           className=" text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>
           {showEndGame && (

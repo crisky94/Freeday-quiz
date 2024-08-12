@@ -14,8 +14,6 @@ export default function EditGame({ params }) {
     asks: [],
   });
 
-  const [selectedAsks, setSelectedAsks] = useState([]);
-
   const socket = useSocket();
   const gameId = params.id;
   const router = useRouter();
@@ -139,10 +137,7 @@ export default function EditGame({ params }) {
       toast.error('El nombre del juego es requerido.');
       hasErrors = true;
     }
-    if (!formData.gameDetail.trim()) {
-      toast.error('Los detalles del juego son requeridos.');
-      hasErrors = true;
-    }
+
     formData.asks.forEach((ask, index) => {
       if (!ask.ask.trim()) {
         toast.error(`La pregunta ${index + 1} es requerida.`);
