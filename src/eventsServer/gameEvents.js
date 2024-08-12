@@ -204,7 +204,7 @@ export function gameEvents(socket, io, prisma) {
       });
 
       // Eliminar el juego
-      await prisma.games.delete({
+      await prisma.games.deleteMany({
         where: {
           id: parseInt(gameId), // Aseguramos que gameId es un entero
         },

@@ -17,22 +17,9 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
 
   const handleConfirmDelete = () => {
     if (gameId) {
-      onDelete(gameId);
-      setShowConfirmation(false);
-
-      toast('Juego eliminado con éxito.', {
-        onClose: () => {
-          router.refresh();
-        },
-        position: 'bottom-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: 'light',
-        transition: Flip,
-      });
+      onDelete(gameId)
+     
+      router.refresh()
     }
   };
 

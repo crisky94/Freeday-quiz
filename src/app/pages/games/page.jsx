@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '../../../context/authContext';
@@ -22,7 +23,7 @@ export default function GamesList() {
   const { user } = useAuth(User);// Obtiene el usuario autenticado del contexto de autenticación.
   const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
   const [hoveredQuestions, setHoveredQuestions] = useState({});// Estado para manejar las preguntas que se muestran en la vista previa.
-
+  const router = useRouter()
   useEffect(() => {
 
     if (user) {
@@ -46,6 +47,7 @@ export default function GamesList() {
             setError(response.error);
           } else {
             setGames(response.games);
+         
           }
         });
       }
@@ -60,7 +62,7 @@ export default function GamesList() {
       if (response.error) {
         console.error(response.error);
       } else {
-        console.log('Juego eliminado exitosamente');
+        setGames(prevGames => prevGames.filter(game => game.id !== gameId));
       }
     });
   };
