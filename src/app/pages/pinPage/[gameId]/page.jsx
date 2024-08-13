@@ -8,7 +8,9 @@ import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
 import usePlayerSocket from '../../../components/usePlayerSocket'; 
-import User from '../../../components/User';
+import PacManCountdown from '../../../components/PacManCountdown';
+import { useAvatar } from '@/context/avatarContext';
+import Image from 'next/image';
 
 const monserrat = Montserrat({
   weight: '400',
@@ -19,11 +21,13 @@ const PinPage = () => {
   const [players, setPlayers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [game, setGame] = useState(null);
+  const [countdown, setCountdown] = useState(false);
   const socket = useSocket();
   const params = useParams();
   const gameId = params.gameId;
   const router = useRouter();
-  const { user } = useAuth(User);
+  const { user } = useAuth();
+  const { fetchAvatar } = useAvatar();
 
   useEffect(() => {
     if (!socket) return;
@@ -59,18 +63,20 @@ const PinPage = () => {
     fetchGame();
   }, [gameId, socket]);
 
-  usePlayerSocket({ socket, setPlayers });
+  usePlayerSocket({ socket, fetchAvatar, setPlayers, setCountdown });
 
   const startGame = () => {
     if (!socket || !game) return;
     socket.emit('startGame', { code: game.codeGame });
+    setCountdown(true);
+  };
+
+  const handleCountdownFinish = () => {
     if (players) {
       router.push(`/pages/page-game/${game.codeGame}`);
     }
     if (user) {
-      setTimeout(() => {
-        router.push(`/pages/control-quiz/${game.id}`);
-      }, 10000);
+      router.push(`/pages/control-quiz/${game.id}`);
     }
   };
 
@@ -114,15 +120,23 @@ const PinPage = () => {
                   <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
                     {player.playerName}
                   </div>
-                  <div className="col-span-1 w-[60%] p-4"></div>
-                  <div className="col-span-1 w-[20%] p-4">
-                    {player.score}
+                  <div className="col-span-1 w-[10%] p-4 flex justify-center"></div>
+                  <div className="col-span-1 w-[70%] p-4 flex justify-center">
+                    <Image
+                      width={40}
+                      height={40}
+                      src={`data:image/svg+xml;utf8,${encodeURIComponent(player.avatar)}`}
+                      alt={`${player.playerName}'s avatar`}
+                    />
                   </div>
-                </li>
+                    </li>
               ))}
             </ul>
           </div>
         </div>
+      )}
+      {countdown && (
+        <PacManCountdown onCountdownFinish={handleCountdownFinish} />
       )}
     </div>
   );
