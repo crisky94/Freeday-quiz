@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-const usePlayerSocket = ({ socket, fetchAvatar, setPlayers, setCountdown }) => {
+const usePlayerSocket = ({ socket, fetchAvatar, setPlayers, setCountdown = null }) => {
   useEffect(() => {
     if (!socket) return;
 
     const handleNewPlayer = async (newPlayer) => {
-      const avatar = await fetchAvatar(newPlayer.playerName);
+      const avatar = await fetchAvatar ? await fetchAvatar(newPlayer.playerName) : null;
       setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
     };
 
@@ -16,7 +16,7 @@ const usePlayerSocket = ({ socket, fetchAvatar, setPlayers, setCountdown }) => {
     };
 
     const handleUpdatePlayer = async (updatedPlayer) => {
-      const avatar = await fetchAvatar(updatedPlayer.playerName);
+      const avatar = await fetchAvatar ? await fetchAvatar(updatedPlayer.playerName) : null;
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
           player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
@@ -25,7 +25,7 @@ const usePlayerSocket = ({ socket, fetchAvatar, setPlayers, setCountdown }) => {
     };
 
     const handleGameStarted = () => {
-      setCountdown(true);
+      if (setCountdown) setCountdown(true);
     };
 
     socket.on('gameStarted', handleGameStarted);

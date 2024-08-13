@@ -7,8 +7,8 @@ import QRCode from 'qrcode.react';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
+import usePlayerSocket from '../../../components/usePlayerSocket'; 
 import User from '../../../components/User';
-
 
 const monserrat = Montserrat({
   weight: '400',
@@ -57,16 +57,9 @@ const PinPage = () => {
     };
 
     fetchGame();
-
-    socket.on('newPlayer', (newPlayer) => {
-      console.log('New player received:', newPlayer);
-      setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
-    });
-
-    return () => {
-      socket.off('newPlayer');
-    };
   }, [gameId, socket]);
+
+  usePlayerSocket({ socket, setPlayers });
 
   const startGame = () => {
     if (!socket || !game) return;
@@ -78,9 +71,7 @@ const PinPage = () => {
       setTimeout(() => {
         router.push(`/pages/control-quiz/${game.id}`);
       }, 10000);
-      
     }
-    
   };
 
   if (!game) {
@@ -123,7 +114,7 @@ const PinPage = () => {
                   <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
                     {player.playerName}
                   </div>
-                  <div className="col-span-1 w-[60%]  p-4"></div>
+                  <div className="col-span-1 w-[60%] p-4"></div>
                   <div className="col-span-1 w-[20%] p-4">
                     {player.score}
                   </div>
@@ -133,7 +124,7 @@ const PinPage = () => {
           </div>
         </div>
       )}
-      </div>
+    </div>
   );
 };
 
