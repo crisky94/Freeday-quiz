@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Confetti from '../../../../lib/utils';
 import { useSocket } from '@/context/socketContext';
-import { useAvatar } from '@/context/avatarContext';
 import { ToastContainer, toast } from 'react-toastify';
 import Image from 'next/image';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,8 +15,7 @@ function RankingPage() {
   const socket = useSocket();
   const [socketId, setSocketId] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [avatars, setAvatars] = useState({});
-  const { fetchAvatar } = useAvatar();
+
 
   useEffect(() => {
     if (!socket) return;
@@ -29,17 +27,11 @@ function RankingPage() {
       } else {
         setRanking(response.ranking);
         setIsLoading(false);
-        const avatarsData = await Promise.all(
-          response.ranking.map(async (player) => {
-            const avatar = await fetchAvatar(player.playerName);
-            return { id: player.id, avatar };
-          })
-        );
-        const avatarsMap = {};
-        avatarsData.forEach(({ id, avatar }) => {
-          avatarsMap[id] = avatar;
-        });
-        setAvatars(avatarsMap);
+
+        response.ranking.map(async (player) => {
+
+          return { id: player.id };
+        })
       }
     };
 
@@ -88,39 +80,36 @@ function RankingPage() {
     );
   }
   return (
-    <div className='flex flex-col p-2 h-auto items-center  bgroom text-white w-full pt-24 min-h-screen'>
-      <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>Ranking</h1>
-      <table className='w-full text-left'>
-        <tbody className='w-full text-white flex flex-col justify-center items-center'>
-          {ranking
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 10)
-            .map((player, index) => (
-              <tr
-                key={index}
-                className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'} bg-opacity-40 rounded-md mb-1`}>
-                <td className='flex items-center'>
-                  {index === 0 && <p className="fas fa-trophy text-yellow-500 mr-2 text-lg">1</p>}
-                  {index === 1 && <p className="fas fa-medal text-gray-400 mr-2 text-lg">2</p>}
-                  {index === 2 && <p className="fas fa-medal text-amber-600 mr-2 text-lg">3</p>}
-                  <Image
-                  className='mr-6 ml-2'
-                    width={40}
-                    height={40}
-                    src={`data:image/svg+xml;utf8,${encodeURIComponent(
-                      avatars[player.id]
-                    )}`}
-                    alt={`${player.playerName}'s avatar`}
-                  />
-                  <span className='font-semibold text-xs md:text-sm'>{player.playerName}</span>
-                </td>
-                <td className='text-right font-bold text-yellow-500 text-xs md:text-sm mr-2'>{player.score}px</td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-      <ToastContainer />
-    </div>
+    <>
+      <div className='flex flex-col p-2 h-auto items-center  bgroom text-white w-full pt-24 min-h-screen'>
+        <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>Ranking</h1>
+        <table className='w-full text-left'>
+          <tbody className='w-full text-white flex flex-col justify-center items-center'>
+            {ranking
+              .sort((a, b) => b.score - a.score)
+              .slice(0, 8)
+              .map((player, index) => (
+                <tr
+                  key={index}
+                  className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'} bg-opacity-40 rounded-md mb-1`}>
+                  <td className='flex items-center'>
+                    {index === 0 && <Image src='/corona1.png' width={20} height={20} />}
+                    {index === 1 && <Image src='/corona2.png' width={20} height={20} />}
+                    {index === 2 && <Image src='/corona3.png' width={20} height={20} />}
+                    <div
+                      className='border-2 border-white rounded-full ml-2 mr-6'
+                      dangerouslySetInnerHTML={{ __html: player.avatar }}
+                    />
+                    <span className='font-semibold text-xs md:text-sm'>{player.playerName}</span>
+                  </td>
+                  <td className='text-right font-bold text-yellow-500 text-xs md:text-sm mr-2'>{player.score}px</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        <ToastContainer />
+      </div>
+    </>
   )
 }
 

@@ -17,6 +17,8 @@ function HomePage() {
       }
     }
   }, [user, nickname, isSignedIn, loading]);
+ 
+
 
   if (loading) {
     return (

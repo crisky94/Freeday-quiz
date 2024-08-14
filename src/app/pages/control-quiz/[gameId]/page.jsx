@@ -23,7 +23,7 @@ export default function GameControlPage({ params }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [showRankingModal, setShowRankingModal] = useState(false);
-  const [ showEndGame, setShowEndGame ] = useState(false)
+  const [showEndGame, setShowEndGame] = useState(false)
   const [isRankingSent, setIsRankingSent] = useState(false);
   const [players, setPlayers] = useState();
   const [playerId, setPlayerId] = useState();
@@ -143,7 +143,7 @@ export default function GameControlPage({ params }) {
   };
 
   const moveToLastQuestion = () => {
-    const lastIndex = questions.length -1;
+    const lastIndex = questions.length - 1;
     setCurrentQuestionIndex(lastIndex);
     setTimeLeft(0);
   };
@@ -152,7 +152,7 @@ export default function GameControlPage({ params }) {
       socket.emit('stopGame');
       setGameState('stopped');
       setMessage('El juego ha sido parado');
-      moveToLastQuestion();    
+      moveToLastQuestion();
     }
   };
 
@@ -227,26 +227,27 @@ export default function GameControlPage({ params }) {
                 }
               }} className=' text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
             ) : (
-                <button onClick={() => {
-                  if (socket) {
-                    socket.emit('pauseGame');
-                    setGameState('paused');
-                    setMessage('El juego está pausado');
-                  }
-                }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Pausar</button>
+              <button onClick={() => {
+                if (socket) {
+                  socket.emit('pauseGame');
+                  setGameState('paused');
+                  setMessage('El juego está pausado');
+                }
+              }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Pausar</button>
             )
           }
-     
-          <button onClick={handleStopGame}
-          className=" text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>
+          {
+            !showEndGame && (<button onClick={handleStopGame}
+              className=" text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>)
+          }
           {showEndGame && (
             <EndGame
               onSend={handleSendMainScreen}
             />
-          )}  
-            <Link className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
-              Modificar juego
-            </Link>
+          )}
+          <Link className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
+            Modificar juego
+          </Link>
           <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
             <p className='break-word'>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
             <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
@@ -258,7 +259,7 @@ export default function GameControlPage({ params }) {
             <RankingModal
               code={code}
               ranking={players}
-              onSend={handleSendRanking}/>}
+              onSend={handleSendRanking} />}
           {sendmsg ? <p className='text-green-500'>{sendmsg}</p> : null}
         </div>
       </div>

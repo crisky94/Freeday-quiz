@@ -1,6 +1,6 @@
 export function playerEvents(socket, io, prisma, gamePlayerMap) {
   // * Unir jugaodres(waiting-room)
-  socket.on('joinRoom', async ({ nickname, code }) => {
+  socket.on('joinRoom', async ({ nickname, code, avatar }) => {
     try {
       const game = await prisma.games.findUnique({
         where: { codeGame: code },
@@ -28,6 +28,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
                 gameId: game.id,
                 score: 0,
                 socketId: socket.id,
+                avatar: avatar,
               },
             });
 
@@ -145,6 +146,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
             playerName: true,
             score: true,
             socketId: true,
+            avatar: true,
           },
         });
         callback({ players });
@@ -277,7 +279,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
 
       callback({ success: true });
     } catch (error) {
-      console.error('Error al actualizar el puntaje:', error);
+   
       callback({ error: 'Failed to update score' });
     }
   });
