@@ -45,7 +45,7 @@ function RankingPage() {
       socket.off('redirectToFinalScreen', handleFinalRanking);
       socket.off('redirectToMainScreen', handleMainScreen);
     };
-  }, [socket]);
+  }, [socket, router]);
 
   if (isLoading) {
     return (

@@ -269,7 +269,7 @@ export default function GameQuizPage({ params }) {
       } else {
         sessionStorage.clear();
         localStorage.clear();
-        console.log('Player eliminado con éxito');
+        console.log('Quiz finalizado, redirigiendo a inicio');
         router.push('/'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
