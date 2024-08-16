@@ -7,7 +7,10 @@ import QRCode from 'qrcode.react';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
-import User from '../../../components/User';
+import usePlayerSocket from '../../../components/usePlayerSocket'; 
+import PacManCountdown from '../../../components/PacManCountdown';
+import { useAvatar } from '@/context/avatarContext';
+import Image from 'next/image';
 
 const monserrat = Montserrat({
   weight: '400',
@@ -18,11 +21,13 @@ const PinPage = () => {
   const [players, setPlayers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [game, setGame] = useState(null);
+  const [countdown, setCountdown] = useState(false);
   const socket = useSocket();
   const params = useParams();
   const gameId = params.gameId;
   const router = useRouter();
-  const { user } = useAuth(User);
+  const { user } = useAuth();
+  const { fetchAvatar } = useAvatar();
 
   useEffect(() => {
     if (!socket) return;
@@ -56,32 +61,28 @@ const PinPage = () => {
     };
 
     fetchGame();
-
-    socket.on('newPlayer', (newPlayer) => {
-      console.log('New player received:', newPlayer);
-      setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
-    });
-
-    return () => {
-      socket.off('newPlayer');
-    };
   }, [gameId, socket]);
+
+  usePlayerSocket({ socket, fetchAvatar, setPlayers, setCountdown });
 
   const startGame = () => {
     if (!socket || !game) return;
     socket.emit('startGame', { code: game.codeGame });
+    setCountdown(true);
+  };
+
+  const handleCountdownFinish = () => {
     if (players) {
       router.push(`/pages/page-game/${game.codeGame}`);
     }
     if (user) {
-    router.push(`/pages/control-quiz/${game.id}`);
-   };
-  }
+      router.push(`/pages/control-quiz/${game.id}`);
+    }
+  };
 
   if (!game) {
     return <div>Cargando...</div>;
   }
-
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>
@@ -112,22 +113,30 @@ const PinPage = () => {
       {showModal && (
         <div className='modal mt-6 bg-custom-linear p-1 flex flex-col justify-between items-center rounded'>
           <div className='bg-hackBlack p-2 rounded flex flex-col items-center'>
-          <h2>Jugadores</h2>
-          <ul>
-            {players.map((player) => (
-              <li key={player.socketId} className="grid grid-cols-3">
-             <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
-               {player.playerName}
-            </div>
-            <div className="col-span-1 w-[60%]  p-4"></div>
-            <div className="col-span-1 w-[20%] p-4">
-            {player.score}
-            </div>
-             </li>
-            ))}
-          </ul>
+            <h2>Jugadores</h2>
+            <ul>
+              {players.map((player) => (
+                <li key={player.socketId} className="grid grid-cols-3">
+                  <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
+                    {player.playerName}
+                  </div>
+                  <div className="col-span-1 w-[10%] p-4 flex justify-center"></div>
+                  <div className="col-span-1 w-[70%] p-4 flex justify-center">
+                    <Image
+                      width={40}
+                      height={40}
+                      src={`data:image/svg+xml;utf8,${encodeURIComponent(player.avatar)}`}
+                      alt={`${player.playerName}'s avatar`}
+                    />
+                  </div>
+                    </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        </div>
+      )}
+      {countdown && (
+        <PacManCountdown onCountdownFinish={handleCountdownFinish} />
       )}
     </div>
   );

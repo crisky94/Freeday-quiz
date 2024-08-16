@@ -15,31 +15,28 @@ export default function Header() {
   const socket = useSocket();
   const { fetchAvatar } = useAvatar();
   const [players, setPlayers] = useState([]);
-  const [avatars, setAvatars] = useState({});
   const [socketId, setSocketId] = useState('');
   const params = useParams();
   const code = parseInt(params.code) || 0;
 
   useEffect(() => {
     if (!socket) return;
-
     const handleGetPlayers = async (response) => {
       if (response.error) {
         console.error(response.error);
       } else {
         setSocketId(socket.id);
         setPlayers(response.players);
-        const avatarsData = await Promise.all(
+         await Promise.all(
           response.players.map(async (player) => {
-            const avatar = await fetchAvatar(player.playerName);
-            return { id: player.id, avatar };
+            return { id: player.id };
           })
         );
-        const avatarsMap = {};
-        avatarsData.forEach(({ id, avatar }) => {
-          avatarsMap[id] = avatar;
-        });
-        setAvatars(avatarsMap);
+        // const avatarsMap = {};
+        // avatarsData.forEach(({ id, avatar }) => {
+        //   avatarsMap[id] = avatar;
+        // });
+        // setAvatars(avatarsMap);
       }
     };
     socket.emit('getPlayers', { code }, handleGetPlayers);
@@ -70,11 +67,11 @@ export default function Header() {
                   key={player.id}
                   className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto'
                 >
-                  {avatars[player.id] && player.socketId === socketId && (
+                  { player.socketId === socketId && (
                     <>
                       <div
                         className='border-2 border-white rounded-full'
-                        dangerouslySetInnerHTML={{ __html: avatars[player.id] }}
+                        dangerouslySetInnerHTML={{ __html: player.avatar }}
                       />
                       <p className='flex flex-row items-center bg-black h-8 rounded-md'>
                         {player.playerName}
