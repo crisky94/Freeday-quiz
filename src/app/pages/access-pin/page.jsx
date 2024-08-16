@@ -10,6 +10,7 @@ function AccessPin({ gameId }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const socket = useSocket();
+  localStorage.setItem('pin', code); // Almacenar el PIN después de la validación
 
   const handleInputChange = (e) => {
     setCode(parseInt(e.target.value));
@@ -20,7 +21,6 @@ function AccessPin({ gameId }) {
 
     socket.emit('correctCodeGame', { code, gameId }, (response) => {
       if (response.success) {
-        sessionStorage.setItem('pin', code); // Almacenar el PIN después de la validación
         toast.success(response.message, {
           autoClose: 1000,
           position: 'bottom-center',

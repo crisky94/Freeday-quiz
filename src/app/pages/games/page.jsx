@@ -16,13 +16,11 @@ import '../../styles/games/ListCard.css';
 
 export default function GamesList() {
   const [games, setGames] = useState([]);// Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
-  const [error, setError] = useState();// Estado para manejar posibles errores.
   const [nickname, setNickname] = useState('');// Estado para almacenar el apodo del jugador.
   const [nickUser, setNickUser] = useState('');// Estado para almacenar el nombre del usuario creador.
   const { user } = useAuth(User);// Obtiene el usuario autenticado del contexto de autenticación.
   const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
   const [hoveredQuestions, setHoveredQuestions] = useState({});// Estado para manejar las preguntas que se muestran en la vista previa.
-
   useEffect(() => {
 
     if (user) {
@@ -43,9 +41,10 @@ export default function GamesList() {
       if (nickUser) {
         socket.emit('getGames', { user: nickUser }, (response) => {
           if (response.error) {
-            setError(response.error);
+            console.log(response.error);
           } else {
             setGames(response.games);
+         
           }
         });
       }
@@ -60,7 +59,7 @@ export default function GamesList() {
       if (response.error) {
         console.error(response.error);
       } else {
-        console.log('Juego eliminado exitosamente');
+        setGames(prevGames => prevGames.filter(game => game.id !== gameId));
       }
     });
   };
@@ -121,7 +120,6 @@ export default function GamesList() {
 
   return (
     <>
-      {user ? (
         <div className='min-h-screen p-2 md:p-16 lg:p-16  '>
           {games.length > 0 ? (
             <>
@@ -210,12 +208,6 @@ export default function GamesList() {
             </div>
           )}
         </div>
-      ) : (
-        <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>
-          Página no autorizada para jugadores, inicia sesión o registrate para
-          que puedas ver tus juegos creados o poder crearlos{' '}
-        </h1>
-      )}
     </>
   );
 }

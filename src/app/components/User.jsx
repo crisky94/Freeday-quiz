@@ -30,13 +30,12 @@ export default function User() {
                   userButtonAvatarBox:
                     'w-16 h-16 rounded-full border-2  border-slate-300',
                 },
-              }}
-            />
+              }}/>
           </>
         </SignedIn>
         {user ? (
           <div className='flex items-center'>
-            <p className=' mr-12 font-bold text-sm text-center  h-6 p-1  rounded-md'>
+            <p className=' mr-12 font-bold text-sm text-center bg-black h-6 p-1  rounded-md'>
               {user.firstName} {user.lastName} ({user.username})
             </p>
           </div>
