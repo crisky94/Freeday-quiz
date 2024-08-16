@@ -5,7 +5,6 @@ import AvatarModal from '../../../components/AvatarModal';
 import { useAvatar } from '../../../../context/avatarContext';
 import { useSocket } from '@/context/socketContext';
 import { toast } from 'react-toastify';
-import { userValidation } from '@/lib/userValidation';
 import Image from 'next/image';
 
 const NickNameForm = ({ params }) => {

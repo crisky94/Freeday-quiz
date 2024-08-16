@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
 import BeforeUnloadHandler from '../../../components/closePage';
 import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
+import fetchAvatar from '../../../../lib/fetchAvatar';
 
 import usePlayerSocket from '../../../components/usePlayerSocket';
 
