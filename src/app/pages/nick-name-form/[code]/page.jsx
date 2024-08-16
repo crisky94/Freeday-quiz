@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 import { userValidation } from '@/lib/userValidation';
 import Image from 'next/image';
 
-
 const NickNameForm = ({ params }) => {
   const [nickname, setNickname] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);

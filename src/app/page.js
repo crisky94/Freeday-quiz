@@ -8,6 +8,7 @@ function HomePage() {
   // const [nickname, setNickname] = useState('');
   const { isSignedIn, loading } = useAuth();
 
+
   if (loading) {
     return (
       <div className='h-screen flex items-center'>

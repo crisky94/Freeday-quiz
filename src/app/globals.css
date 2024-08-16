@@ -5,18 +5,16 @@
 :root {
   --foreground-rgb: 255, 255, 255;
   --number-of-characters: 21;
+  --bgroom:linear-gradient(200deg,
+      rgba(28, 255, 228, 1) 0%,
+      rgba(17, 17, 17, 1) 20%,
+      rgba(17, 17, 17, 1) 42%,
+      rgba(17, 17, 17, 1) 79%,
+      rgba(252, 255, 0, 1) 100%);;
 }
 
 .bgroom {
-  background: rgb(28, 255, 228);
-  background: linear-gradient(
-    200deg,
-    rgba(28, 255, 228, 1) 0%,
-    rgba(17, 17, 17, 1) 20%,
-    rgba(17, 17, 17, 1) 42%,
-    rgba(17, 17, 17, 1) 79%,
-    rgba(252, 255, 0, 1) 100%
-  );
+  background: var(--bgroom);
 }
 
 /* Header */
@@ -89,7 +87,7 @@ body {
 @media (min-width: 1024px) {
   body {
     width: 100%;
-    font-size: 22px;
+    font-size: 20px;
   }
 }
 

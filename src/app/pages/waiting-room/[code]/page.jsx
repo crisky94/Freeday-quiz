@@ -2,8 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
-import { useAvatar } from '../../../../context/avatarContext';
-import Image from 'next/image';
 import BeforeUnloadHandler from '../../../components/closePage';
 import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
 
@@ -12,13 +10,13 @@ import usePlayerSocket from '../../../components/usePlayerSocket';
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
   const socket = useSocket();
-  const { fetchAvatar } = useAvatar();
   const [players, setPlayers] = useState([]);
   const code = parseInt(params.code);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
+
 
   useEffect(() => {
     const userNick = sessionStorage.getItem('nickname');
@@ -63,7 +61,6 @@ const WaitingRoom = ({ params }) => {
     fetchGameInfo();
   }, [code, router]);
 
-
   usePlayerSocket({ socket, fetchAvatar, setPlayers, setCountdown });
 
   useEffect(() => {
@@ -75,9 +72,8 @@ const WaitingRoom = ({ params }) => {
           console.error(response.error);
         } else {
           const playersWithAvatars = await Promise.all(
-            response.players.map(async (player) => {
-              const avatar = await fetchAvatar(player.playerName);
-              return { ...player, avatar };
+            response.players.map(async (player) => {             
+              return { ...player };
             })
           );
           setPlayers(playersWithAvatars);
@@ -91,7 +87,7 @@ const WaitingRoom = ({ params }) => {
       socket.off('getPlayers');
       socket.off('connect', fetchPlayers);
     };
-  }, [socket, code, fetchAvatar]);
+  }, [socket, code]);
 
   const deletePlayer = useCallback(() => {
     if (!socket) return;
@@ -129,23 +125,17 @@ const WaitingRoom = ({ params }) => {
         </h1>
         <p className='text-wrap break-words w-full'>{description}</p>
       </div>
-
       <div className='flex flex-wrap -mt-9 '>
         {players.map((player) => (
           <div
             key={player.id}
-            className={`w-14 flex flex-col items-center p-1 mx-8 ${
-              player.socketId === socketId ? 'text-secundary' : 'text-white'
-            }`}
+            className={`w-14 flex flex-col items-center p-1 mx-8 ${player.socketId === socketId ? 'text-secundary' : 'text-white'
+              }`}
           >
             <div className='text-center flex flex-col items-center p-1 gap-1'>
-              <Image
-                width={40}
-                height={40}
-                src={`data:image/svg+xml;utf8,${encodeURIComponent(
-                  player.avatar
-                )}`}
-                alt={`${player.playerName}'s avatar`}
+              <div
+                className='border-2 border-white rounded-full'
+                dangerouslySetInnerHTML={{ __html: player.avatar }}
               />
               <p>{player.playerName}</p>
             </div>

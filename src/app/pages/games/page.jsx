@@ -15,15 +15,13 @@ import '../../styles/games/editButtonGames.css';
 import '../../styles/games/ListCard.css';
 import GameRankings from '@/app/components/RankingsModal';
 export default function GamesList() {
-  
-  const [games, setGames] = useState([]); // Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
-  const [error, setError] = useState(); // Estado para manejar posibles errores.
-  const [nickname, setNickname] = useState(''); // Estado para almacenar el apodo del jugador.
-  const [nickUser, setNickUser] = useState(''); // Estado para almacenar el nombre del usuario creador.
-  const { user } = useAuth(User); // Obtiene el usuario autenticado del contexto de autenticación.
-  const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
-  const [hoveredQuestions, setHoveredQuestions] = useState({}); // Estado para manejar las preguntas que se muestran en la vista previa.
 
+  const [games, setGames] = useState([]);// Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
+  const [nickname, setNickname] = useState('');// Estado para almacenar el apodo del jugador.
+  const [nickUser, setNickUser] = useState('');// Estado para almacenar el nombre del usuario creador.
+  const { user } = useAuth(User);// Obtiene el usuario autenticado del contexto de autenticación.
+  const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
+  const [hoveredQuestions, setHoveredQuestions] = useState({});// Estado para manejar las preguntas que se muestran en la vista previa.
   useEffect(() => {
     if (user) {
       setNickUser(`${user.firstName} ${user.lastName}`);
@@ -43,12 +41,9 @@ export default function GamesList() {
       if (nickUser) {
         socket.emit('getGames', { user: nickUser }, (response) => {
           if (response.error) {
-            setError(response.error);
-            console.log(error);
+            console.log(response.error);
           } else {
-            setGames(response.games);
-            console.log(response.games + 'hola');
-
+            setGames(response.games)
           }
         });
       }
@@ -224,6 +219,5 @@ export default function GamesList() {
       ''
       )}
     </section>
-
   );
 }

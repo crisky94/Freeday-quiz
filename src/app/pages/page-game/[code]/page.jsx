@@ -30,13 +30,13 @@ export default function GameQuizPage({ params }) {
   const code = parseInt(params.code);
   const router = useRouter();
 
+
   useEffect(() => {
     const userNick = sessionStorage.getItem('nickname');
     if (!userNick) {
       router.push('/');
     }
   }, [router]);
-
 
   useEffect(() => {
     if (!socket) {
@@ -230,29 +230,8 @@ export default function GameQuizPage({ params }) {
       setIsCorrect(false);
       setSelectedAnswer(null);
       setShowCorrectAnswer(false);
-
-      showToast().then(() => {
-        moveToNextQuestion();
-      });
-    }, 1000);
-  };
-
-  const showToast = () => {
-    return new Promise((resolve) => {
-      toast(`Puntos: ${score}px 🚀`, {
-        toastId: 'custom-id-yes',
-        position: 'bottom-center',
-        autoClose: 2000,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: true,
-        theme: 'light',
-        transition: Bounce,
-        onClose: resolve,
-        pauseOnFocusLoss: false,
-      });
-    });
-
+      moveToNextQuestion();
+    }, 2000);
   };
 
   const moveToNextQuestion = () => {
@@ -311,32 +290,12 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <BeforeUnloadHandler onBeforeUnload={deletePlayer} />{' '}
-      {/* Agrega el componente */}
-      <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
-        <ToastContainer />
-        <div
-          key={currentQuestion.id}
-          className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
-        >
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
-              {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
-            </p>
-          </div>
-          <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
-            {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
-          </p>
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 w-full'>
-            <div
-              onClick={() => handleAnswerClick('a')}
-              className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass(
-                'a'
-              )} text-center overflow-wrap break-word text-sm sm:text-base`}
-            >
-              {currentQuestion.a}
-            </div>
-
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
+      <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
+      <ToastContainer />
+      {
+        currentQuestion && (
+          <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
             <div
               key={currentQuestion.id}
               className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'

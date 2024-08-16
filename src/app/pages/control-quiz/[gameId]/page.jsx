@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useSocket } from '@/context/socketContext';
 import Link from 'next/link';
-import { Tooltip } from '@nextui-org/tooltip';
 import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -24,6 +23,7 @@ export default function GameControlPage({ params }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [showRankingModal, setShowRankingModal] = useState(false);
+  const [showEndGame, setShowEndGame] = useState(false)
   const [isRankingSent, setIsRankingSent] = useState(false);
   const [players, setPlayers] = useState();
   const [playerId, setPlayerId] = useState();
@@ -82,8 +82,6 @@ export default function GameControlPage({ params }) {
 
     socket.on('pauseGame', () => setIsPaused(true));
     socket.on('resumeGame', () => setIsPaused(false));
-    socket.on('stopGame', () => {});
-
     // Manejar actualizaciones de preguntas
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
@@ -115,8 +113,18 @@ export default function GameControlPage({ params }) {
       }
     });
 
+    socket.on('stopGame', () => {
+      toast('El juego para los jugadores, ha finalizado.', {
+        position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
+          setShowEndGame(true);
+          setShowRankingModal(true);
+        }
+      });
+    })
+
     return () => {
       socket.off('gameStateUpdate', handleGameStateUpdate);
+      socket.off('stopGame');
     };
   }, [socket, router]);
 
@@ -140,7 +148,7 @@ export default function GameControlPage({ params }) {
   const handleTimeUp = () => {
     setTimeout(() => {
       moveToNextQuestion();
-    }, 4000);
+    }, 2000);
   };
 
   const moveToNextQuestion = () => {
@@ -149,8 +157,21 @@ export default function GameControlPage({ params }) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000);
     } else {
-      setShowRankingModal(true);
       handleReloadPlayersData();
+    }
+  };
+
+  const moveToLastQuestion = () => {
+    const lastIndex = questions.length - 1;
+    setCurrentQuestionIndex(lastIndex);
+    setTimeLeft(0);
+  };
+  const handleStopGame = () => {
+    if (socket) {
+      socket.emit('stopGame');
+      setGameState('stopped');
+      setMessage('El juego ha sido parado');
+      moveToLastQuestion();
     }
   };
 
@@ -249,67 +270,45 @@ export default function GameControlPage({ params }) {
     <div className='flex flex-col items-center justify-center min-h-screen w-full pt-16'>
       <div className='bg-custom-linear flex mb-2'>
         <div className='flex flex-col  p-14 m-1 h-auto w-58 sm:w-full items-center bg-black gap-5'>
-          <h1 className='uppercase font-bold text-xl text-center'>
-            Sala de control del juego
-          </h1>
-          <div className='text-[#1cffe4] font-bold uppercase'>{message}</div>
-          <button
-            onClick={() => {
-              if (socket) {
-                socket.emit('pauseGame');
-                setGameState('paused');
-                setMessage('El juego está pausado');
-              }
-            }}
-            className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
-          >
-            Pausar
-          </button>
-          <button
-            onClick={() => {
-              if (socket) {
-                socket.emit('resumeGame');
-                setGameState('resumed');
-                setMessage('El juego está en marcha');
-              }
-            }}
-            className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
-          >
-            Reanudar
-          </button>
-          <button
-            onClick={() => {
-              if (socket) {
-                socket.emit('stopGame');
-                setGameState('stopped');
-                setMessage('El juego ha sido parado');
-              }
-            }}
-            className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
-          >
-            Parar
-          </button>
-          <EndGame onSend={handleSendMainScreen} />
-          <Tooltip
-            className='text-[#fcff00] text-base uppercase'
-            content='Sólo Eliminar preguntas futuras'
-          >
-            <Link
-              onClick={() => {}}
-              className='mt-5 text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center'
-              href={`/pages/modify-page/${gameId}`}
-              target='_blank'
-            >
-              Modificar juego
-            </Link>
-          </Tooltip>
+          <h1 className='uppercase font-bold text-xl text-center'>Sala de control del juego</h1>
+          <div className='text-[#1cffe4] font-bold uppercase'>
+            {message}
+          </div>
+          {
+            isPaused ? (
+              <button onClick={() => {
+                if (socket) {
+                  socket.emit('resumeGame');
+                  setGameState('resumed');
+                  setMessage('El juego está en marcha');
+                }
+              }} className=' text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
+            ) : (
+              <button onClick={() => {
+                if (socket) {
+                  socket.emit('pauseGame');
+                  setGameState('paused');
+                  setMessage('El juego está pausado');
+                }
+              }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Pausar</button>
+            )
+          }
+          {
+            !showEndGame && (<button onClick={handleStopGame}
+              className=" text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>)
+          }
+          {showEndGame && (
+            <EndGame
+              onSend={handleSendMainScreen}
+            />
+          )}
+          <Link className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
+            Modificar juego
+          </Link>
           <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
-            <p>
-              Preguntas: {currentQuestionIndex + 1} de {questions.length}
-            </p>
-            <div className='text-lg text-center'>
-              {currentQuestionIndex + 1}. {currentQuestion?.ask}
-            </div>
+            <p className='break-word'>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
+            <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
+
             <div className='text-xl font-bold text-center mt-4 text-red-500'>
               Tiempo restante: {formatTime(timeLeft)}
             </div>
@@ -318,9 +317,7 @@ export default function GameControlPage({ params }) {
             <RankingModal
               code={code}
               ranking={players}
-              onSend={handleSendRanking}
-            />
-          )}
+              onSend={handleSendRanking} />}
           {sendmsg ? <p className='text-green-500'>{sendmsg}</p> : null}
         </div>
       </div>

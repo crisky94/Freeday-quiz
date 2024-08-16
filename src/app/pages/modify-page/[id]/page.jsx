@@ -16,6 +16,7 @@ export default function EditGame({ params }) {
 
   const socket = useSocket(); // Obtener la instancia del socket desde el contexto
   const gameId = params.id; // Obtener el ID del juego desde los parámetros de la URL
+
   const router = useRouter();
 
   useEffect(() => {
@@ -109,8 +110,7 @@ export default function EditGame({ params }) {
     socket.emit('deleteAsk', { askId }, (response) => {
       console.log(response);
       if (response.success) {
-        setFormData((prevData) => {
-
+        setFormData(prevData => {
           // Filtrar las preguntas para eliminar la pregunta con askId
           const updatedAsks = prevData.asks.filter((ask) => ask.id !== askId);
           return {
