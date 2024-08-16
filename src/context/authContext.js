@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
         router.push('/'); // Redirigir a una página específica
       }
     }
-  }, [isLoaded, isSignedIn, router]);
+  }, [isLoaded, isSignedIn]);
 
   return (
     <AuthContext.Provider value={{ isSignedIn, user, loading }}>

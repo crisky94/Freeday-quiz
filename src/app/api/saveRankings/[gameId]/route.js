@@ -38,7 +38,7 @@ export async function GET(req, { params }) {
 
     // Agrupa los rankings por su fecha de creación
     const groupedRankings = rankings.reduce((acc, ranking) => {
-      const date = ranking.createdAt.toISOString().split('T')[0]; // Obtener solo la fecha
+      const date = ranking.createdAt.toISOString(); // Obtener solo la fecha
       if (!acc[date]) {
         acc[date] = [];
       }

@@ -31,7 +31,8 @@ function RankingPage() {
     socket.on('redirectToFinalScreen', handleFinalRanking);
 
     const handleMainScreen = () => {
-      toast('Eliminando jugador y redirigiendo a home', {
+      toast('Quiz finalizado, redirigiendo a inicio', {
+        autoClose: 2000,
         onClose: () => {
           sessionStorage.clear();
           localStorage.clear();
