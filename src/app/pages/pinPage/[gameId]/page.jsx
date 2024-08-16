@@ -1,18 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import QRCode from 'qrcode.react';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
 import usePlayerSocket from '../../../components/usePlayerSocket'; 
 import PacManCountdown from '../../../components/PacManCountdown';
-import { useAvatar } from '@/context/avatarContext';
-import Image from 'next/image';
 
-const monserrat = Montserrat({
+const montserrat = Montserrat({
   weight: '400',
   subsets: ['latin'],
 });
@@ -27,11 +24,12 @@ const PinPage = () => {
   const gameId = params.gameId;
   const router = useRouter();
   const { user } = useAuth();
-  const { fetchAvatar } = useAvatar();
+
+  // Use the custom hook
+  usePlayerSocket({ socket, setPlayers, setCountdown });
 
   useEffect(() => {
     if (!socket) return;
-    console.log('Socket initialized:', socket);
 
     const fetchGame = async () => {
       socket.emit(
@@ -63,8 +61,6 @@ const PinPage = () => {
     fetchGame();
   }, [gameId, socket]);
 
-  usePlayerSocket({ socket, fetchAvatar, setPlayers, setCountdown });
-
   const startGame = () => {
     if (!socket || !game) return;
     socket.emit('startGame', { code: game.codeGame });
@@ -86,10 +82,10 @@ const PinPage = () => {
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>
-      <h1 className={`${monserrat.className} text-4xl uppercase bold bg-hackBlack bg-opacity-90`}>
+      <h1 className={`${montserrat.className} text-4xl uppercase bold bg-hackBlack bg-opacity-90`}>
         {game.nameGame}
       </h1>
-      <p className={`${monserrat.className} text-xl uppercase bold bg-hackBlack bg-opacity-90`}>
+      <p className={`${montserrat.className} text-xl uppercase bold bg-hackBlack bg-opacity-90`}>
         {game.detailGame}
       </p>
       <QRCode
@@ -117,19 +113,17 @@ const PinPage = () => {
             <ul>
               {players.map((player) => (
                 <li key={player.socketId} className="grid grid-cols-3">
-                  <div className={`${monserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
+                  <div className={`${montserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
                     {player.playerName}
                   </div>
                   <div className="col-span-1 w-[10%] p-4 flex justify-center"></div>
                   <div className="col-span-1 w-[70%] p-4 flex justify-center">
-                    <Image
-                      width={40}
-                      height={40}
-                      src={`data:image/svg+xml;utf8,${encodeURIComponent(player.avatar)}`}
-                      alt={`${player.playerName}'s avatar`}
+                    <div
+                      className='border-2 border-white rounded-full'
+                      dangerouslySetInnerHTML={{ __html: player.avatar }}
                     />
                   </div>
-                    </li>
+                </li>
               ))}
             </ul>
           </div>

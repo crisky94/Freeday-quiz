@@ -2,11 +2,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
+import { useAvatar } from '@/context/avatarContext';
 import BeforeUnloadHandler from '../../../components/closePage';
 import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
-import fetchAvatar from '../../../../lib/fetchAvatar';
+import usePlayerSocket from '@/app/components/usePlayerSocket';
 
-import usePlayerSocket from '../../../components/usePlayerSocket';
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -17,19 +17,10 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
-
-
-  useEffect(() => {
-    const userNick = sessionStorage.getItem('nickname');
-    if (!userNick) {
-      router.push('/');
-    }
-  }, [router]);
+  const { fetchAvatar } = useAvatar();
 
   useEffect(() => {
-    // const userPin = localStorage.getItem('pin');
-    const userNick = localStorage.getItem('nickame');
-    if (!socket && !userNick) {
+    if (!socket) {
       router.push('/');
     } else {
       setSocketId(socket.id);
@@ -62,7 +53,9 @@ const WaitingRoom = ({ params }) => {
     fetchGameInfo();
   }, [code, router]);
 
-  usePlayerSocket({ socket, fetchAvatar, setPlayers, setCountdown });
+  usePlayerSocket({ socket, setPlayers, setCountdown });
+
+  
 
   useEffect(() => {
     if (!socket) return;
@@ -73,7 +66,7 @@ const WaitingRoom = ({ params }) => {
           console.error(response.error);
         } else {
           const playersWithAvatars = await Promise.all(
-            response.players.map(async (player) => {             
+            response.players.map(async (player) => {
               return { ...player };
             })
           );
@@ -98,10 +91,6 @@ const WaitingRoom = ({ params }) => {
       console.error('Player ID not found');
       return;
     }
-    // Limpiar el localStorage y sesion  cuando el jugador es eliminado
-    sessionStorage.removeItem('pin');
-    sessionStorage.removeItem('nickname');
-    localStorage.removeItem('nickname');
 
     socket.emit('deletePlayer', { playerId, code }, (response) => {
       if (response.error) {
