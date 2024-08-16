@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Loading from '../../../loading';
 import { useSocket } from '@/context/socketContext';
 import { useRouter } from 'next/navigation';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
 import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
@@ -213,7 +213,6 @@ export default function GameQuizPage({ params }) {
     });
   };
 
-
   const handleTimeUp = async () => {
     setShowCorrectAnswer(true);
     setAlertMessage(`Puntos: ${score}px 🚀`);
@@ -221,9 +220,9 @@ export default function GameQuizPage({ params }) {
     setTimeout(() => {
       setIsCorrect(false);
       setSelectedAnswer(null);
-      setShowCorrectAnswer(false);   
+      setShowCorrectAnswer(false);
       moveToNextQuestion();
-    }, 3000);
+    }, 2000);
   };
 
   const moveToNextQuestion = () => {
@@ -283,12 +282,12 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <BeforeUnloadHandler onBeforeUnload={deletePlayer} /> 
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
       <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
-        <ToastContainer />
-        {
-          currentQuestion && (
-      <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
+      <ToastContainer />
+      {
+        currentQuestion && (
+          <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
             <div
               key={currentQuestion.id}
               className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
@@ -335,11 +334,11 @@ export default function GameQuizPage({ params }) {
                   {currentQuestion.d}
                 </div>
               </div>
-      </div>
             </div>
-          )
-        }
+          </div>
+        )
+      }
     </div>
-       
+
   );
 }

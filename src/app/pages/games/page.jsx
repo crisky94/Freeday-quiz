@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '../../../context/authContext';
@@ -17,13 +16,11 @@ import '../../styles/games/ListCard.css';
 
 export default function GamesList() {
   const [games, setGames] = useState([]);// Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
-  const [error, setError] = useState();// Estado para manejar posibles errores.
   const [nickname, setNickname] = useState('');// Estado para almacenar el apodo del jugador.
   const [nickUser, setNickUser] = useState('');// Estado para almacenar el nombre del usuario creador.
   const { user } = useAuth(User);// Obtiene el usuario autenticado del contexto de autenticación.
   const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
   const [hoveredQuestions, setHoveredQuestions] = useState({});// Estado para manejar las preguntas que se muestran en la vista previa.
-  const router = useRouter()
   useEffect(() => {
 
     if (user) {
@@ -44,7 +41,7 @@ export default function GamesList() {
       if (nickUser) {
         socket.emit('getGames', { user: nickUser }, (response) => {
           if (response.error) {
-            setError(response.error);
+            console.log(response.error);
           } else {
             setGames(response.games);
          

@@ -72,7 +72,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-  socket.on('replaceNickname', async ({ nickname, code }) => {
+  socket.on('replaceNickname', async ({ nickname, code, avatar }) => {
     try {
       const game = await prisma.games.findUnique({
         where: { codeGame: code },
@@ -86,6 +86,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
           },
           data: {
             playerName: nickname,
+            avatar: avatar,
           },
         });
 

@@ -100,9 +100,9 @@ function RankingPage() {
                       className='border-2 border-white rounded-full ml-2 mr-6'
                       dangerouslySetInnerHTML={{ __html: player.avatar }}
                     />
-                    <span className='font-semibold text-xs md:text-sm'>{player.playerName}</span>
+                    <span className='font-semibold text-lg'>{player.playerName}</span>
                   </td>
-                  <td className='text-right font-bold text-yellow-500 text-xs md:text-sm mr-2'>{player.score}px</td>
+                  <td className='text-right font-bold text-yellow-500 text-lg md:text-sm mr-2'>{player.score}px</td>
                 </tr>
               ))}
           </tbody>

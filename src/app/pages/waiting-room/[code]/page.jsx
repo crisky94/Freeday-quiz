@@ -15,8 +15,6 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
-  // const [avatar, setAvatar] = useState()
-
 
   useEffect(() => {
     if (!socket) {
@@ -75,7 +73,7 @@ const WaitingRoom = ({ params }) => {
       );
     };
 
-    const handleGameStarted = ({ code }) => {
+    const handleGameStarted = () => {
       setCountdown(true);
     };
 
@@ -101,9 +99,7 @@ const WaitingRoom = ({ params }) => {
           console.error(response.error);
         } else {
           const playersWithAvatars = await Promise.all(
-            response.players.map(async (player) => {
-              
-              
+            response.players.map(async (player) => {             
               return { ...player };
             })
           );
@@ -152,7 +148,6 @@ const WaitingRoom = ({ params }) => {
         </h1>
         <p className='text-wrap break-words w-full'>{description}</p>
       </div>
-
       <div className='flex flex-wrap -mt-9 '>
         {players.map((player) => (
           <div
@@ -165,7 +160,6 @@ const WaitingRoom = ({ params }) => {
                 className='border-2 border-white rounded-full'
                 dangerouslySetInnerHTML={{ __html: player.avatar }}
               />
-
               <p>{player.playerName}</p>
             </div>
           </div>
