@@ -23,9 +23,9 @@ export default function GameControlPage({ params }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [showRankingModal, setShowRankingModal] = useState(false);
-  const [showEndGame, setShowEndGame] = useState(false)
+  const [showEndGame, setShowEndGame] = useState(false);
   const [isRankingSent, setIsRankingSent] = useState(false);
-  const [players, setPlayers] = useState();
+  const [players, setPlayers] = useState([]);
   const [playerId, setPlayerId] = useState();
   const gameId = parseInt(params.gameId);
 
@@ -82,7 +82,6 @@ export default function GameControlPage({ params }) {
 
     socket.on('pauseGame', () => setIsPaused(true));
     socket.on('resumeGame', () => setIsPaused(false));
-    // Manejar actualizaciones de preguntas
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
         setQuestions((prevQuestions) => {
@@ -100,7 +99,6 @@ export default function GameControlPage({ params }) {
       }
     });
 
-    // Manejar eliminaciones de preguntas
     socket.on('updateDeleteAsk', (response) => {
       if (response.data) {
         setQuestions((prevQuestions) => {
@@ -120,7 +118,7 @@ export default function GameControlPage({ params }) {
           setShowRankingModal(true);
         }
       });
-    })
+    });
 
     return () => {
       socket.off('gameStateUpdate', handleGameStateUpdate);
@@ -166,6 +164,7 @@ export default function GameControlPage({ params }) {
     setCurrentQuestionIndex(lastIndex);
     setTimeLeft(0);
   };
+
   const handleStopGame = () => {
     if (socket) {
       socket.emit('stopGame');
@@ -269,7 +268,7 @@ export default function GameControlPage({ params }) {
   return (
     <div className='flex flex-col items-center justify-center min-h-screen w-full pt-16'>
       <div className='bg-custom-linear flex mb-2'>
-        <div className='flex flex-col  p-14 m-1 h-auto w-58 sm:w-full items-center bg-black gap-5'>
+        <div className='flex flex-col p-14 m-1 h-auto w-58 sm:w-full items-center bg-black gap-5'>
           <h1 className='uppercase font-bold text-xl text-center'>Sala de control del juego</h1>
           <div className='text-[#1cffe4] font-bold uppercase'>
             {message}
@@ -282,7 +281,9 @@ export default function GameControlPage({ params }) {
                   setGameState('resumed');
                   setMessage('El juego está en marcha');
                 }
-              }} className=' text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Reanudar</button>
+              }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>
+                Reanudar
+              </button>
             ) : (
               <button onClick={() => {
                 if (socket) {
@@ -290,25 +291,27 @@ export default function GameControlPage({ params }) {
                   setGameState('paused');
                   setMessage('El juego está pausado');
                 }
-              }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>Pausar</button>
+              }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>
+                Pausar
+              </button>
             )
           }
           {
-            !showEndGame && (<button onClick={handleStopGame}
-              className=" text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">Finalizar</button>)
+            !showEndGame && (
+              <button onClick={handleStopGame} className="text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">
+                Finalizar
+              </button>
+            )
           }
           {showEndGame && (
-            <EndGame
-              onSend={handleSendMainScreen}
-            />
+            <EndGame onSend={handleSendMainScreen} />
           )}
           <Link className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
             Modificar juego
           </Link>
-          <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
+          <div className='flex flex-col p-5 m-1 items-center bg-black gap-5'>
             <p className='break-word'>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
             <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
-
             <div className='text-xl font-bold text-center mt-4 text-red-500'>
               Tiempo restante: {formatTime(timeLeft)}
             </div>
@@ -317,7 +320,9 @@ export default function GameControlPage({ params }) {
             <RankingModal
               code={code}
               ranking={players}
-              onSend={handleSendRanking} />}
+              onSend={handleSendRanking}
+            />
+          )}
           {sendmsg ? <p className='text-green-500'>{sendmsg}</p> : null}
         </div>
       </div>

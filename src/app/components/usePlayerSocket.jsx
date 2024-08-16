@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 
-const usePlayerSocket = ({ socket, fetchAvatar, setPlayers, setCountdown = null }) => {
+const usePlayerSocket = ({ socket, setPlayers, setCountdown = null }) => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewPlayer = async (newPlayer) => {
-      const avatar = await fetchAvatar ? await fetchAvatar(newPlayer.playerName) : null;
-      setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
+    const handleNewPlayer = (newPlayer) => {
+      setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
     };
 
     const handleExitPlayer = (removedPlayerId) => {
@@ -15,11 +14,10 @@ const usePlayerSocket = ({ socket, fetchAvatar, setPlayers, setCountdown = null 
       );
     };
 
-    const handleUpdatePlayer = async (updatedPlayer) => {
-      const avatar = await fetchAvatar ? await fetchAvatar(updatedPlayer.playerName) : null;
+    const handleUpdatePlayer = (updatedPlayer) => {
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
-          player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
+          player.id === updatedPlayer.id ? updatedPlayer : player
         )
       );
     };
@@ -39,7 +37,7 @@ const usePlayerSocket = ({ socket, fetchAvatar, setPlayers, setCountdown = null 
       socket.off('exitPlayer', handleExitPlayer);
       socket.off('updatePlayer', handleUpdatePlayer);
     };
-  }, [socket, fetchAvatar, setPlayers, setCountdown]);
+  }, [socket, setPlayers, setCountdown]);
 };
 
 export default usePlayerSocket;
