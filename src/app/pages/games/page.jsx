@@ -15,6 +15,7 @@ import '../../styles/games/editButtonGames.css';
 import '../../styles/games/ListCard.css';
 import GameRankings from '@/app/components/RankingsModal';
 export default function GamesList() {
+  
   const [games, setGames] = useState([]); // Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
   const [error, setError] = useState(); // Estado para manejar posibles errores.
   const [nickname, setNickname] = useState(''); // Estado para almacenar el apodo del jugador.
@@ -47,6 +48,7 @@ export default function GamesList() {
           } else {
             setGames(response.games);
             console.log(response.games + 'hola');
+
           }
         });
       }
@@ -61,7 +63,7 @@ export default function GamesList() {
       if (response.error) {
         console.error(response.error);
       } else {
-        console.log('Juego eliminado exitosamente');
+        setGames(prevGames => prevGames.filter(game => game.id !== gameId));
       }
     });
   };
@@ -219,11 +221,9 @@ export default function GamesList() {
           )}
         </div>
       ) : (
-        <h1 className='pt-16 break-words text-center justify-center h-full text-[#fed500] bg-[#111]'>
-          Página no autorizada para jugadores, inicia sesión o registrate para
-          que puedas ver tus juegos creados o poder crearlos{' '}
-        </h1>
+      ''
       )}
     </section>
+
   );
 }

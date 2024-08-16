@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Confetti from '../../../../lib/utils';
 import { useSocket } from '@/context/socketContext';
 import { ToastContainer, toast } from 'react-toastify';
+import Image from 'next/image';
 import 'react-toastify/dist/ReactToastify.css';
 
 function RankingPage() {
@@ -15,16 +16,22 @@ function RankingPage() {
   const [socketId, setSocketId] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     if (!socket) return;
     setSocketId(socket.id);
     // Listener para recibir el ranking final
-    const handleFinalRanking = (response) => {
+    const handleFinalRanking = async (response) => {
       if (response.error) {
         console.error(response.error);
       } else {
         setRanking(response.ranking);
         setIsLoading(false);
+
+        response.ranking.map(async (player) => {
+
+          return { id: player.id };
+        })
       }
     };
 
@@ -33,6 +40,7 @@ function RankingPage() {
     const handleMainScreen = () => {
       toast('Quiz finalizado, redirigiendo a inicio', {
         autoClose: 2000,
+
         onClose: () => {
           sessionStorage.clear();
           localStorage.clear();
@@ -115,6 +123,7 @@ function RankingPage() {
       <ToastContainer />
     </div>
   );
+
 }
 
 export default RankingPage;

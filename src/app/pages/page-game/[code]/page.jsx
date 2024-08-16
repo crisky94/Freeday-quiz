@@ -4,10 +4,12 @@ import { useEffect, useState, useCallback } from 'react';
 import Loading from '../../../loading';
 import { useSocket } from '@/context/socketContext';
 import { useRouter } from 'next/navigation';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
 import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
+import { userValidation } from '@/lib/userValidation';
+import Alert from '@/app/components/Alert';
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -22,6 +24,8 @@ export default function GameQuizPage({ params }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('info');
   const socket = useSocket();
   const code = parseInt(params.code);
   const router = useRouter();
@@ -32,6 +36,7 @@ export default function GameQuizPage({ params }) {
       router.push('/');
     }
   }, [router]);
+
 
   useEffect(() => {
     if (!socket) {
@@ -103,12 +108,11 @@ export default function GameQuizPage({ params }) {
       });
 
       socket.on('stopGame', () => {
-        toast('El juego ha sido parado', {
-          position: 'bottom-center',
-          autoClose: 2000,
-          onClose: () => {
-            router.push(`/pages/ranking/${code}`);
-          },
+
+        toast('El juego ha finalizado', {
+          position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
+            router.push(`/pages/ranking/${code}`)
+          }
         });
       });
 
@@ -220,10 +224,13 @@ export default function GameQuizPage({ params }) {
 
   const handleTimeUp = async () => {
     setShowCorrectAnswer(true);
+    setAlertMessage(`Puntos: ${score}px 🚀`);
+    setAlertType('info');
     setTimeout(() => {
       setIsCorrect(false);
       setSelectedAnswer(null);
       setShowCorrectAnswer(false);
+
       showToast().then(() => {
         moveToNextQuestion();
       });
@@ -245,6 +252,7 @@ export default function GameQuizPage({ params }) {
         pauseOnFocusLoss: false,
       });
     });
+
   };
 
   const moveToNextQuestion = () => {
@@ -253,6 +261,7 @@ export default function GameQuizPage({ params }) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
+      socket.emit('stopGame');
       router.push(`/pages/ranking/${code}`);
     }
   };
@@ -327,33 +336,58 @@ export default function GameQuizPage({ params }) {
             >
               {currentQuestion.a}
             </div>
+
             <div
-              onClick={() => handleAnswerClick('b')}
-              className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass(
-                'b'
-              )} text-center overflow-wrap break-word text-sm sm:text-base`}
+              key={currentQuestion.id}
+              className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
             >
-              {currentQuestion.b}
-            </div>
-            <div
-              onClick={() => handleAnswerClick('c')}
-              className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
-                'c'
-              )} text-center overflow-wrap break-word text-sm sm:text-base`}
-            >
-              {currentQuestion.c}
-            </div>
-            <div
-              onClick={() => handleAnswerClick('d')}
-              className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
-                'd'
-              )} text-center overflow-wrap break-word text-sm sm:text-base`}
-            >
-              {currentQuestion.d}
+              <div className='flex flex-col items-center justify-center'>
+                <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
+                  {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
+                </p>
+              </div>
+              <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
+                {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
+              </p>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 w-full'>
+                <div
+                  onClick={() => handleAnswerClick('a')}
+                  className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass(
+                    'a'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.a}
+                </div>
+                <div
+                  onClick={() => handleAnswerClick('b')}
+                  className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass(
+                    'b'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.b}
+                </div>
+                <div
+                  onClick={() => handleAnswerClick('c')}
+                  className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
+                    'c'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.c}
+                </div>
+                <div
+                  onClick={() => handleAnswerClick('d')}
+                  className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
+                    'd'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.d}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        )
+      }
     </div>
+
   );
 }
