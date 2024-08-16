@@ -14,8 +14,8 @@ export default function EditGame({ params }) {
     asks: [],
   });
 
-  const socket = useSocket();
-  const gameId = params.id;
+  const socket = useSocket(); // Obtener la instancia del socket desde el contexto
+  const gameId = params.id; // Obtener el ID del juego desde los parámetros de la URL
   const router = useRouter();
 
   useEffect(() => {
@@ -109,12 +109,13 @@ export default function EditGame({ params }) {
     socket.emit('deleteAsk', { askId }, (response) => {
       console.log(response);
       if (response.success) {
-        setFormData(prevData => {
+        setFormData((prevData) => {
+
           // Filtrar las preguntas para eliminar la pregunta con askId
-          const updatedAsks = prevData.asks.filter(ask => ask.id !== askId);
+          const updatedAsks = prevData.asks.filter((ask) => ask.id !== askId);
           return {
             ...prevData,
-            asks: updatedAsks
+            asks: updatedAsks,
           };
         });
       } else {
@@ -144,11 +145,15 @@ export default function EditGame({ params }) {
         hasErrors = true;
       }
       if (!ask.a.trim() || !ask.b.trim() || !ask.c.trim() || !ask.d.trim()) {
-        toast.error(`Todas las respuestas para la pregunta ${index + 1} son requeridas.`);
+        toast.error(
+          `Todas las respuestas para la pregunta ${index + 1} son requeridas.`
+        );
         hasErrors = true;
       }
-      if (ask.answer === '') {
-        toast.error(`Selecciona una respuesta correcta para la pregunta ${index + 1}.`);
+      if (ask.answer === null) {
+        toast.error(
+          `Selecciona una respuesta correcta para la pregunta ${index + 1}.`
+        );
         hasErrors = true;
       }
     });
@@ -170,7 +175,6 @@ export default function EditGame({ params }) {
           closeOnClick: false,
           pauseOnHover: true,
           draggable: false,
-          pauseOnHover: false,
           closeButton: false,
           theme: 'light',
           transition: Flip,

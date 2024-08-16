@@ -38,33 +38,37 @@ function RankingPage() {
     socket.on('redirectToFinalScreen', handleFinalRanking);
 
     const handleMainScreen = () => {
-      toast('Redirigiendo a home.', {
+      toast('Quiz finalizado, redirigiendo a inicio', {
+        autoClose: 2000,
+
         onClose: () => {
-          router.push('/')
+          sessionStorage.clear();
+          localStorage.clear();
+          router.push('/');
         },
-      })
-    }
+      });
+    };
     socket.on('redirectToMainScreen', handleMainScreen);
 
     return () => {
       socket.off('redirectToFinalScreen', handleFinalRanking);
       socket.off('redirectToMainScreen', handleMainScreen);
     };
-
-  }, [socket]);
+  }, [socket, router]);
 
   if (isLoading) {
-
     return (
       <>
-        <div className="relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bgroom">
-          <p className="mb-4 text-center text-lg sm:text-xl md:text-2xl">Haz click en el texto</p>
-          <span className="pointer-events-none whitespace-pre-wrap  bg-clip-text text-center text-4xl font-semibold leading-none text-primary sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none ">
+        <div className='relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bg-white bg-opacity-80'>
+          <p className='mb-4 text-center text-lg sm:text-xl md:text-2xl'>
+            Haz click en el texto
+          </p>
+          <span className='pointer-events-none whitespace-pre-wrap  bg-clip-text text-center text-4xl font-semibold leading-none text-[#111] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none '>
             ¡Juego Completado!
           </span>
           <Confetti
             ref={confettiRef}
-            className="absolute left-0 top-0 z-0 w-full h-full"
+            className='absolute left-0 top-0 z-0 w-full h-full'
             onClick={() => {
               confettiRef.current?.fire();
             }}
@@ -80,37 +84,46 @@ function RankingPage() {
     );
   }
   return (
-    <>
-      <div className='flex flex-col p-2 h-auto items-center  bgroom text-white w-full pt-24 min-h-screen'>
-        <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>Ranking</h1>
-        <table className='w-full text-left'>
-          <tbody className='w-full text-white flex flex-col justify-center items-center'>
-            {ranking
-              .sort((a, b) => b.score - a.score)
-              .slice(0, 8)
-              .map((player, index) => (
-                <tr
-                  key={index}
-                  className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'} bg-opacity-40 rounded-md mb-1`}>
-                  <td className='flex items-center'>
-                    {index === 0 && <Image src='/corona1.png' width={20} height={20} />}
-                    {index === 1 && <Image src='/corona2.png' width={20} height={20} />}
-                    {index === 2 && <Image src='/corona3.png' width={20} height={20} />}
-                    <div
-                      className='border-2 border-white rounded-full ml-2 mr-6'
-                      dangerouslySetInnerHTML={{ __html: player.avatar }}
-                    />
-                    <span className='font-semibold text-lg'>{player.playerName}</span>
-                  </td>
-                  <td className='text-right font-bold text-yellow-500 text-lg md:text-sm mr-2'>{player.score}px</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-        <ToastContainer />
-      </div>
-    </>
-  )
+    <div className='flex flex-col p-2 h-auto items-center bg-black text-white w-full pt-20 min-h-screen'>
+      <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>
+        Ranking
+      </h1>
+      <table className='w-full text-left'>
+        <tbody className='w-full text-white flex flex-col justify-center items-center'>
+          {ranking.slice(0, 10).map((player, index) => (
+            <tr
+              key={index}
+              className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${
+                player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'
+              } bg-opacity-40 rounded-md mb-1`}
+            >
+              <td className='flex items-center'>
+                {index === 0 && (
+                  <p className='fas fa-trophy text-yellow-500 mr-2 text-lg'>
+                    1
+                  </p>
+                )}
+                {index === 1 && (
+                  <p className='fas fa-medal text-gray-400 mr-2 text-lg'>2</p>
+                )}
+                {index === 2 && (
+                  <p className='fas fa-medal text-amber-600 mr-2 text-lg'>3</p>
+                )}
+                <span className='font-semibold text-xs md:text-sm'>
+                  {player.playerName}
+                </span>
+              </td>
+              <td className='text-right font-bold text-yellow-500 text-xs md:text-sm'>
+                {player.score}px
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <ToastContainer />
+    </div>
+  );
+
 }
 
 export default RankingPage;

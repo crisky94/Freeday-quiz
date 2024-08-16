@@ -1,22 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/authContext';
 import AccesPin from './pages/access-pin/page';
 import GamesList from './pages/games/page';
 import Loading from './loading';
 
 function HomePage() {
-  const [nickname, setNickname] = useState('');
-  const { user, isSignedIn, loading } = useAuth();
-
-  useEffect(() => {
-    if (!loading && !user && !isSignedIn) {
-      const storedNickname = localStorage.getItem('nickname');
-      if (storedNickname) {
-        setNickname(storedNickname);
-      }
-    }
-  }, [user, nickname, isSignedIn, loading]);
+  // const [nickname, setNickname] = useState('');
+  const { isSignedIn, loading } = useAuth();
 
   if (loading) {
     return (

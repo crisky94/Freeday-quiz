@@ -6,6 +6,7 @@ import { useAvatar } from '../../../../context/avatarContext';
 import Image from 'next/image';
 import BeforeUnloadHandler from '../../../components/closePage';
 import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
+
 import usePlayerSocket from '../../../components/usePlayerSocket';
 
 const WaitingRoom = ({ params }) => {
@@ -61,6 +62,7 @@ const WaitingRoom = ({ params }) => {
 
     fetchGameInfo();
   }, [code, router]);
+
 
   usePlayerSocket({ socket, fetchAvatar, setPlayers, setCountdown });
 

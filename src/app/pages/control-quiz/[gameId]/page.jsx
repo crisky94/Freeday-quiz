@@ -177,21 +177,59 @@ export default function GameControlPage({ params }) {
     }
   };
 
-  const handleSendMainScreen = () => {
+  const handleSendMainScreen = async () => {
     if (socket) {
       socket.emit('endGame');
+      // Guardar el ranking antes de eliminar jugadores
+      try {
+        await saveRankings(); // Llamada para guardar el ranking
+      } catch (error) {
+        console.error('Error al guardar el ranking:', error);
+        return; // Si ocurre un error al guardar el ranking, no continuar
+      }
 
+      // Eliminar jugadores después de guardar el ranking
       socket.emit('deleteAllPlayers', { gameId }, (response) => {
         if (response.error) {
           console.error(response.error);
         } else {
-          toast('Todos los jugadores han sido eliminados.', {
+          toast('Quiz finalizado', {
+            autoClose: 2000,
             onClose: () => {
               router.push('/');
             },
           });
         }
       });
+    }
+  };
+
+  const saveRankings = async () => {
+    const rankings = players
+      .sort((a, b) => b.score - a.score)
+      .map((player, index) => ({
+        gameId,
+        playerId: player.id,
+        playerName: player.playerName,
+        playerScore: player.score,
+        rank: index + 1,
+      }));
+
+    try {
+      const response = await fetch('/api/saveRankings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rankings }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al guardar el ranking.');
+      }
+    } catch (error) {
+      console.error('Error al guardar el ranking:', error);
+      throw error; // Lanzar error para manejarlo en la función de llamada
     }
   };
 

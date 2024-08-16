@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { userValidation } from '@/lib/userValidation';
 import Image from 'next/image';
 
+
 const NickNameForm = ({ params }) => {
   const [nickname, setNickname] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +21,12 @@ const NickNameForm = ({ params }) => {
   const { fetchAvatar } = useAvatar();
   const socket = useSocket();
 
-  userValidation();
+  useEffect(() => {
+    const userPin = sessionStorage.getItem('pin');
+    if (!userPin) {
+      router.push('/');
+    }
+  }, [router]);
 
   useEffect(() => {
     if (!socket) return;
@@ -65,6 +71,7 @@ const NickNameForm = ({ params }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (nickname && selectedAvatar) {
+       sessionStorage.setItem('nickname', nickname);
       setPendingNickname(nickname);
       socket.emit('joinRoom', { nickname, code, avatar: selectedAvatar });
     } 

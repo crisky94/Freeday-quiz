@@ -13,16 +13,18 @@ import DemoPreview from '@/app/components/DemoPreview';
 import '../../styles/games/deleteGame.css';
 import '../../styles/games/editButtonGames.css';
 import '../../styles/games/ListCard.css';
-
+import GameRankings from '@/app/components/RankingsModal';
 export default function GamesList() {
-  const [games, setGames] = useState([]);// Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
-  const [nickname, setNickname] = useState('');// Estado para almacenar el apodo del jugador.
-  const [nickUser, setNickUser] = useState('');// Estado para almacenar el nombre del usuario creador.
-  const { user } = useAuth(User);// Obtiene el usuario autenticado del contexto de autenticación.
+  
+  const [games, setGames] = useState([]); // Estado para almacenar la lista de juegos.// Estado para almacenar la lista de juegos.
+  const [error, setError] = useState(); // Estado para manejar posibles errores.
+  const [nickname, setNickname] = useState(''); // Estado para almacenar el apodo del jugador.
+  const [nickUser, setNickUser] = useState(''); // Estado para almacenar el nombre del usuario creador.
+  const { user } = useAuth(User); // Obtiene el usuario autenticado del contexto de autenticación.
   const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
-  const [hoveredQuestions, setHoveredQuestions] = useState({});// Estado para manejar las preguntas que se muestran en la vista previa.
-  useEffect(() => {
+  const [hoveredQuestions, setHoveredQuestions] = useState({}); // Estado para manejar las preguntas que se muestran en la vista previa.
 
+  useEffect(() => {
     if (user) {
       setNickUser(`${user.firstName} ${user.lastName}`);
     }
@@ -41,10 +43,12 @@ export default function GamesList() {
       if (nickUser) {
         socket.emit('getGames', { user: nickUser }, (response) => {
           if (response.error) {
-            console.log(response.error);
+            setError(response.error);
+            console.log(error);
           } else {
             setGames(response.games);
-         
+            console.log(response.games + 'hola');
+
           }
         });
       }
@@ -119,11 +123,12 @@ export default function GamesList() {
   };
 
   return (
-    <>
-        <div className='min-h-screen p-2 md:p-16 lg:p-16  '>
+    <section>
+      {user ? (
+        <div className='min-h-screen p-2  '>
           {games.length > 0 ? (
             <>
-              <div className='mt-10'>
+              <div className='mt-12 mb-2 mx-4'>
                 <CreateButton />
               </div>
               <Carousel
@@ -139,12 +144,28 @@ export default function GamesList() {
                 {games.map((game, i) => (
                   <div
                     key={game.id}
-                    className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center mt-10 sm:mt-20 shadow-xl p-1 transition-all'
+                    className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center  sm:mt-20 shadow-xl p-1 transition-all'
                   >
-                    <div className='flex  flex-col flex-wrap card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
-                      <h2 className='truncate  card-title font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
+                    <div className='flex flex-col  card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
+                      <h2 className='truncate card-title  font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
                         {`${i + 1}. ${game.nameGame}`}
                       </h2>
+                      <div className='text-xs p-4 pb-10 text-slate-300 '>
+                        {game.updateAt ? (
+                          <p className='text'>
+                            Actualizado: {formatDate(game.updateAt)}
+                          </p>
+                        ) : (
+                          <p>Creado: {formatDate(game.endedAt)}</p>
+                        )}
+                      </div>
+                      {/* Mostrar la fecha de finalización del juego */}
+
+                      {/* Botón para abrir el modal de rankings */}
+                      <div className=''>
+                        <GameRankings gameId={game.id} />
+                      </div>
+
                       <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
                         <Link href={`/pages/modify-page/${game.id}.jsx`}>
                           <button className='edit-button'>
@@ -160,28 +181,19 @@ export default function GamesList() {
                       </div>
 
                       <Link
-                        className='mt-5 hoverGradiant bg-custom-linear w-44 p-2 rounded-md text-black uppercase'
+                        className='m-2 font-bold hoverGradiant text-xs bg-custom-linear w-44 p-1 rounded-md text-black uppercase'
                         href={`/pages/pinPage/${game.id}`}
                       >
                         <span>Seleccionar</span>
                       </Link>
-                      {/* Mostrar la fecha de finalización del juego */}
-                      {game.updateAt ? (
-                        <p className='text-sm'>
-                          Actualizado: {formatDate(game.updateAt)}
-                        </p>
-                      ) : (
-                        <p className='text-sm'>
-                          Creado: {formatDate(game.endedAt)}
-                        </p>
-                      )}
+
                       <div
-                        className=' w-44 bottom-7 absolute transition duration-700 ease-in-out transform hover:scale-105  cursor-zoom-in p-1 text-xs text-black'
+                        className='w-full h-4 bottom-36 my-14 px-14 pt-3  absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
-                        <p className='rounded-md w-full  bg-primary'>
-                          Vista previa{' '}
+                        <p className='rounded-md w-full  text-white border-2 hover:bg-primary hover:border-none hover:text-black '>
+                          Vista previa
                         </p>
                         {hoveredQuestions[game.id] && (
                           <div className='bg-transparent '>
@@ -208,6 +220,10 @@ export default function GamesList() {
             </div>
           )}
         </div>
-    </>
+      ) : (
+      ''
+      )}
+    </section>
+
   );
 }

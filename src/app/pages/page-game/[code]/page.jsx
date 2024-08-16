@@ -11,7 +11,6 @@ import BeforeUnloadHandler from '../../../components/closePage'; // Importa el c
 import { userValidation } from '@/lib/userValidation';
 import Alert from '@/app/components/Alert';
 
-
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
   const [gameId, setGameId] = useState(null);
@@ -21,6 +20,7 @@ export default function GameQuizPage({ params }) {
   const [isCorrect, setIsCorrect] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [socketId, setSocketId] = useState('');
+  const [playerId, setPlayerId] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
@@ -30,12 +30,20 @@ export default function GameQuizPage({ params }) {
   const code = parseInt(params.code);
   const router = useRouter();
 
-  userValidation();
+  useEffect(() => {
+    const userNick = sessionStorage.getItem('nickname');
+    if (!userNick) {
+      router.push('/');
+    }
+  }, [router]);
+
 
   useEffect(() => {
     if (!socket) {
       router.push('/');
     } else {
+      console.log(socketId);
+
       setSocketId(socket.id);
     }
   }, [socket, router]);
@@ -52,6 +60,7 @@ export default function GameQuizPage({ params }) {
         );
         if (player) {
           setPlayerName(player.playerName);
+          setPlayerId(player.id); // Guarda el playerId aquí
         }
         console.log(response.players);
       }
@@ -99,6 +108,7 @@ export default function GameQuizPage({ params }) {
       });
 
       socket.on('stopGame', () => {
+
         toast('El juego ha finalizado', {
           position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
             router.push(`/pages/ranking/${code}`)
@@ -198,12 +208,11 @@ export default function GameQuizPage({ params }) {
 
   const insertPlayer = (gameId, playerName, score) => {
     return new Promise((resolve, reject) => {
-      socket.emit('insertPlayer', { gameId, playerName, score });
-      socket.on('insertPlayerResponse', (data) => {
-        if (data.error) {
-          reject(data.error);
+      socket.emit('insertPlayer', { gameId, playerName, score }, (response) => {
+        if (response.error) {
+          reject(response.error);
         } else {
-          resolve(data);
+          resolve(response);
         }
       });
 
@@ -221,8 +230,29 @@ export default function GameQuizPage({ params }) {
       setIsCorrect(false);
       setSelectedAnswer(null);
       setShowCorrectAnswer(false);
-      moveToNextQuestion();
-    }, 2000);
+
+      showToast().then(() => {
+        moveToNextQuestion();
+      });
+    }, 1000);
+  };
+
+  const showToast = () => {
+    return new Promise((resolve) => {
+      toast(`Puntos: ${score}px 🚀`, {
+        toastId: 'custom-id-yes',
+        position: 'bottom-center',
+        autoClose: 2000,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: 'light',
+        transition: Bounce,
+        onClose: resolve,
+        pauseOnFocusLoss: false,
+      });
+    });
+
   };
 
   const moveToNextQuestion = () => {
@@ -237,11 +267,8 @@ export default function GameQuizPage({ params }) {
   };
 
   const deletePlayer = useCallback(() => {
-    if (!socket) return;
-
-    const playerId = players.find((player) => player.socketId === socketId)?.id;
-    if (!playerId) {
-      console.error('Player ID not found');
+    if (!socket || !playerId) {
+      console.error('Player ID not found or socket not connected');
       return;
     }
 
@@ -249,11 +276,13 @@ export default function GameQuizPage({ params }) {
       if (response.error) {
         console.error(response.error);
       } else {
-        console.log('Player eliminado con éxito');
-        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
+        sessionStorage.clear();
+        localStorage.clear();
+        console.log('Quiz finalizado, redirigiendo a inicio');
+        router.push('/'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
-  }, [socket, playerName, code, router]);
+  }, [socket, code, router, playerId]);
 
   if (questions.length === 0) {
     return <Loading />;
@@ -282,12 +311,32 @@ export default function GameQuizPage({ params }) {
 
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
-      <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
-      <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
-      <ToastContainer />
-      {
-        currentQuestion && (
-          <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
+      <BeforeUnloadHandler onBeforeUnload={deletePlayer} />{' '}
+      {/* Agrega el componente */}
+      <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
+        <ToastContainer />
+        <div
+          key={currentQuestion.id}
+          className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
+        >
+          <div className='flex flex-col items-center justify-center'>
+            <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
+              {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
+            </p>
+          </div>
+          <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
+            {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
+          </p>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 w-full'>
+            <div
+              onClick={() => handleAnswerClick('a')}
+              className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass(
+                'a'
+              )} text-center overflow-wrap break-word text-sm sm:text-base`}
+            >
+              {currentQuestion.a}
+            </div>
+
             <div
               key={currentQuestion.id}
               className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
