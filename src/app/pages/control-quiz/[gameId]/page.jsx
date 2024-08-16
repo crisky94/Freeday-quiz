@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useSocket } from '@/context/socketContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Loading from '../../../loading'
+import { Bounce, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Loading from '../../../loading';
 import '../../../styles/page-game/pageGame.css';
 import RankingModal from '../../../components/RankingModal';
 import EndGame from '@/app/components/EndGame';
@@ -55,13 +55,25 @@ export default function GameControlPage({ params }) {
       setGameState(state);
       switch (state) {
         case 'paused':
-          toast('El juego está pausado', { position: "bottom-center", autoClose: 4000, transition: Bounce });
+          toast('El juego está pausado', {
+            position: 'bottom-center',
+            autoClose: 4000,
+            transition: Bounce,
+          });
           break;
         case 'resumed':
-          toast('El juego está en marcha', { position: "bottom-center", autoClose: 4000, transition: Bounce });
+          toast('El juego está en marcha', {
+            position: 'bottom-center',
+            autoClose: 4000,
+            transition: Bounce,
+          });
           break;
         case 'stopped':
-          toast('El juego ha finalizado', { position: "bottom-center", autoClose: 4000, transition: Bounce });
+          toast('El juego ha finalizado', {
+            position: 'bottom-center',
+            autoClose: 4000,
+            transition: Bounce,
+          });
           break;
         default:
           setMessage('Inicio del juego');
@@ -74,9 +86,14 @@ export default function GameControlPage({ params }) {
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
         setQuestions((prevQuestions) => {
-          const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
-          response.asks.forEach(newAsk => {
-            updatedQuestionsMap.set(newAsk.id, { ...updatedQuestionsMap.get(newAsk.id), ...newAsk });
+          const updatedQuestionsMap = new Map(
+            prevQuestions.map((q) => [q.id, q])
+          );
+          response.asks.forEach((newAsk) => {
+            updatedQuestionsMap.set(newAsk.id, {
+              ...updatedQuestionsMap.get(newAsk.id),
+              ...newAsk,
+            });
           });
           return Array.from(updatedQuestionsMap.values());
         });
@@ -87,7 +104,9 @@ export default function GameControlPage({ params }) {
     socket.on('updateDeleteAsk', (response) => {
       if (response.data) {
         setQuestions((prevQuestions) => {
-          const updatedQuestionsMap = new Map(prevQuestions.map(q => [q.id, q]));
+          const updatedQuestionsMap = new Map(
+            prevQuestions.map((q) => [q.id, q])
+          );
           updatedQuestionsMap.delete(response.data.id);
           return Array.from(updatedQuestionsMap.values());
         });
@@ -164,7 +183,7 @@ export default function GameControlPage({ params }) {
           console.error(response.error);
         } else {
           setPlayers(response.players);
-          setPlayerId(response.players.id)
+          setPlayerId(response.players.id);
         }
       });
     }
@@ -179,23 +198,61 @@ export default function GameControlPage({ params }) {
     }
   };
 
-  const handleSendMainScreen = () => {
+  const handleSendMainScreen = async () => {
     if (socket) {
       socket.emit('endGame');
+      // Guardar el ranking antes de eliminar jugadores
+      try {
+        await saveRankings(); // Llamada para guardar el ranking
+      } catch (error) {
+        console.error('Error al guardar el ranking:', error);
+        return; // Si ocurre un error al guardar el ranking, no continuar
+      }
 
+      // Eliminar jugadores después de guardar el ranking
       socket.emit('deleteAllPlayers', { gameId }, (response) => {
         if (response.error) {
           console.error(response.error);
         } else {
-          toast('Redirigiendo a home.', {
+          toast('Quiz finalizado', {
+            autoClose: 2000,
             onClose: () => {
-              router.push('/')
-            }
+              router.push('/');
+            },
           });
         }
       });
     }
-  }
+  };
+
+  const saveRankings = async () => {
+    const rankings = players
+      .sort((a, b) => b.score - a.score)
+      .map((player, index) => ({
+        gameId,
+        playerId: player.id,
+        playerName: player.playerName,
+        playerScore: player.score,
+        rank: index + 1,
+      }));
+
+    try {
+      const response = await fetch('/api/saveRankings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rankings }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al guardar el ranking.');
+      }
+    } catch (error) {
+      console.error('Error al guardar el ranking:', error);
+      throw error; // Lanzar error para manejarlo en la función de llamada
+    }
+  };
 
   const formatTime = (milliseconds) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -210,7 +267,7 @@ export default function GameControlPage({ params }) {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full pt-16">
+    <div className='flex flex-col items-center justify-center min-h-screen w-full pt-16'>
       <div className='bg-custom-linear flex mb-2'>
         <div className='flex flex-col  p-14 m-1 h-auto w-58 sm:w-full items-center bg-black gap-5'>
           <h1 className='uppercase font-bold text-xl text-center'>Sala de control del juego</h1>
@@ -251,11 +308,12 @@ export default function GameControlPage({ params }) {
           <div className=' flex flex-col  p-5 m-1  items-center bg-black gap-5 '>
             <p className='break-word'>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
             <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
+
             <div className='text-xl font-bold text-center mt-4 text-red-500'>
               Tiempo restante: {formatTime(timeLeft)}
             </div>
           </div>
-          {showRankingModal &&
+          {showRankingModal && (
             <RankingModal
               code={code}
               ranking={players}

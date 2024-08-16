@@ -38,23 +38,25 @@ function RankingPage() {
     socket.on('redirectToFinalScreen', handleFinalRanking);
 
     const handleMainScreen = () => {
-      toast('Redirigiendo a home.', {
+
+      toast('Quiz finalizado, redirigiendo a inicio', {
+        autoClose: 2000,
         onClose: () => {
-          router.push('/')
+          sessionStorage.clear();
+          localStorage.clear();
+          router.push('/');
         },
-      })
-    }
+      });
+    };
     socket.on('redirectToMainScreen', handleMainScreen);
 
     return () => {
       socket.off('redirectToFinalScreen', handleFinalRanking);
       socket.off('redirectToMainScreen', handleMainScreen);
     };
-
-  }, [socket]);
+  }, [socket, router]);
 
   if (isLoading) {
-
     return (
       <>
         <div className="relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bgroom">
@@ -64,7 +66,7 @@ function RankingPage() {
           </span>
           <Confetti
             ref={confettiRef}
-            className="absolute left-0 top-0 z-0 w-full h-full"
+            className='absolute left-0 top-0 z-0 w-full h-full'
             onClick={() => {
               confettiRef.current?.fire();
             }}

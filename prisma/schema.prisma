@@ -17,6 +17,7 @@ model Games {
   updateAt     DateTime?
   players      Players[]
   asks         Asks[]
+  rankings     Rankings[]  // Relación con Rankings
 }
 
 model Players {
@@ -29,8 +30,19 @@ model Players {
   game       Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-}
 
+}
+model Rankings {
+  id        Int       @id @default(autoincrement())
+  gameId    Int
+  playerId  Int?
+  playerName String   // Incluye el nombre del jugador
+  playerScore Int    // Incluye el score del jugador
+  rank      Int
+  game      Games     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+
+}
 model Asks {
   id        Int     @id @default(autoincrement())
   gameId    Int

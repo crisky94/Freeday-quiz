@@ -2,16 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { SignInButton, SignUpButton, useUser } from '@clerk/nextjs';
+import { SignInButton, SignUpButton } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useAvatar } from '../../context/avatarContext';
 import { useSocket } from '@/context/socketContext';
 import User from './User';
 import '../styles/header.css';
+import { useAuth } from '@/context/authContext';
+import Loading from '../loading';
 
 export default function Header() {
-  const { user } = useUser();
+  const { isSignedIn, loading } = useAuth();
   const socket = useSocket();
   const { fetchAvatar } = useAvatar();
   const [players, setPlayers] = useState([]);
@@ -39,11 +41,20 @@ export default function Header() {
         // setAvatars(avatarsMap);
       }
     };
+
     socket.emit('getPlayers', { code }, handleGetPlayers);
     return () => {
       socket.off('getPlayers', handleGetPlayers);
     };
   }, [socket, fetchAvatar, players]);
+
+  if (loading) {
+    return (
+      <div className='h-screen w-screen flex items-center'>
+        <Loading />
+      </div>
+    ); // Indicador de carga
+  }
 
   return (
     <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 shadow-md shadow-slate-200 z-50 h-32'>
@@ -57,7 +68,7 @@ export default function Header() {
         />
       </Link>
       <div className='nav-header'>
-        {user ? (
+        {isSignedIn ? (
           <User />
         ) : (
           <div className='flex flex-row justify-between'>

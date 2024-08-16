@@ -14,11 +14,13 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (isLoaded) {
       setLoading(false);
+      console.log('User is signed in: ', isSignedIn);
+
       if (isSignedIn && window.location.pathname === '/') {
         router.push('/'); // Redirigir a una página específica
       }
     }
-  }, [isLoaded, isSignedIn, router]);
+  }, [isLoaded, isSignedIn]);
 
   return (
     <AuthContext.Provider value={{ isSignedIn, user, loading }}>
@@ -26,6 +28,7 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
 export function useAuth() {
   return useContext(AuthContext);
 }

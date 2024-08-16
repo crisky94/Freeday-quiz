@@ -5,6 +5,7 @@ import { useSocket } from '@/context/socketContext';
 import BeforeUnloadHandler from '../../../components/closePage';
 import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
 
+import usePlayerSocket from '../../../components/usePlayerSocket';
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -16,8 +17,18 @@ const WaitingRoom = ({ params }) => {
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
 
+
   useEffect(() => {
-    if (!socket) {
+    const userNick = sessionStorage.getItem('nickname');
+    if (!userNick) {
+      router.push('/');
+    }
+  }, [router]);
+
+  useEffect(() => {
+    // const userPin = localStorage.getItem('pin');
+    const userNick = localStorage.getItem('nickame');
+    if (!socket && !userNick) {
       router.push('/');
     } else {
       setSocketId(socket.id);
@@ -50,45 +61,7 @@ const WaitingRoom = ({ params }) => {
     fetchGameInfo();
   }, [code, router]);
 
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleNewPlayer = async (newPlayer) => {
-      const avatar = localStorage.getItem('avatar')
-      setPlayers((prevPlayers) => [...prevPlayers, { ...newPlayer, avatar }]);
-    };
-
-    const handleExitPlayer = (removedPlayerId) => {
-      setPlayers((prevPlayers) =>
-        prevPlayers.filter((player) => player.id !== removedPlayerId)
-      );
-    };
-
-    const handleUpdatePlayer = async (updatedPlayer) => {
-      const avatar = localStorage.getItem('avatar')
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((player) =>
-          player.id === updatedPlayer.id ? { ...updatedPlayer, avatar } : player
-        )
-      );
-    };
-
-    const handleGameStarted = () => {
-      setCountdown(true);
-    };
-
-    socket.on('gameStarted', handleGameStarted);
-    socket.on('updatePlayer', handleUpdatePlayer);
-    socket.on('newPlayer', handleNewPlayer);
-    socket.on('exitPlayer', handleExitPlayer);
-
-    return () => {
-      socket.off('gameStarted', handleGameStarted);
-      socket.off('newPlayer', handleNewPlayer);
-      socket.off('exitPlayer', handleExitPlayer);
-      socket.off('updatePlayer', handleUpdatePlayer);
-    };
-  }, [socket]);
+  usePlayerSocket({ socket, fetchAvatar, setPlayers, setCountdown });
 
   useEffect(() => {
     if (!socket) return;
@@ -124,6 +97,10 @@ const WaitingRoom = ({ params }) => {
       console.error('Player ID not found');
       return;
     }
+    // Limpiar el localStorage y sesion  cuando el jugador es eliminado
+    sessionStorage.removeItem('pin');
+    sessionStorage.removeItem('nickname');
+    localStorage.removeItem('nickname');
 
     socket.emit('deletePlayer', { playerId, code }, (response) => {
       if (response.error) {
