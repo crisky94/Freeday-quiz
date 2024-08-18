@@ -7,9 +7,9 @@ import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
-import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
-import { userValidation } from '@/lib/userValidation';
+import BeforeUnloadHandler from '@/app/components/closePage'; 
 import Alert from '@/app/components/Alert';
+import CountdownBar from '@/app/components/CountdownBar';
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -22,6 +22,7 @@ export default function GameQuizPage({ params }) {
   const [socketId, setSocketId] = useState('');
   const [playerId, setPlayerId] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
+  const [countDown, setCountDown] = useState(0);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
   const [alertMessage, setAlertMessage] = useState('');
@@ -85,6 +86,7 @@ export default function GameQuizPage({ params }) {
             setQuestions(response.asks);
             setCurrentQuestionIndex(0);
             setTimeLeft((response.asks[0]?.timer || 0) * 1000); // Convertir a milisegundos
+            setCountDown(response.asks[0]?.timer ||0);
             setGameId(response.game.id);
           }
         });
@@ -111,7 +113,7 @@ export default function GameQuizPage({ params }) {
 
         toast('El juego ha finalizado', {
           position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
-            router.push(`/pages/ranking/${code}`)
+            router.push(`/pages/ranking/${code}`);
           }
         });
       });
@@ -282,13 +284,7 @@ export default function GameQuizPage({ params }) {
     return '';
   };
 
-  const formatTime = (milliseconds) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const remainingSeconds = totalSeconds % 60;
-    return `${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
-  return (
+   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
       <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
@@ -300,10 +296,8 @@ export default function GameQuizPage({ params }) {
               key={currentQuestion.id}
               className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
             >
-              <div className='flex flex-col items-center justify-center'>
-                <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
-                  {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
-                </p>
+            <div className='w-full mt-5'>
+                <CountdownBar seconds={countDown} />
               </div>
               <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
                 {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}

@@ -2,9 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
-import { useAvatar } from '@/context/avatarContext';
 import BeforeUnloadHandler from '../../../components/closePage';
-import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
+import PacManCountdown from '@/app/components/PacManCountdown';
 import usePlayerSocket from '@/app/components/usePlayerSocket';
 
 
@@ -17,8 +16,7 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
-  const { fetchAvatar } = useAvatar();
-
+ 
   useEffect(() => {
     if (!socket) {
       router.push('/');

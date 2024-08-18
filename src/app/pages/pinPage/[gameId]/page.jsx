@@ -6,8 +6,8 @@ import QRCode from 'qrcode.react';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
-import usePlayerSocket from '../../../components/usePlayerSocket'; 
-import PacManCountdown from '../../../components/PacManCountdown';
+import usePlayerSocket from '@/app/components/usePlayerSocket'; 
+import PacManCountdown from '@/app/components/PacManCountdown';
 
 const montserrat = Montserrat({
   weight: '400',
@@ -25,7 +25,6 @@ const PinPage = () => {
   const router = useRouter();
   const { user } = useAuth();
 
-  // Use the custom hook
   usePlayerSocket({ socket, setPlayers, setCountdown });
 
   useEffect(() => {
@@ -60,6 +59,33 @@ const PinPage = () => {
 
     fetchGame();
   }, [gameId, socket]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const fetchPlayers = () => {
+      socket.emit('getPlayers', { code: game?.codeGame }, async (response) => {
+        if (response.error) {
+          console.error(response.error);
+        } else {
+          const playersWithAvatars = await Promise.all(
+            response.players.map(async (player) => {
+              return { ...player };
+            })
+          );
+          setPlayers(playersWithAvatars);
+        }
+      });
+    };
+
+    socket.on('connect', fetchPlayers);
+    fetchPlayers();
+
+    return () => {
+      socket.off('getPlayers');
+      socket.off('connect', fetchPlayers);
+    };
+  }, [socket, game?.codeGame]);
 
   const startGame = () => {
     if (!socket || !game) return;
