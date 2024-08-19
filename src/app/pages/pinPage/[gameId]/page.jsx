@@ -6,8 +6,8 @@ import QRCode from 'qrcode.react';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
-import usePlayerSocket from '@/app/components/usePlayerSocket'; 
-import PacManCountdown from '@/app/components/PacManCountdown';
+import usePlayerSocket from '@/app/hooks/usePlayerSocket'; 
+import CountdownBall from '@/app/components/CountdownBall';
 
 const montserrat = Montserrat({
   weight: '400',
@@ -156,7 +156,7 @@ const PinPage = () => {
         </div>
       )}
       {countdown && (
-        <PacManCountdown onCountdownFinish={handleCountdownFinish} />
+        <CountdownBall onCountdownFinish={handleCountdownFinish} />
       )}
     </div>
   );

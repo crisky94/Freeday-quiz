@@ -13,16 +13,23 @@ const CountdownBar = ({ seconds }) => {
         }
     }, [currentSeconds]);
 
-    const segments = Array.from({ length: seconds }).map((_, index) => (
-        <div
-            key={index}
-            style={{
-                flex: 1,
-                backgroundColor: index < currentSeconds ? '#3498db' : '#ecf0f1',
-                transition: 'background-color 0.5s ease'
-            }}
-        />
-    ));
+    const segments = Array.from({ length: seconds }).map((_, index) => {
+        const isActive = index < currentSeconds;
+        const background = isActive
+            ? 'linear-gradient(90deg, rgba(28, 255, 228, 1) 0%, rgba(252, 255, 0, 1) 100%)'
+            : '#111111';
+
+        return (
+            <div
+                key={index}
+                style={{
+                    flex: 1,
+                    background,
+                    transition: 'background 0.5s ease'
+                }}
+            />
+        );
+    });
 
     return (
         <div
@@ -30,7 +37,7 @@ const CountdownBar = ({ seconds }) => {
                 display: 'flex',
                 height: '10px',
                 width: '100%',
-                backgroundColor: '#ecf0f1',
+                backgroundColor: '#111111',
                 borderRadius: '5px',
                 overflow: 'hidden',
             }}

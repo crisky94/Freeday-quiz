@@ -6,7 +6,7 @@ const monserrat = Montserrat({
   subsets: ['latin'],
 });
 
-const PacManCountdown = ({ onCountdownFinish }) => {
+const CountdownBall = ({ onCountdownFinish }) => {
   const [timeLeft, setTimeLeft] = useState(10);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const PacManCountdown = ({ onCountdownFinish }) => {
 
   return (
     <div className="flex flex-col items-center space-x-2">
-      <p className={`${monserrat.className} text-xl text-hackYellow`}>Listas para comenzar juego en:</p>
+      <p className={`${monserrat.className} text-xl text-hackYellow`}>El Juego comenzara en:</p>
       <div className="flex space-x-2">
         {[...Array(Math.max(timeLeft, 0))].map((_, index) => (
           <div key={index} className="w-8 h-8 bg-custom-linear rounded-full"></div>
@@ -35,4 +35,4 @@ const PacManCountdown = ({ onCountdownFinish }) => {
   );
 };
 
-export default PacManCountdown;
+export default CountdownBall;

@@ -3,8 +3,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/socketContext';
 import BeforeUnloadHandler from '../../../components/closePage';
-import PacManCountdown from '@/app/components/PacManCountdown';
-import usePlayerSocket from '@/app/components/usePlayerSocket';
+import CountdownBall from '@/app/components/CountdownBall';
+import usePlayerSocket from '@/app/hooks/usePlayerSocket';
 
 
 const WaitingRoom = ({ params }) => {
@@ -142,7 +142,7 @@ const WaitingRoom = ({ params }) => {
       )}
       <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
         {countdown ? (
-          <PacManCountdown onCountdownFinish={handleCountdownFinish} />
+          <CountdownBall onCountdownFinish={handleCountdownFinish} />
         ) : (
           <>
             <p className='pb-2'>Esperando inicio del juego...</p>
