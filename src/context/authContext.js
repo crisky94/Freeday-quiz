@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
       console.log('User is signed in: ', isSignedIn);
 
       if (isSignedIn && window.location.pathname === '/') {
-        router.push('/'); // Redirigir a una página específica
+        router.push('/'); // Redirigir a la página principal
       }
     }
   }, [isLoaded, isSignedIn]);

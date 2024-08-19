@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import '../styles/createButton.css';
 
+//Componente boton que dirige a la página de crear
 function CreateButton() {
   return (
     <div className='flex flex-row justify-end items-start'>

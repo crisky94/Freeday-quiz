@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '@/context/SocketContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -11,8 +11,9 @@ import '../../../styles/page-game/pageGame.css';
 import RankingModal from '../../../components/RankingModal';
 import EndGame from '@/app/components/EndGame';
 
+// Componente para controlar la página del juego
 export default function GameControlPage({ params }) {
-  const socket = useSocket();
+  const socket = useSocket();// Obtención del contexto del socket
   const router = useRouter();
   const [gameState, setGameState] = useState('resumed');
   const [message, setMessage] = useState('');
@@ -25,24 +26,25 @@ export default function GameControlPage({ params }) {
   const [showRankingModal, setShowRankingModal] = useState(false);
   const [showEndGame, setShowEndGame] = useState(false);
   const [isRankingSent, setIsRankingSent] = useState(false);
-  const [players, setPlayers] = useState([]);
   const [playerId, setPlayerId] = useState();
+  const [players, setPlayers] = useState([]);
   const gameId = parseInt(params.gameId);
 
   useEffect(() => {
     if (!socket) return;
 
+    // Emitir un evento para obtener el ID del juego y luego las preguntas asociadas
     socket.emit('getGamesId', { gameId }, (response) => {
       if (response.error) {
         console.error(response.error);
       } else {
-        setCode(response.game.codeGame);
+        setCode(response.game.codeGame);// Establecer el código del juego
         socket.emit('getAsks', { gameId }, (response) => {
           if (response.error) {
             console.error(response.error);
           } else {
             const gameQuestions = response.questions;
-            setQuestions(gameQuestions);
+            setQuestions(gameQuestions);// Establecer las preguntas del juego
             if (gameQuestions.length > 0) {
               setTimeLeft(gameQuestions[0].timer * 1000);
             }
@@ -50,7 +52,7 @@ export default function GameControlPage({ params }) {
         });
       }
     });
-
+    // Manejar actualizaciones del estado del juego (pausa, reanudación, finalización)
     const handleGameStateUpdate = (state) => {
       setGameState(state);
       switch (state) {
@@ -78,8 +80,10 @@ export default function GameControlPage({ params }) {
         default:
           setMessage('Inicio del juego');
       }
+      console.log(gameState);
+      
     };
-
+    // Escuchar eventos del socket para actualizar el estado del juego en tiempo real
     socket.on('pauseGame', () => setIsPaused(true));
     socket.on('resumeGame', () => setIsPaused(false));
     socket.on('updatedAsks', (response) => {
@@ -125,7 +129,7 @@ export default function GameControlPage({ params }) {
       socket.off('stopGame');
     };
   }, [socket, router]);
-
+  // Efecto para manejar el temporizador de las preguntas
   useEffect(() => {
     if (timeLeft === null || isPaused) return;
 
@@ -142,13 +146,13 @@ export default function GameControlPage({ params }) {
 
     return () => clearInterval(intervalId);
   }, [timeLeft, isPaused]);
-
+  // Función que se ejecuta cuando el tiempo para una pregunta se agota
   const handleTimeUp = () => {
     setTimeout(() => {
       moveToNextQuestion();
     }, 2000);
   };
-
+  // Función para avanzar a la siguiente pregunta
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {
@@ -158,36 +162,37 @@ export default function GameControlPage({ params }) {
       handleReloadPlayersData();
     }
   };
-
+  // Función para saltar a la última pregunta
   const moveToLastQuestion = () => {
     const lastIndex = questions.length - 1;
     setCurrentQuestionIndex(lastIndex);
     setTimeLeft(0);
   };
-
+  // Función para detener el juego
   const handleStopGame = () => {
     if (socket) {
-      socket.emit('stopGame');
+      socket.emit('stopGame');// Emitir un evento para detener el juego
       setGameState('stopped');
-      setMessage('El juego ha sido parado');
-      moveToLastQuestion();
+      setMessage('El juego ha finalizado ');
+      moveToLastQuestion();// Moverse a la última pregunta
     }
   };
 
+  // Función para recargar los datos de los jugadores
   const handleReloadPlayersData = () => {
     if (socket) {
       socket.emit('getPlayers', { code }, (response) => {
-        console.log(response, 'jugadores');
+
         if (response.error) {
           console.error(response.error);
         } else {
-          setPlayers(response.players);
+          setPlayers(response.players);// Actualizar la lista de jugadores
           setPlayerId(response.players.id);
         }
       });
     }
   };
-
+  // Función para enviar el ranking de jugadores
   const handleSendRanking = () => {
     if (socket) {
       socket.emit('playerRanking', { ranking: players });
@@ -197,6 +202,7 @@ export default function GameControlPage({ params }) {
     }
   };
 
+// Función para enviar la pantalla principal después de que el juego finaliza
   const handleSendMainScreen = async () => {
     if (socket) {
       socket.emit('endGame');
@@ -223,7 +229,7 @@ export default function GameControlPage({ params }) {
       });
     }
   };
-
+  // Función para guardar los rankings de los jugadores en el servidor
   const saveRankings = async () => {
     const rankings = players
       .sort((a, b) => b.score - a.score)
@@ -252,7 +258,7 @@ export default function GameControlPage({ params }) {
       throw error; // Lanzar error para manejarlo en la función de llamada
     }
   };
-
+  // Función para formatear el tiempo restante en segundos
   const formatTime = (milliseconds) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const remainingSeconds = totalSeconds % 60;
@@ -323,7 +329,7 @@ export default function GameControlPage({ params }) {
               onSend={handleSendRanking}
             />
           )}
-          {sendmsg ? <p className='text-green-500'>{sendmsg}</p> : null}
+          {isRankingSent && sendmsg ? <p className='text-green-500'>{sendmsg}</p> : null}
         </div>
       </div>
       <ToastContainer />

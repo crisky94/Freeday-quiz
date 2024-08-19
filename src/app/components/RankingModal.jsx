@@ -3,6 +3,7 @@
 import { useState} from "react";
 import Image from "next/image";
 
+//Componente para ver ranking y enviarselo a los jugadores si se desea.
 export default function RankingModal({ ranking, onSend }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -55,7 +56,7 @@ export default function RankingModal({ ranking, onSend }) {
             </table>
             <div className='mt-4 flex justify-center text-black gap-10'>
               <button onClick={onSend} className='hoverGradiant bg-custom-linear px-5 text-sm h-8 md:h-12 rounded-lg hover:transition duration-200 font-bold'>Enviar Ranking</button>
-              <button onClick={handleCancel} className='hoverGradiant bg-custom-linear px-5 text-sm h-8 md:h-12 rounded-lg hover:transition duration-200 font-bold'>Cancelar</button>
+              <button onClick={handleCancel} className='hoverGradiant bg-custom-linear px-5 text-sm h-8 md:h-12 rounded-lg hover:transition duration-200 font-bold'>Salir</button>
             </div>
           </div>
         </div>

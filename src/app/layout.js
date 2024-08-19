@@ -2,7 +2,7 @@ import Header from '@/app/components/Header';
 import Sidebar from '@/app/components/Sidebar';
 import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from '@/context/authContext';
-import { SocketProvider } from '@/context/socketContext';
+import { SocketProvider } from '@/context/SocketContext';
 import { AvatarProvider } from '@/context/avatarContext';
 import { PlayerProvider } from '@/context/playerContext';
 import './globals.css';

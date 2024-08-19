@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Flip, ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import 'react-toastify/dist/ReactToastify.css';
 
+//Componente de la página games para borrar juegos por su Id
 const DeleteConfirmation = ({ gameId, onDelete }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const router = useRouter();
@@ -82,7 +82,6 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
           </div>
         )}
       </div>
-      <ToastContainer />
     </>
   );
 };

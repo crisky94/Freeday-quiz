@@ -71,6 +71,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
+  //* Manejar el reemplazo del nombre y el avatar del jugador
   socket.on('replaceNickname', async ({ nickname, code, avatar }) => {
     try {
       const game = await prisma.games.findUnique({

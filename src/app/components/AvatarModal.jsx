@@ -1,5 +1,6 @@
-import React from 'react';
+'use client'
 
+//Componente para elegir avatar en la página nickName
 const AvatarModal = ({ isOpen, onRequestClose, onSelectAvatar, avatars }) => {
   if (!isOpen) return null;
 
