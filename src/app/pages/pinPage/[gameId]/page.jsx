@@ -107,25 +107,25 @@ const PinPage = () => {
   }
 
   return (
-    <div className='mt-20 flex flex-col justify-between items-center'>
-      <h1 className={`${montserrat.className} text-4xl uppercase bold bg-hackBlack bg-opacity-90`}>
+    <div className='mt-20 flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8'>
+      <h1 className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-color-primary text-center bg-hackBlack bg-opacity-90 p-2`}>
         {game.nameGame}
       </h1>
-      <p className={`${montserrat.className} text-xl uppercase bold bg-hackBlack bg-opacity-90`}>
+      <p className={`${montserrat.className} text-sm sm:text-base md:text-lg lg:text-xl uppercase font-bold text-center bg-hackBlack bg-opacity-90 mt-4 break-words w-full max-w-full`} style={{ wordBreak: 'break-word' }}>
         {game.detailGame}
-      </p>
+        </p>
       <QRCode
         value={`http://localhost:3000/nick-name-form/${game.codeGame}`}
-        className='bg-white p-2 rounded mt-4'
+        className='bg-white p-2 rounded mt-4 w-full sm:w-auto'
       />
-      <p className='bg-hackBlack p-2 rounded mt-4'>PIN: {game.codeGame}</p>
-      <div className='flex flex-row justify-between items-center'>
-        <div className='m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
+      <p className='bg-hackBlack p-2 rounded mt-4 text-lg sm:text-xl'>PIN: {game.codeGame}</p>
+      <div className='flex flex-col sm:flex-row justify-between items-center w-full sm:w-auto'>
+        <div className='m-2 sm:m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
           <button onClick={startGame}>
             <span>Empezar Juego</span>
           </button>
         </div>
-        <div className='m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
+        <div className='m-2 sm:m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
           <button onClick={() => setShowModal(!showModal)}>
             <span>{showModal ? 'Cerrar Jugadores' : 'Ver Jugadores'}</span>
           </button>
@@ -133,21 +133,17 @@ const PinPage = () => {
       </div>
 
       {showModal && (
-        <div className='modal mt-6 bg-custom-linear p-1 flex flex-col justify-between items-center rounded'>
-          <div className='bg-hackBlack p-2 rounded flex flex-col items-center'>
-            <h2>Jugadores</h2>
-            <ul>
+        <div className='modal bg-custom-linear p-1 flex flex-col justify-between items-center rounded'>
+          <div className='bg-hackBlack p-3 rounded flex flex-col items-center'>
+            <h2 className='text-xl sm:text-2xl'>Jugadores</h2>
+            <ul className='w-full'>
               {players.map((player) => (
-                <li key={player.socketId} className="grid grid-cols-3">
-                  <div className={`${montserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
+                <li key={player.socketId} className="grid grid-cols-3 gap-2 items-center py-2">
+                  <div className={`${montserrat.className} text-base sm:text-xl text-hackYellow col-span-1 uppercase font-bold text-center`}>
                     {player.playerName}
                   </div>
-                  <div className="col-span-1 w-[10%] p-4 flex justify-center"></div>
-                  <div className="col-span-1 w-[70%] p-4 flex justify-center">
-                    <div
-                      className='border-2 border-white rounded-full'
-                      dangerouslySetInnerHTML={{ __html: player.avatar }}
-                    />
+                  <div className="col-span-1 flex justify-center"></div>
+                  <div className='col-span-1 flex justify-center rounded-full' dangerouslySetInnerHTML={{ __html: player.avatar }} style={{ maxWidth: '60%', height: 'auto' }}>
                   </div>
                 </li>
               ))}

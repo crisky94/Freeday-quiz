@@ -291,7 +291,7 @@ export default function GameQuizPage({ params }) {
       <ToastContainer />
       {
         currentQuestion && (
-          <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear">
+          <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 mx-8 bg-custom-linear">
             <div
               key={currentQuestion.id}
               className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'

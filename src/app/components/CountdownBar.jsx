@@ -16,7 +16,7 @@ const CountdownBar = ({ seconds }) => {
     const segments = Array.from({ length: seconds }).map((_, index) => {
         const isActive = index < currentSeconds;
         const background = isActive
-            ? 'linear-gradient(90deg, rgba(28, 255, 228, 1) 0%, rgba(252, 255, 0, 1) 100%)'
+            ? 'linear-gradient(90deg, #ffffff 0%, #ffffffeb 100%)'
             : '#111111';
 
         return (
@@ -40,7 +40,7 @@ const CountdownBar = ({ seconds }) => {
                 backgroundColor: '#111111',
                 borderRadius: '5px',
                 overflow: 'hidden',
-            }}
+                        }}
         >
             {segments}
         </div>
