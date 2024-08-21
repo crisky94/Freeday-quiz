@@ -154,7 +154,7 @@ export default function EditGame({ params }) {
         );
         hasErrors = true;
       }
-      if (ask.answer === null) {
+      if (ask.answer === '') {
         toast.error(
           `Selecciona una respuesta correcta para la pregunta ${index + 1}.`
         );
@@ -179,7 +179,7 @@ export default function EditGame({ params }) {
           hideProgressBar: false,
           autoClose: 1000,
           closeOnClick: false,
-          pauseOnHover: true,
+          pauseOnHover: false,
           draggable: false,
           closeButton: false,
           theme: 'light',
