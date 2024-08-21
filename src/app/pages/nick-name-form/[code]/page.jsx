@@ -3,17 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AvatarModal from '../../../components/AvatarModal';
 import { useAvatar } from '../../../../context/avatarContext';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '@/context/SocketContext';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 
 const NickNameForm = ({ params }) => {
-  const [nickname, setNickname] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalAvatarOpen, setIsAvatarModalOpen] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState(null);
-  const [avatars, setAvatars] = useState([]);
-  const [pendingNickname, setPendingNickname] = useState('');
+  const [nickname, setNickname] = useState('');// Estado para el nickname ingresado por el usuario.
+  const [isModalOpen, setIsModalOpen] = useState(false);// Estado para controlar la visibilidad del modal de reemplazo de nickname.
+  const [isModalAvatarOpen, setIsAvatarModalOpen] = useState(false);// Estado para controlar la visibilidad del modal de selección de avatar.
+  const [selectedAvatar, setSelectedAvatar] = useState(null); // Estado para guardar el avatar seleccionado.
+  const [avatars, setAvatars] = useState([]); // Estado para guardar la lista de avatares generados.
+  const [pendingNickname, setPendingNickname] = useState('');// Estado para manejar un nickname pendiente de confirmación.
   const code = parseInt(params.code);
   const router = useRouter();
   const { fetchAvatar } = useAvatar();
@@ -22,17 +22,17 @@ const NickNameForm = ({ params }) => {
   useEffect(() => {
     const userPin = sessionStorage.getItem('pin');
     if (!userPin) {
-      router.push('/');
+      router.push('/');// Redirige a la página de inicio si no hay un PIN.
     }
   }, [router]);
 
   useEffect(() => {
     if (!socket) return;
-
+    // Escucha el evento de conflicto de nickname.
     socket.on('nicknameConflict', () => {
       setIsModalOpen(true);
     });
-
+    // Escucha el evento de éxito al unirse a una sala.
     socket.on('joinSuccess', () => {
       router.push(`/pages/waiting-room/${code}`);
     });
@@ -42,25 +42,25 @@ const NickNameForm = ({ params }) => {
       socket.off('joinSuccess');
     };
   }, [socket, code, router]);
-
+  // Función para abrir el modal de selección de avatar.
   const handleOpenAvatarModal = async () => {
-    const randomNicknames = Array.from({ length: 24 }, () => Math.random().toString(36).substring(2, 10));
+    const randomNicknames = Array.from({ length: 28 }, () => Math.random().toString(36).substring(2, 10));
     const avatarPromises = randomNicknames.map(nicknames => fetchAvatar(nicknames));
     const avatarSvgs = await Promise.all(avatarPromises);
     setAvatars(avatarSvgs);
     setIsAvatarModalOpen(true);   
   };
-
+  // Función para cerrar cualquier modal abierto.
   const handleCloseModal = () => {
     setIsAvatarModalOpen(false);
     setIsModalOpen(false);
   };
-
+  // Función para manejar la selección de un avatar.
   const handleSelectAvatar = (avatar) => {
     setSelectedAvatar(avatar);
     setIsAvatarModalOpen(false);
   };
-
+  // Función para manejar el reemplazo de un nickname en conflicto.
   const handleReplaceNickname = () => {
     setIsModalOpen(true);
     socket.emit('replaceNickname', { nickname: pendingNickname, code, avatar: selectedAvatar  });
@@ -71,7 +71,7 @@ const NickNameForm = ({ params }) => {
     if (nickname && selectedAvatar) {
        sessionStorage.setItem('nickname', nickname);
       setPendingNickname(nickname);
-      socket.emit('joinRoom', { nickname, code, avatar: selectedAvatar });
+      socket.emit('joinRoom', { nickname, code, avatar: selectedAvatar });// Envía el evento para unirse a la sala.
     } 
     
     if (!nickname && !selectedAvatar){

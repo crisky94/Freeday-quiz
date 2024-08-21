@@ -1,8 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSocket } from '@/context/socketContext';
-import { useAvatar } from '@/context/avatarContext';
+import { useSocket } from '@/context/SocketContext';
 import BeforeUnloadHandler from '../../../components/closePage';
 import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
 import usePlayerSocket from '@/app/components/usePlayerSocket';
@@ -17,31 +16,31 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
-  const { fetchAvatar } = useAvatar();
+
 
   useEffect(() => {
     if (!socket) {
-      router.push('/');
+      router.push('/');// Redirige a la página principal si no hay conexión al socket
     } else {
-      setSocketId(socket.id);
+      setSocketId(socket.id);// Guarda el ID del socket si está disponible
     }
   }, [socket, router]);
 
   useEffect(() => {
     if (!code) {
       console.error('Code parameter is missing.');
-      router.push('/');
+      router.push('/');//Redirige a la página principal si falta el código
       return;
     }
 
     const fetchGameInfo = async () => {
       try {
-        const response = await fetch(`/api/game/${code}`);
+        const response = await fetch(`/api/game/${code}`);// Solicita información del juego al servidor
         const game = await response.json();
 
         if (response.ok) {
-          setTitle(game.nameGame);
-          setDescription(game.detailGame || '');
+          setTitle(game.nameGame);// Establece el título del juego
+          setDescription(game.detailGame || '');// Establece la descripción del juego
         } else {
           console.error('Error fetching game info');
         }
@@ -50,12 +49,10 @@ const WaitingRoom = ({ params }) => {
       }
     };
 
-    fetchGameInfo();
+    fetchGameInfo();// Llama a la función para obtener la información del juego
   }, [code, router]);
-
+  // Hook personalizado para manejar eventos del socket relacionados con jugadores
   usePlayerSocket({ socket, setPlayers, setCountdown });
-
-  
 
   useEffect(() => {
     if (!socket) return;
@@ -74,7 +71,7 @@ const WaitingRoom = ({ params }) => {
         }
       });
     };
-    socket.on('connect', fetchPlayers);
+    socket.on('connect', fetchPlayers);// Escucha el evento de conexión y actualiza los jugadores
     fetchPlayers();
 
     return () => {
@@ -91,7 +88,7 @@ const WaitingRoom = ({ params }) => {
       console.error('Player ID not found');
       return;
     }
-
+    // Función para eliminar un jugador de la sala
     socket.emit('deletePlayer', { playerId, code }, (response) => {
       if (response.error) {
         console.error(response.error);
@@ -101,7 +98,7 @@ const WaitingRoom = ({ params }) => {
       }
     });
   }, [socket, players, socketId, code, router]);
-
+  // Maneja la finalización de la cuenta regresiva, redirigiendo a la página del juego
   const handleCountdownFinish = () => {
     router.push(`/pages/page-game/${code}`);
   };
@@ -145,7 +142,7 @@ const WaitingRoom = ({ params }) => {
       <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
         {countdown ? (
           <PacManCountdown onCountdownFinish={handleCountdownFinish} />
-        ) : (
+        ) : (// Muestra el componente de cuenta regresiva si 'countdown' es verdadero
           <>
             <p className='pb-2'>Esperando inicio del juego...</p>
             <div className='loaderRoom'></div>

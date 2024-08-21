@@ -8,7 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
 import BeforeUnloadHandler from '../../../components/closePage'; // Importa el componente
-import Alert from '@/app/components/Alert';
+import ScoreAlert from '@/app/components/ScoreAlert';
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
@@ -220,6 +220,7 @@ export default function GameQuizPage({ params }) {
   };
   // Maneja la acción cuando se acaba el tiempo de una pregunta
   const handleTimeUp = async () => {
+    setSelectedAnswer(true);
     setShowCorrectAnswer(true);// Muestra la respuesta correcta
     setAlertMessage(`Puntos: ${score}px 🚀`);
     setAlertType('info');
@@ -228,7 +229,7 @@ export default function GameQuizPage({ params }) {
       setSelectedAnswer(null);
       setShowCorrectAnswer(false);
       moveToNextQuestion();
-    }, 2000);
+    }, 1000);
   };
   // Mueve a la siguiente pregunta o finaliza el juego si no hay más preguntas
   const moveToNextQuestion = () => {
@@ -288,7 +289,7 @@ export default function GameQuizPage({ params }) {
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
-      <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
+      <ScoreAlert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
       <ToastContainer />
       {
         currentQuestion && (

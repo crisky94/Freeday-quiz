@@ -36,13 +36,6 @@ FreedayQuiz es una aplicacion y diseñada para que se puedan crear juegos de pre
 4. Crea las variables de entorno en dos archivos .env.local, las de clerk y apikey y en .env las de mysql.
 5. Ejecuta el servidor en la carpeta Frontend: `npm run dev`
 
-## 🔗 API 
-
-Puedes encontrar más detalles sobre la API y los endpoints en la carpeta de Api.
-
-## 📸 Capturas de Pantalla
-
-
 ## 📝 Contribución
 
 - [Victor Morales](https://github.com/)

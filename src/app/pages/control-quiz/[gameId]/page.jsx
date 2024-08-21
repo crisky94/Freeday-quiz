@@ -102,7 +102,7 @@ export default function GameControlPage({ params }) {
         });
       }
     });
-
+//Para avtualizar en tiempo real las preguntas
     socket.on('updateDeleteAsk', (response) => {
       if (response.data) {
         setQuestions((prevQuestions) => {
@@ -129,7 +129,7 @@ export default function GameControlPage({ params }) {
       socket.off('stopGame');
     };
   }, [socket, router]);
-  // Efecto para manejar el temporizador de las preguntas
+  // Para manejar el temporizador de las preguntas
   useEffect(() => {
     if (timeLeft === null || isPaused) return;
 
@@ -150,7 +150,7 @@ export default function GameControlPage({ params }) {
   const handleTimeUp = () => {
     setTimeout(() => {
       moveToNextQuestion();
-    }, 2000);
+    }, 1020);
   };
   // Función para avanzar a la siguiente pregunta
   const moveToNextQuestion = () => {
@@ -190,6 +190,7 @@ export default function GameControlPage({ params }) {
           setPlayerId(response.players.id);
         }
       });
+      console.log(playerId)
     }
   };
   // Función para enviar el ranking de jugadores
