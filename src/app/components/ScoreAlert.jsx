@@ -13,8 +13,8 @@ const ScoreAlert = ({ message, onClose, autoClose }) => {
       }, 1000);
       // Se establece otro temporizador que vuelve a cambiar el estado "visible" a true después de 1 segundo.
       setTimeout(() => {
-        setVisible(true)
-      }, 1000)
+        setVisible(true);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [autoClose, onClose]);

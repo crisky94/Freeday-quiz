@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../styles/games/deleteGame.css'
+import '../styles/games/deleteGame.css';
 
 //Componente de la página modify para borrar preguntas nuevas. 
 const DeleteNewAsk = ({ askId, onClick }) => {
