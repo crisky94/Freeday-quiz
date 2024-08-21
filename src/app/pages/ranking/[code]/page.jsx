@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Confetti from '../../../../lib/utils'; // Importa un componente para mostrar confeti
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import { ToastContainer, toast } from 'react-toastify';
 import Image from 'next/image';
 import 'react-toastify/dist/ReactToastify.css';
@@ -97,9 +97,8 @@ function RankingPage() {
               .map((player, index) => (
                 <tr
                   key={index}
-                  className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${
-                    player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'
-                  } bg-opacity-40 rounded-md mb-1`}
+                  className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'
+                    } bg-opacity-40 rounded-md mb-1`}
                 >
                   <td className='flex items-center'>
                     {index === 0 && (

@@ -6,7 +6,6 @@ export default clerkMiddleware((auth, req) => {
   // Definir las rutas protegidas y dinámicas
   const protectedRoutes = [
     '/pages/create-quiz',
-    '/pages/control-quiz',
     '/pages/games',
     ];
 

@@ -1,7 +1,7 @@
 'use client';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import { Tooltip } from '@nextui-org/tooltip';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/authContext';
 import 'react-toastify/dist/ReactToastify.css';
@@ -222,7 +222,7 @@ export default function CreateGame() {
         localStorage.removeItem('asks');
         toast.success('Redirigiendo a control quiz ✨', {
           position: 'bottom-center',
-          autoClose: 5000,
+          autoClose: 4000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,

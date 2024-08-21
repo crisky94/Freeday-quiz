@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -81,7 +81,7 @@ export default function GameControlPage({ params }) {
           setMessage('Inicio del juego');
       }
       console.log(gameState);
-      
+
     };
     // Escuchar eventos del socket para actualizar el estado del juego en tiempo real
     socket.on('pauseGame', () => setIsPaused(true));
@@ -102,7 +102,7 @@ export default function GameControlPage({ params }) {
         });
       }
     });
-//Para avtualizar en tiempo real las preguntas
+    //Para avtualizar en tiempo real las preguntas
     socket.on('updateDeleteAsk', (response) => {
       if (response.data) {
         setQuestions((prevQuestions) => {
@@ -190,7 +190,7 @@ export default function GameControlPage({ params }) {
           setPlayerId(response.players.id);
         }
       });
-      console.log(playerId)
+      console.log(playerId);
     }
   };
   // Función para enviar el ranking de jugadores
@@ -203,7 +203,7 @@ export default function GameControlPage({ params }) {
     }
   };
 
-// Función para enviar la pantalla principal después de que el juego finaliza
+  // Función para enviar la pantalla principal después de que el juego finaliza
   const handleSendMainScreen = async () => {
     if (socket) {
       socket.emit('endGame');
