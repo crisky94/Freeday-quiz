@@ -35,8 +35,9 @@ export default function Header() {
         );
       }
     };
-
-    socket.emit('getPlayers', { code }, handleGetPlayers);
+ if(code){
+   socket.emit('getPlayers', { code }, handleGetPlayers);
+ }
     return () => {
       socket.off('getPlayers', handleGetPlayers);
     };

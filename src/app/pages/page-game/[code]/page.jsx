@@ -2,14 +2,13 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Loading from '../../../loading';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
-import BeforeUnloadHandler from '@/app/components/closePage'; 
+import BeforeUnloadHandler from '@/app/components/closePage';
 import ScoreAlert from '@/app/components/ScoreAlert';
-import CountdownBar from '@/app/components/CountdownBar';
 
 
 export default function GameQuizPage({ params }) {
@@ -20,10 +19,9 @@ export default function GameQuizPage({ params }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);// Respuesta seleccionada por el jugador
   const [isCorrect, setIsCorrect] = useState(null);
   const [playerName, setPlayerName] = useState('');
-  const [socketId, setSocketId] = useState(''); 
+  const [socketId, setSocketId] = useState('');
   const [playerId, setPlayerId] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
-  const [countDown, setCountDown] = useState(0);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
   const [alertMessage, setAlertMessage] = useState('');
@@ -86,7 +84,6 @@ export default function GameQuizPage({ params }) {
             setQuestions(response.asks);// Almacena las preguntas del juego
             setCurrentQuestionIndex(0);// Reinicia el índice de preguntas
             setTimeLeft((response.asks[0]?.timer || 0) * 1000); // Convertir a milisegundos
-            setCountDown(response.asks[0]?.timer ||0);
             setGameId(response.game.id);// Guarda el ID del juego
           }
         });
@@ -285,25 +282,31 @@ export default function GameQuizPage({ params }) {
     }
     return '';
   };
-
-   return (
+  
+ const formatTime = (milliseconds) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const remainingSeconds = totalSeconds % 60;
+    return `${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+  return (
     <div className='flex justify-center items-center w-full min-h-screen'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
-      <ScoreAlert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
+      <ScoreAlert
+        message={alertMessage}
+        type={alertType}
+        onClose={() => setAlertMessage('')}
+        autoClose={!!alertMessage}
+      />
       <ToastContainer />
-
-      {
-        currentQuestion && (
-          <div className="flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 mx-8 bg-custom-linear">
-            <div
-              key={currentQuestion.id}
-              className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
-            >
-            <div className='w-full mt-5'>
-                <CountdownBar seconds={countDown} />
-              </div>
-              <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
-                {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
+      {currentQuestion && (
+        <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
+          <div
+            key={currentQuestion.id}
+            className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
+          >
+            <div className='flex flex-col items-center justify-center'>
+              <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
+                {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
               </p>
             </div>
             <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
@@ -347,5 +350,6 @@ export default function GameQuizPage({ params }) {
         </div>
       )}
     </div>
-  );
+
+  )
 }

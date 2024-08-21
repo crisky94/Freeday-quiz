@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import 'react-toastify/dist/ReactToastify.css';

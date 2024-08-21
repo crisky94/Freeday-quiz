@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AvatarModal from '../../../components/AvatarModal';
 import { useAvatar } from '../../../../context/avatarContext';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 import Loading from '@/app/loading';
@@ -78,9 +78,9 @@ const NickNameForm = ({ params }) => {
       sessionStorage.setItem('nickname', nickname);
       setPendingNickname(nickname);
       socket.emit('joinRoom', { nickname, code, avatar: selectedAvatar });// Envía el evento para unirse a la sala.
-    } 
-    
-    if (!nickname && !selectedAvatar){
+    }
+
+    if (!nickname && !selectedAvatar) {
       toast.error('Por favor, ingresa un nickname y selecciona un avatar.', {
         onClose: () => {
           window.location.reload();

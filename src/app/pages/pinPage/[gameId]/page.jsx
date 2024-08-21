@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import QRCode from 'qrcode.react';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
-import usePlayerSocket from '@/app/hooks/usePlayerSocket'; 
+import usePlayerSocket from '@/app/hooks/usePlayerSocket';
 import CountdownBall from '@/app/components/CountdownBall';
 
 
@@ -27,7 +27,7 @@ const PinPage = () => {
   const { user } = useAuth();
 
 
-   // Hook personalizado para manejar eventos del socket relacionados con jugadores
+  // Hook personalizado para manejar eventos del socket relacionados con jugadores
   usePlayerSocket({ socket, setPlayers, setCountdown });
 
   useEffect(() => {
@@ -112,18 +112,18 @@ const PinPage = () => {
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8'>
-      <h1 className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-color-primary text-center bg-hackBlack bg-opacity-90 p-2`}>
+      <h1 className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-primary text-center bg-hackBlack bg-opacity-90 p-2`}>
         {game.nameGame}
       </h1>
       <p className={`${montserrat.className} text-sm sm:text-base md:text-lg lg:text-xl uppercase font-bold text-center bg-hackBlack bg-opacity-90 mt-4 break-words w-full max-w-full`} style={{ wordBreak: 'break-word' }}>
         {game.detailGame}
-        </p>
+      </p>
       <QRCode
         value={`${baseUrl}/pages/nick-name-form/${game.codeGame}`}
         className='bg-white p-2 rounded mt-4'
 
       />
-      <p className='bg-hackBlack p-2 rounded mt-4 text-lg sm:text-xl'>PIN: {game.codeGame}</p>
+      <p className='bg-hackBlack p-2 rounded mt-4 text-lg sm:text-xl font-bold'>PIN: {game.codeGame}</p>
       <div className='flex flex-col sm:flex-row justify-between items-center w-full sm:w-auto'>
         <div className='m-2 sm:m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
           <button onClick={startGame}>
