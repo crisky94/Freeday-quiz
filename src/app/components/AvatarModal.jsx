@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 //Componente para elegir avatar en la página nickName
 const AvatarModal = ({ isOpen, onRequestClose, onSelectAvatar, avatars }) => {

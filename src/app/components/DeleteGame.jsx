@@ -17,9 +17,9 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
 
   const handleConfirmDelete = () => {
     if (gameId) {
-      onDelete(gameId)
+      onDelete(gameId);
      
-      router.refresh()
+      router.refresh();
     }
   };
 

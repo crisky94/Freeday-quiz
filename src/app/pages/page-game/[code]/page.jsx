@@ -351,5 +351,5 @@ export default function GameQuizPage({ params }) {
       )}
     </div>
 
-  )
+  );
 }
