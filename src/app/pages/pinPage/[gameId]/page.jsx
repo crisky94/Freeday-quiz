@@ -9,7 +9,6 @@ import { Montserrat } from 'next/font/google';
 import usePlayerSocket from '@/app/hooks/usePlayerSocket';
 import CountdownBall from '@/app/components/CountdownBall';
 
-
 const montserrat = Montserrat({
   weight: '400',
   subsets: ['latin'],
@@ -17,15 +16,14 @@ const montserrat = Montserrat({
 
 const PinPage = () => {
   const [players, setPlayers] = useState([]); // Estado para almacenar la lista de jugadores.
-  const [showModal, setShowModal] = useState(false);// Estado para controlar la visibilidad del modal de jugadores.
-  const [game, setGame] = useState(null);// Estado para almacenar los detalles del juego.
-  const [countdown, setCountdown] = useState(false);// Estado para controlar si la cuenta regresiva debe mostrarse.
+  const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal de jugadores.
+  const [game, setGame] = useState(null); // Estado para almacenar los detalles del juego.
+  const [countdown, setCountdown] = useState(false); // Estado para controlar si la cuenta regresiva debe mostrarse.
   const socket = useSocket();
   const params = useParams();
   const gameId = params.gameId;
   const router = useRouter();
   const { user } = useAuth();
-
 
   // Hook personalizado para manejar eventos del socket relacionados con jugadores
   usePlayerSocket({ socket, setPlayers, setCountdown });
@@ -42,9 +40,9 @@ const PinPage = () => {
           if (response.error) {
             console.error(response.error);
           } else {
-            setGame(response.game);// Almacena los detalles del juego en el estado.
+            setGame(response.game); // Almacena los detalles del juego en el estado.
             socket.emit(
-              'joinRoom',// Emite un evento para unirse a la sala de juego usando el código del juego.
+              'joinRoom', // Emite un evento para unirse a la sala de juego usando el código del juego.
               { code: response.game.codeGame },
               (joinResponse) => {
                 if (joinResponse.error) {
@@ -92,15 +90,15 @@ const PinPage = () => {
   const startGame = () => {
     if (!socket || !game) return;
     socket.emit('startGame', { code: game.codeGame }); // Emite un evento para iniciar el juego.
-    setCountdown(true);// Activa la cuenta regresiva.
+    setCountdown(true); // Activa la cuenta regresiva.
   };
 
   const handleCountdownFinish = () => {
     if (players) {
-      router.push(`/pages/page-game/${game.codeGame}`);// Navega a la página del juego para los jugadores.
+      router.push(`/pages/page-game/${game.codeGame}`); // Navega a la página del juego para los jugadores.
     }
     if (user) {
-      router.push(`/pages/control-quiz/${game.id}`);// Navega a la página de control del quiz para el usuario autenticado.
+      router.push(`/pages/control-quiz/${game.id}`); // Navega a la página de control del quiz para el usuario autenticado.
     }
   };
 
@@ -112,18 +110,24 @@ const PinPage = () => {
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8'>
-      <h1 className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-primary text-center bg-hackBlack bg-opacity-90 p-2`}>
+      <h1
+        className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-primary text-center bg-hackBlack bg-opacity-90 p-2`}
+      >
         {game.nameGame}
       </h1>
-      <p className={`${montserrat.className} text-sm sm:text-base md:text-lg lg:text-xl uppercase font-bold text-center bg-hackBlack bg-opacity-90 mt-4 break-words w-full max-w-full`} style={{ wordBreak: 'break-word' }}>
+      <p
+        className={`${montserrat.className} text-sm sm:text-base md:text-lg lg:text-xl uppercase font-bold text-center bg-hackBlack bg-opacity-90 mt-4 break-words w-full max-w-full`}
+        style={{ wordBreak: 'break-word' }}
+      >
         {game.detailGame}
       </p>
       <QRCode
         value={`${baseUrl}/pages/nick-name-form/${game.codeGame}`}
         className='bg-white p-2 rounded mt-4'
-
       />
-      <p className='bg-hackBlack p-2 rounded mt-4 text-lg sm:text-xl font-bold'>PIN: {game.codeGame}</p>
+      <p className='bg-hackBlack p-2 rounded mt-4 text-lg sm:text-xl font-bold'>
+        PIN: {game.codeGame}
+      </p>
       <div className='flex flex-col sm:flex-row justify-between items-center w-full sm:w-auto'>
         <div className='m-2 sm:m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
           <button onClick={startGame}>
@@ -143,22 +147,28 @@ const PinPage = () => {
             <h2 className='text-xl sm:text-2xl'>Jugadores</h2>
             <ul className='w-full'>
               {players.map((player) => (
-                <li key={player.socketId} className="grid grid-cols-3 gap-2 items-center py-2">
-                  <div className={`${montserrat.className} text-base sm:text-xl text-hackYellow col-span-1 uppercase font-bold text-center`}>
+                <li
+                  key={player.socketId}
+                  className='grid grid-cols-3 gap-2 items-center py-2'
+                >
+                  <div
+                    className={`${montserrat.className} text-base sm:text-xl text-hackYellow col-span-1 uppercase font-bold text-center`}
+                  >
                     {player.playerName}
                   </div>
-                  <div className="col-span-1 flex justify-center"></div>
-                  <div className='col-span-1 flex justify-center rounded-full' dangerouslySetInnerHTML={{ __html: player.avatar }} style={{ maxWidth: '60%', height: 'auto' }}>
-                  </div>
+                  <div className='col-span-1 flex justify-center'></div>
+                  <div
+                    className='col-span-1 flex justify-center rounded-full'
+                    dangerouslySetInnerHTML={{ __html: player.avatar }}
+                    style={{ maxWidth: '60%', height: 'auto' }}
+                  ></div>
                 </li>
               ))}
             </ul>
           </div>
         </div>
       )}
-      {countdown && (
-        <CountdownBall onCountdownFinish={handleCountdownFinish} />
-      )}
+      {countdown && <CountdownBall onCountdownFinish={handleCountdownFinish} />}
     </div>
   );
 };

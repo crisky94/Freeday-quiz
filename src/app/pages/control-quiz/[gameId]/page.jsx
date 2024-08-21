@@ -13,7 +13,7 @@ import EndGame from '@/app/components/EndGame';
 
 // Componente para controlar la página del juego
 export default function GameControlPage({ params }) {
-  const socket = useSocket();// Obtención del contexto del socket
+  const socket = useSocket(); // Obtención del contexto del socket
   const router = useRouter();
   const [gameState, setGameState] = useState('resumed');
   const [message, setMessage] = useState('');
@@ -38,13 +38,13 @@ export default function GameControlPage({ params }) {
       if (response.error) {
         console.error(response.error);
       } else {
-        setCode(response.game.codeGame);// Establecer el código del juego
+        setCode(response.game.codeGame); // Establecer el código del juego
         socket.emit('getAsks', { gameId }, (response) => {
           if (response.error) {
             console.error(response.error);
           } else {
             const gameQuestions = response.questions;
-            setQuestions(gameQuestions);// Establecer las preguntas del juego
+            setQuestions(gameQuestions); // Establecer las preguntas del juego
             if (gameQuestions.length > 0) {
               setTimeLeft(gameQuestions[0].timer * 1000);
             }
@@ -81,7 +81,6 @@ export default function GameControlPage({ params }) {
           setMessage('Inicio del juego');
       }
       console.log(gameState);
-
     };
     // Escuchar eventos del socket para actualizar el estado del juego en tiempo real
     socket.on('pauseGame', () => setIsPaused(true));
@@ -117,10 +116,13 @@ export default function GameControlPage({ params }) {
 
     socket.on('stopGame', () => {
       toast('El juego para los jugadores, ha finalizado.', {
-        position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
+        position: 'bottom-center',
+        autoClose: 1000,
+        toastId: 'custom-id-yes',
+        onClose: () => {
           setShowEndGame(true);
           setShowRankingModal(true);
-        }
+        },
       });
     });
 
@@ -171,10 +173,10 @@ export default function GameControlPage({ params }) {
   // Función para detener el juego
   const handleStopGame = () => {
     if (socket) {
-      socket.emit('stopGame');// Emitir un evento para detener el juego
+      socket.emit('stopGame'); // Emitir un evento para detener el juego
       setGameState('stopped');
       setMessage('El juego ha finalizado ');
-      moveToLastQuestion();// Moverse a la última pregunta
+      moveToLastQuestion(); // Moverse a la última pregunta
     }
   };
 
@@ -182,11 +184,10 @@ export default function GameControlPage({ params }) {
   const handleReloadPlayersData = () => {
     if (socket) {
       socket.emit('getPlayers', { code }, (response) => {
-
         if (response.error) {
           console.error(response.error);
         } else {
-          setPlayers(response.players);// Actualizar la lista de jugadores
+          setPlayers(response.players); // Actualizar la lista de jugadores
           setPlayerId(response.players.id);
         }
       });
@@ -276,49 +277,60 @@ export default function GameControlPage({ params }) {
     <div className='flex flex-col items-center justify-center min-h-screen w-full pt-16'>
       <div className='bg-custom-linear flex mb-2'>
         <div className='flex flex-col p-14 m-1 h-auto w-58 sm:w-full items-center bg-black gap-5'>
-          <h1 className='uppercase font-bold text-xl text-center'>Sala de control del juego</h1>
-          <div className='text-[#1cffe4] font-bold uppercase'>
-            {message}
-          </div>
-          {
-            isPaused ? (
-              <button onClick={() => {
+          <h1 className='uppercase font-bold text-xl text-center'>
+            Sala de control del juego
+          </h1>
+          <div className='text-[#1cffe4] font-bold uppercase'>{message}</div>
+          {isPaused ? (
+            <button
+              onClick={() => {
                 if (socket) {
                   socket.emit('resumeGame');
                   setGameState('resumed');
                   setMessage('El juego está en marcha');
                 }
-              }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>
-                Reanudar
-              </button>
-            ) : (
-              <button onClick={() => {
+              }}
+              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+            >
+              Reanudar
+            </button>
+          ) : (
+            <button
+              onClick={() => {
                 if (socket) {
                   socket.emit('pauseGame');
                   setGameState('paused');
                   setMessage('El juego está pausado');
                 }
-              }} className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'>
-                Pausar
-              </button>
-            )
-          }
-          {
-            !showEndGame && (
-              <button onClick={handleStopGame} className="text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2">
-                Finalizar
-              </button>
-            )
-          }
-          {showEndGame && (
-            <EndGame onSend={handleSendMainScreen} />
+              }}
+              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+            >
+              Pausar
+            </button>
           )}
-          <Link className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center' href={`/pages/modify-page/${gameId}`} target='_blank'>
+          {!showEndGame && (
+            <button
+              onClick={handleStopGame}
+              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+            >
+              Finalizar
+            </button>
+          )}
+          {showEndGame && <EndGame onSend={handleSendMainScreen} />}
+          <Link
+            className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center'
+            href={`/pages/modify-page/${gameId}`}
+            target='_blank'
+          >
             Modificar juego
           </Link>
           <div className='flex flex-col p-5 m-1 items-center bg-black gap-5'>
-            <p className='break-word'>Preguntas: {currentQuestionIndex + 1} de {questions.length}</p>
-            <div className='text-lg text-center'>{currentQuestionIndex + 1}. {currentQuestion?.ask}</div>
+            <p className='break-word'>
+              Preguntas: {currentQuestionIndex + 1} de {questions.length}
+            </p>
+            <div className='text-lg text-center'>
+              {currentQuestionIndex + 1}. {currentQuestion?.ask}
+            </div>
             <div className='text-xl font-bold text-center mt-4 text-red-500'>
               Tiempo restante: {formatTime(timeLeft)}
             </div>
@@ -330,7 +342,9 @@ export default function GameControlPage({ params }) {
               onSend={handleSendRanking}
             />
           )}
-          {isRankingSent && sendmsg ? <p className='text-green-500'>{sendmsg}</p> : null}
+          {isRankingSent && sendmsg ? (
+            <p className='text-green-500'>{sendmsg}</p>
+          ) : null}
         </div>
       </div>
       <ToastContainer />

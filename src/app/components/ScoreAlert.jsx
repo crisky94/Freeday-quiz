@@ -13,8 +13,8 @@ const ScoreAlert = ({ message, onClose, autoClose }) => {
       }, 1000);
       // Se establece otro temporizador que vuelve a cambiar el estado "visible" a true después de 1 segundo.
       setTimeout(() => {
-        setVisible(true)
-      }, 1000)
+        setVisible(true);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [autoClose, onClose]);
@@ -22,11 +22,13 @@ const ScoreAlert = ({ message, onClose, autoClose }) => {
   if (!visible || !message) return null;
 
   return (
-    <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 text-black bg-white rounded-md`} role="alert">
+    <div
+      className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 text-black bg-white rounded-md`}
+      role='alert'
+    >
       <p>{message}</p>
     </div>
   );
 };
 
 export default ScoreAlert;
-

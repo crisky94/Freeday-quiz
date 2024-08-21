@@ -25,11 +25,16 @@ const CountdownBall = ({ onCountdownFinish }) => {
   }, [onCountdownFinish]);
 
   return (
-    <div className="flex flex-col items-center space-x-2">
-      <p className={`${monserrat.className} text-xl text-hackYellow`}>El Juego comenzará en:</p>
-      <div className="flex gap-1">
+    <div className='flex flex-col items-center space-x-2'>
+      <p className={`${monserrat.className} text-xl text-hackYellow`}>
+        El Juego comenzará en:
+      </p>
+      <div className='flex gap-1'>
         {[...Array(Math.max(timeLeft, 0))].map((_, index) => (
-          <div key={index} className="w-6 h-6 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-8 lg:h-8 xl:w-8 xl:h-8 bg-custom-linear rounded-full"></div>
+          <div
+            key={index}
+            className='w-6 h-6 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-8 lg:h-8 xl:w-8 xl:h-8 bg-custom-linear rounded-full'
+          ></div>
         ))}
       </div>
     </div>
