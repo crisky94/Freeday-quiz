@@ -32,9 +32,8 @@ const Sidebar = () => {
         setPlayers(response.players);
 
         response.players.map(async (player) => {
-
           return { id: player.id };
-        })
+        });
       }
     };
 
@@ -60,7 +59,7 @@ const Sidebar = () => {
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#111] shadow-xl text-white transition-transform transform z-50 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+        }`}
       >
         <button
           className='p-4 mt-6 hover:text-primary text-white'
@@ -80,7 +79,7 @@ const Sidebar = () => {
                   key={player.id}
                   className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto mt-5'
                 >
-                  { player.socketId === socketId && (
+                  {player.socketId === socketId && (
                     <>
                       <div
                         className='border-2 border-white rounded-full'

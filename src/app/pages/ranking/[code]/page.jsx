@@ -16,7 +16,6 @@ function RankingPage() {
   const [socketId, setSocketId] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
     if (!socket) return;
     setSocketId(socket.id);
@@ -29,16 +28,14 @@ function RankingPage() {
         setIsLoading(false);
 
         response.ranking.map(async (player) => {
-
           return { id: player.id };
-        })
+        });
       }
     };
 
     socket.on('redirectToFinalScreen', handleFinalRanking);
 
     const handleMainScreen = () => {
-
       toast('Quiz finalizado, redirigiendo a inicio', {
         autoClose: 2000,
         onClose: () => {
@@ -59,9 +56,11 @@ function RankingPage() {
   if (isLoading) {
     return (
       <>
-        <div className="relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bgroom">
-          <p className="mb-4 text-center text-lg sm:text-xl md:text-2xl">Haz click en el texto</p>
-          <span className="pointer-events-none whitespace-pre-wrap  bg-clip-text text-center text-4xl font-semibold leading-none text-primary sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none ">
+        <div className='relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bgroom'>
+          <p className='mb-4 text-center text-lg sm:text-xl md:text-2xl'>
+            Haz click en el texto
+          </p>
+          <span className='pointer-events-none whitespace-pre-wrap  bg-clip-text text-center text-4xl font-semibold leading-none text-primary sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none '>
             ¡Juego Completado!
           </span>
           <Confetti
@@ -84,7 +83,9 @@ function RankingPage() {
   return (
     <>
       <div className='flex flex-col p-2 h-auto items-center  bgroom text-white w-full pt-24 min-h-screen'>
-        <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>Ranking</h1>
+        <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>
+          Ranking
+        </h1>
         <table className='w-full text-left'>
           <tbody className='w-full text-white flex flex-col justify-center items-center'>
             {ranking
@@ -93,18 +94,31 @@ function RankingPage() {
               .map((player, index) => (
                 <tr
                   key={index}
-                  className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'} bg-opacity-40 rounded-md mb-1`}>
+                  className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${
+                    player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'
+                  } bg-opacity-40 rounded-md mb-1`}
+                >
                   <td className='flex items-center'>
-                    {index === 0 && <Image src='/corona1.png' width={20} height={20} />}
-                    {index === 1 && <Image src='/corona2.png' width={20} height={20} />}
-                    {index === 2 && <Image src='/corona3.png' width={20} height={20} />}
+                    {index === 0 && (
+                      <Image src='/corona1.png' width={20} height={20} />
+                    )}
+                    {index === 1 && (
+                      <Image src='/corona2.png' width={20} height={20} />
+                    )}
+                    {index === 2 && (
+                      <Image src='/corona3.png' width={20} height={20} />
+                    )}
                     <div
                       className='border-2 border-white rounded-full ml-2 mr-6'
                       dangerouslySetInnerHTML={{ __html: player.avatar }}
                     />
-                    <span className='font-semibold text-lg'>{player.playerName}</span>
+                    <span className='font-semibold text-lg'>
+                      {player.playerName}
+                    </span>
                   </td>
-                  <td className='text-right font-bold text-yellow-500 text-lg md:text-sm mr-2'>{player.score}px</td>
+                  <td className='text-right font-bold text-yellow-500 text-lg md:text-sm mr-2'>
+                    {player.score}px
+                  </td>
                 </tr>
               ))}
           </tbody>
@@ -112,7 +126,7 @@ function RankingPage() {
         <ToastContainer />
       </div>
     </>
-  )
+  );
 }
 
 export default RankingPage;

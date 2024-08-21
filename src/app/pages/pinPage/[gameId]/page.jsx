@@ -9,6 +9,7 @@ import { Montserrat } from 'next/font/google';
 import usePlayerSocket from '@/app/hooks/usePlayerSocket'; 
 import CountdownBall from '@/app/components/CountdownBall';
 
+
 const montserrat = Montserrat({
   weight: '400',
   subsets: ['latin'],
@@ -39,8 +40,6 @@ const PinPage = () => {
             console.error(response.error);
           } else {
             setGame(response.game);
-            console.log('Game data received:', response.game);
-
             socket.emit(
               'joinRoom',
               { code: response.game.codeGame },
@@ -106,6 +105,8 @@ const PinPage = () => {
     return <div>Cargando...</div>;
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SOCKET_IO || 'http://localhost:3000';
+
   return (
     <div className='mt-20 flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8'>
       <h1 className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-color-primary text-center bg-hackBlack bg-opacity-90 p-2`}>
@@ -115,8 +116,9 @@ const PinPage = () => {
         {game.detailGame}
         </p>
       <QRCode
-        value={`http://localhost:3000/nick-name-form/${game.codeGame}`}
-        className='bg-white p-2 rounded mt-4 w-full sm:w-auto'
+        value={`${baseUrl}/pages/nick-name-form/${game.codeGame}`}
+        className='bg-white p-2 rounded mt-4'
+
       />
       <p className='bg-hackBlack p-2 rounded mt-4 text-lg sm:text-xl'>PIN: {game.codeGame}</p>
       <div className='flex flex-col sm:flex-row justify-between items-center w-full sm:w-auto'>

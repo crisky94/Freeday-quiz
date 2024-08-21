@@ -6,7 +6,6 @@ import BeforeUnloadHandler from '../../../components/closePage';
 import CountdownBall from '@/app/components/CountdownBall';
 import usePlayerSocket from '@/app/hooks/usePlayerSocket';
 
-
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
   const socket = useSocket();
@@ -16,7 +15,15 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
- 
+
+  useEffect(() => {
+    const userNick = sessionStorage.getItem('nickname');
+    if (!userNick) {
+      router.push('/');
+    }
+  }, [router]);
+
+
   useEffect(() => {
     if (!socket) {
       router.push('/');
@@ -52,8 +59,6 @@ const WaitingRoom = ({ params }) => {
   }, [code, router]);
 
   usePlayerSocket({ socket, setPlayers, setCountdown });
-
-  
 
   useEffect(() => {
     if (!socket) return;
@@ -94,8 +99,10 @@ const WaitingRoom = ({ params }) => {
       if (response.error) {
         console.error(response.error);
       } else {
+        sessionStorage.removeItem('pin');
+        sessionStorage.removeItem('nickname');
         console.log('Player eliminado con éxito');
-        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
+        router.push('/'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
   }, [socket, players, socketId, code, router]);
@@ -117,8 +124,9 @@ const WaitingRoom = ({ params }) => {
         {players.map((player) => (
           <div
             key={player.id}
-            className={`w-14 flex flex-col items-center p-1 mx-8 ${player.socketId === socketId ? 'text-secundary' : 'text-white'
-              }`}
+            className={`w-14 flex flex-col items-center p-1 mx-8 ${
+              player.socketId === socketId ? 'text-secundary' : 'text-white'
+            }`}
           >
             <div className='text-center flex flex-col items-center p-1 gap-1'>
               <div

@@ -6,10 +6,11 @@ const BeforeUnloadHandler = ({ onBeforeUnload }) => {
       event.preventDefault();
 
       // Ejecutar la función de eliminación de jugador
-      await onBeforeUnload(); 
+      await onBeforeUnload();
 
       // Aviso para la recarga
-      event.returnValue = '¿Estás seguro de que deseas recargar la página? Se perderán los datos no guardados.';
+      event.returnValue =
+        '¿Estás seguro de que deseas recargar la página? Se perderán los datos no guardados.';
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
