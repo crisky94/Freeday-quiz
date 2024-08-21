@@ -1,5 +1,5 @@
 'use client';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '@/context/SocketContext';
 import { useState, useEffect, useCallback } from 'react';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,6 +8,7 @@ import DeleteAsk from '@/app/components/DeleteAsk';
 import DeleteNewAsk from '@/app/components/DeleteNewAsk';
 
 export default function EditGame({ params }) {
+  // Estado inicial del formulario para el nombre, detalle del juego y preguntas
   const [formData, setFormData] = useState({
     gameName: '',
     gameDetail: '',
@@ -21,6 +22,7 @@ export default function EditGame({ params }) {
 
   useEffect(() => {
     const fetchData = () => {
+      // Solicita las preguntas del juego al servidor
       socket.emit('getAsks', { gameId }, (response) => {
         if (response.error) {
           console.error(response.error);
@@ -40,11 +42,12 @@ export default function EditGame({ params }) {
           }));
         }
       });
-
+      // Solicita los detalles del juego al servidor
       socket.emit('getGamesId', { gameId }, (response) => {
         if (response.error) {
           console.error(response.error);
         } else {
+          // Actualiza el estado con los detalles del juego recibidos
           setFormData((prevData) => ({
             ...prevData,
             gameName: response.game.nameGame,
@@ -54,7 +57,8 @@ export default function EditGame({ params }) {
       });
     };
 
-    fetchData();
+    fetchData();// Llama a la función para obtener los datos
+    // Escucha las actualizaciones de las preguntas desde el servidor y actualiza el estado
     socket.on('updateQuestions', (updatedAsks) => {
       setFormData((prevData) => ({
         ...prevData,
@@ -65,7 +69,7 @@ export default function EditGame({ params }) {
       socket.off('updateQuestions');
     };
   }, [gameId, socket]);
-
+  // Maneja cambios en los campos de texto del formulario
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -73,7 +77,7 @@ export default function EditGame({ params }) {
       [name]: value,
     }));
   }, []);
-
+  // Maneja cambios en los campos específicos de las preguntas
   const handleAskChange = useCallback((index, field, value) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -84,7 +88,7 @@ export default function EditGame({ params }) {
       return { ...prevData, asks: newAsks };
     });
   }, []);
-
+  // Maneja cambios en la opción correcta seleccionada para una pregunt
   const handleCorrectAnswerChange = useCallback((index, option) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
@@ -95,7 +99,7 @@ export default function EditGame({ params }) {
       return { ...prevData, asks: newAsks };
     });
   }, []);
-
+  // Añade una nueva pregunta al formulario
   const handleAddQuestion = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -105,10 +109,10 @@ export default function EditGame({ params }) {
       ],
     }));
   };
-
+  // Elimina una pregunta existente (ya guardada en el servidor) del formulario
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
-      console.log(response);
+
       if (response.success) {
         setFormData(prevData => {
           // Filtrar las preguntas para eliminar la pregunta con askId
@@ -123,14 +127,14 @@ export default function EditGame({ params }) {
       }
     });
   };
-
+  // Elimina una nueva pregunta (no guardada en el servidor) del formulario
   const handleRemoveNewQuestion = (index) => {
     setFormData((prevData) => ({
       ...prevData,
       asks: prevData.asks.filter((_, i) => i !== index),
     }));
   };
-
+  // Valida los datos del formulario antes de enviarlos al servidor
   const validateForm = () => {
     let hasErrors = false;
 
@@ -150,7 +154,7 @@ export default function EditGame({ params }) {
         );
         hasErrors = true;
       }
-      if (ask.answer === null) {
+      if (ask.answer === '') {
         toast.error(
           `Selecciona una respuesta correcta para la pregunta ${index + 1}.`
         );
@@ -162,18 +166,20 @@ export default function EditGame({ params }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const hasErrors = validateForm();
+    const hasErrors = validateForm();// Valida el formulario antes de enviarlo
     if (hasErrors) {
       return;
     }
+    // Emite un evento para actualizar el juego en el servidor
     socket.emit('updateGame', { formData, gameId }, (response) => {
       if (response.success) {
+        // Muestra una notificación de éxito y redirige al usuario a la página principal
         toast('Juego actualizado con éxito. Redirigiendo a Home 🚀', {
           position: 'bottom-center',
           hideProgressBar: false,
           autoClose: 1000,
           closeOnClick: false,
-          pauseOnHover: true,
+          pauseOnHover: false,
           draggable: false,
           closeButton: false,
           theme: 'light',
@@ -187,13 +193,12 @@ export default function EditGame({ params }) {
       }
     });
   };
-
+  // Ajusta automáticamente el tamaño de un textarea al ingresar texto
   const handleAutoResize = (e) => {
     const textarea = e.target;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
-
 
   return (
     <form
@@ -299,7 +304,7 @@ export default function EditGame({ params }) {
                 <input
                   className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#fcff00] mb-4 w-20'
                   type='number'
-                  min={5}
+                  min={3}
                   max={50}
                   id={`timer-${index}`}
                   name={`timer-${index}`}
@@ -307,6 +312,7 @@ export default function EditGame({ params }) {
                   onChange={(e) => handleAskChange(index, 'timer', e.target.value)}
                 />
               </div>
+              {/* Renderiza el componente adecuado para eliminar una pregunta dependiendo si es nueva o ya existente */}
               {!ask.id ?
                 <DeleteNewAsk askId={index} onClick={handleRemoveNewQuestion} /> : (
                   <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />

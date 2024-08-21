@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import '../styles/games/deleteGame.css'
 import { useRouter } from 'next/navigation';
+
+//Componente de botón borrar preguntas en la pagina modify
 const DeleteAsk = ({ askId, onClick }) => {
  const router = useRouter()
   const [showConfirmation, setShowConfirmation] = useState(false);

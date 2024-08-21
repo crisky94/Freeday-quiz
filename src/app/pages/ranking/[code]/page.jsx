@@ -2,24 +2,26 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Confetti from '../../../../lib/utils';
-import { useSocket } from '@/context/socketContext';
+import Confetti from '../../../../lib/utils'; // Importa un componente para mostrar confeti
+import { useSocket } from '@/context/SocketContext';
 import { ToastContainer, toast } from 'react-toastify';
 import Image from 'next/image';
 import 'react-toastify/dist/ReactToastify.css';
 
 function RankingPage() {
+  // Referencia para el componente de confeti
   const confettiRef = useRef(null);
   const router = useRouter();
   const [ranking, setRanking] = useState([]);
-  const socket = useSocket();
   const [socketId, setSocketId] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const socket = useSocket();// Obtiene la instancia del socket desde el contexto
 
   useEffect(() => {
+    // Verifica si el socket está disponible
     if (!socket) return;
     setSocketId(socket.id);
-    // Listener para recibir el ranking final
+    // Configura el socket para recibir el ranking final
     const handleFinalRanking = async (response) => {
       if (response.error) {
         console.error(response.error);
@@ -32,7 +34,7 @@ function RankingPage() {
         });
       }
     };
-
+    // Configura el listener para el evento 'redirectToFinalScreen'
     socket.on('redirectToFinalScreen', handleFinalRanking);
 
     const handleMainScreen = () => {
@@ -80,6 +82,7 @@ function RankingPage() {
       </>
     );
   }
+  // Muestra el ranking si los datos ya han sido enviados por el creador
   return (
     <>
       <div className='flex flex-col p-2 h-auto items-center  bgroom text-white w-full pt-24 min-h-screen'>

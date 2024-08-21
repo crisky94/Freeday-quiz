@@ -2,9 +2,9 @@
 import React, { Suspense, lazy } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import Loading from './loading';
-
 const AccesPin = lazy(() => import('./pages/access-pin/page'));
 const GamesList = lazy(() => import('./pages/games/page'));
+
 
 function HomePage() {
   const { isLoaded, isSignedIn } = useUser();
@@ -19,6 +19,7 @@ function HomePage() {
   // Renderiza el componente adecuado dependiendo del estado de autenticación
   return (
     <>
+      {/* Si no esta registrado le aparece la página para insertar el pin del juego */}
       {!isSignedIn ? (
         <Suspense fallback={<Loading />}>
           <AccesPin />

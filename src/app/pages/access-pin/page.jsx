@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '@/context/SocketContext';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,14 +10,14 @@ function AccessPin({ gameId }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const socket = useSocket();
-
+  // Maneja el cambio de valor en el input para el PIN
   const handleInputChange = (e) => {
     setCode(parseInt(e.target.value));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    // Emite un evento a través de Socket.IO para verificar el código del juego.
     socket.emit('correctCodeGame', { code, gameId }, (response) => {
       if (response.success) {
         sessionStorage.setItem('pin', code); // Almacenar el PIN después de la validación
@@ -27,7 +27,7 @@ function AccessPin({ gameId }) {
           theme: 'light',
           transition: Flip,
           onClose: () => {
-            router.push(`/pages/nick-name-form/${code}`);
+            router.push(`/pages/nick-name-form/${code}`);// Dirige a los jugadores a la pagina para introducir nick
           },
         });
       } else {

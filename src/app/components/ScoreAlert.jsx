@@ -1,15 +1,17 @@
-// components/Alert.js
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const Alert = ({ message, onClose, autoClose }) => {
+// Definición del componente Alert para los puntos del juego que acepta props: message, onClose y autoClose.
+const ScoreAlert = ({ message, onClose, autoClose }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     if (autoClose) {
+      // Se establece un temporizador que cambia el estado "visible" a false y llama a la función "onClose" después de 1 segundo.
       const timer = setTimeout(() => {
         setVisible(false);
         onClose();
       }, 1000);
+      // Se establece otro temporizador que vuelve a cambiar el estado "visible" a true después de 1 segundo.
       setTimeout(() => {
         setVisible(true)
       }, 1000)
@@ -26,5 +28,5 @@ const Alert = ({ message, onClose, autoClose }) => {
   );
 };
 
-export default Alert;
+export default ScoreAlert;
 

@@ -1,3 +1,4 @@
+//Componente de carousel de la pagina de games
 const CustomDot = ({ onClick, ...rest }) => {
   const { active } = rest;
   return (

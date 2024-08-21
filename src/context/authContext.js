@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
 
       if (isSignedIn && window.location.pathname === '/') {
-        router.push('/'); // Redirigir a una página específica
+        router.push('/'); // Redirigir a la página principal
       }
     }
   }, [isLoaded, isSignedIn]);

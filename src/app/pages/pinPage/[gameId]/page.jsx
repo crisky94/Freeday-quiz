@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import QRCode from 'qrcode.react';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '@/context/SocketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
 import usePlayerSocket from '@/app/hooks/usePlayerSocket'; 
@@ -16,22 +16,25 @@ const montserrat = Montserrat({
 });
 
 const PinPage = () => {
-  const [players, setPlayers] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [game, setGame] = useState(null);
-  const [countdown, setCountdown] = useState(false);
+  const [players, setPlayers] = useState([]); // Estado para almacenar la lista de jugadores.
+  const [showModal, setShowModal] = useState(false);// Estado para controlar la visibilidad del modal de jugadores.
+  const [game, setGame] = useState(null);// Estado para almacenar los detalles del juego.
+  const [countdown, setCountdown] = useState(false);// Estado para controlar si la cuenta regresiva debe mostrarse.
   const socket = useSocket();
   const params = useParams();
   const gameId = params.gameId;
   const router = useRouter();
   const { user } = useAuth();
 
+
+   // Hook personalizado para manejar eventos del socket relacionados con jugadores
   usePlayerSocket({ socket, setPlayers, setCountdown });
 
   useEffect(() => {
     if (!socket) return;
 
     const fetchGame = async () => {
+      // Emite un evento al servidor para obtener los detalles del juego usando el gameId.
       socket.emit(
         'getGamesId',
         { gameId: parseInt(gameId, 10) },
@@ -39,9 +42,9 @@ const PinPage = () => {
           if (response.error) {
             console.error(response.error);
           } else {
-            setGame(response.game);
+            setGame(response.game);// Almacena los detalles del juego en el estado.
             socket.emit(
-              'joinRoom',
+              'joinRoom',// Emite un evento para unirse a la sala de juego usando el código del juego.
               { code: response.game.codeGame },
               (joinResponse) => {
                 if (joinResponse.error) {
@@ -56,7 +59,7 @@ const PinPage = () => {
       );
     };
 
-    fetchGame();
+    fetchGame(); // Llama a la función fetchGame para iniciar la obtención de los detalles del juego.
   }, [gameId, socket]);
 
   useEffect(() => {
@@ -88,16 +91,16 @@ const PinPage = () => {
 
   const startGame = () => {
     if (!socket || !game) return;
-    socket.emit('startGame', { code: game.codeGame });
-    setCountdown(true);
+    socket.emit('startGame', { code: game.codeGame }); // Emite un evento para iniciar el juego.
+    setCountdown(true);// Activa la cuenta regresiva.
   };
 
   const handleCountdownFinish = () => {
     if (players) {
-      router.push(`/pages/page-game/${game.codeGame}`);
+      router.push(`/pages/page-game/${game.codeGame}`);// Navega a la página del juego para los jugadores.
     }
     if (user) {
-      router.push(`/pages/control-quiz/${game.id}`);
+      router.push(`/pages/control-quiz/${game.id}`);// Navega a la página de control del quiz para el usuario autenticado.
     }
   };
 

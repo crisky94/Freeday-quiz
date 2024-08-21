@@ -2,24 +2,25 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Loading from '../../../loading';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '@/context/SocketContext';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/page-game/pageGame.css';
 import BeforeUnloadHandler from '@/app/components/closePage'; 
-import Alert from '@/app/components/Alert';
+import ScoreAlert from '@/app/components/ScoreAlert';
 import CountdownBar from '@/app/components/CountdownBar';
+
 
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
   const [gameId, setGameId] = useState(null);
   const [score, setScore] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);// Respuesta seleccionada por el jugador
   const [isCorrect, setIsCorrect] = useState(null);
   const [playerName, setPlayerName] = useState('');
-  const [socketId, setSocketId] = useState('');
+  const [socketId, setSocketId] = useState(''); 
   const [playerId, setPlayerId] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
   const [countDown, setCountDown] = useState(0);
@@ -27,20 +28,22 @@ export default function GameQuizPage({ params }) {
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('info');
-  const socket = useSocket();
-  const code = parseInt(params.code);
+  const socket = useSocket();// Obtener instancia del socket
+  const code = parseInt(params.code);// Código del juego tomado de los parámetros
   const router = useRouter();
 
+
+  // Verifica si el jugador tiene un nickname almacenado en la sesión
   useEffect(() => {
     const userNick = sessionStorage.getItem('nickname');
     if (!userNick) {
-      router.push('/');
+      router.push('/');// Redirige al inicio si no hay nickname
     }
   }, [router]);
 
   useEffect(() => {
     if (!socket) {
-      router.push('/');
+      router.push('/');// Redirige al inicio si el socket no está disponible
     } else {
       console.log(socketId);
 
@@ -50,7 +53,7 @@ export default function GameQuizPage({ params }) {
 
   useEffect(() => {
     if (!socket) return;
-
+    // Obtener jugadores del servidor y actualizar el estado del jugador actual
     const handleGetPlayers = (response) => {
       if (response.error) {
         console.error(response.error);
@@ -59,14 +62,13 @@ export default function GameQuizPage({ params }) {
           (player) => player.socketId === socket.id
         );
         if (player) {
-          setPlayerName(player.playerName);
+          setPlayerName(player.playerName);// Almacena el nombre del jugador
           setPlayerId(player.id); // Guarda el playerId aquí
         }
-        console.log(response.players);
       }
     };
 
-    socket.emit('getPlayers', { code }, handleGetPlayers);
+    socket.emit('getPlayers', { code }, handleGetPlayers);// Solicita la lista de jugadores al servidor
 
     return () => {
       socket.off('getPlayers', handleGetPlayers);
@@ -78,15 +80,14 @@ export default function GameQuizPage({ params }) {
       // Obtener el estado inicial del juego
       const fetchQuestions = () => {
         socket.emit('getCodeGame', { code }, (response) => {
-          console.log(response, 'getcodeGame');
           if (response.error) {
             console.error(response.error);
           } else {
-            setQuestions(response.asks);
-            setCurrentQuestionIndex(0);
+            setQuestions(response.asks);// Almacena las preguntas del juego
+            setCurrentQuestionIndex(0);// Reinicia el índice de preguntas
             setTimeLeft((response.asks[0]?.timer || 0) * 1000); // Convertir a milisegundos
             setCountDown(response.asks[0]?.timer ||0);
-            setGameId(response.game.id);
+            setGameId(response.game.id);// Guarda el ID del juego
           }
         });
       };
@@ -117,10 +118,9 @@ export default function GameQuizPage({ params }) {
 
         });
       });
-
+      // Actualiza las preguntas cuando se recibe una actualización del servidor
       socket.on('updatedAsks', (response) => {
         if (response.asks) {
-          console.log(response);
           // Combinar las preguntas actuales con las nuevas preguntas
           setQuestions((prevQuestions) => {
             const updatedQuestionsMap = new Map(
@@ -137,9 +137,8 @@ export default function GameQuizPage({ params }) {
           });
         }
       });
-
+      // Elimina preguntas cuando se recibe una solicitud de eliminación del servidor
       socket.on('updateDeleteAsk', (response) => {
-        console.log(response);
         if (response.data) {
           setQuestions((prevQuestions) => {
             // Crear un nuevo Map con las preguntas actuales
@@ -166,13 +165,14 @@ export default function GameQuizPage({ params }) {
   }, [socket, code, router, playerName]);
 
   useEffect(() => {
+    // Maneja el temporizador de las preguntas
     if (timeLeft === null || isPaused) return;
 
     const intervalId = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1000) {
           clearInterval(intervalId);
-          handleTimeUp();
+          handleTimeUp();// Maneja la acción cuando se acaba el tiempo
           return 0;
         }
         return prevTime - 1000;
@@ -183,7 +183,7 @@ export default function GameQuizPage({ params }) {
   }, [timeLeft, isPaused]);
 
   useEffect(() => {
-    // Configurar el temporizador
+    // Configura el temporizador cuando cambia la pregunta
     setTimeLeft((questions[currentQuestionIndex]?.timer || 0) * 1000); // Convertir a milisegundos
   }, [currentQuestionIndex, questions]);
 
@@ -202,12 +202,13 @@ export default function GameQuizPage({ params }) {
       const totalPoints = basePoints + timeBonus;
       const newScore = score + totalPoints;
       setScore(newScore);
-      await insertPlayer(gameId, playerName, totalPoints);
+      await insertPlayer(gameId, playerName, totalPoints);// Inserta los puntos del jugador en el servidor
     } else {
-      await insertPlayer(gameId, playerName, 0);
+      await insertPlayer(gameId, playerName, 0); // Inserta cero puntos si la respuesta es incorrecta
     }
   };
 
+  // Inserta la puntuación del jugador en el servidor
   const insertPlayer = (gameId, playerName, score) => {
     return new Promise((resolve, reject) => {
       socket.emit('insertPlayer', { gameId, playerName, score }, (response) => {
@@ -223,9 +224,10 @@ export default function GameQuizPage({ params }) {
       });
     });
   };
-
+  // Maneja la acción cuando se acaba el tiempo de una pregunta
   const handleTimeUp = async () => {
-    setShowCorrectAnswer(true);
+    setSelectedAnswer(true);
+    setShowCorrectAnswer(true);// Muestra la respuesta correcta
     setAlertMessage(`Puntos: ${score}px 🚀`);
     setAlertType('info');
     setTimeout(() => {
@@ -233,9 +235,9 @@ export default function GameQuizPage({ params }) {
       setSelectedAnswer(null);
       setShowCorrectAnswer(false);
       moveToNextQuestion();
-    }, 2000);
+    }, 1000);
   };
-
+  // Mueve a la siguiente pregunta o finaliza el juego si no hay más preguntas
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {
@@ -287,12 +289,7 @@ export default function GameQuizPage({ params }) {
    return (
     <div className='flex justify-center items-center w-full min-h-screen'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
-      <Alert
-        message={alertMessage}
-        type={alertType}
-        onClose={() => setAlertMessage('')}
-        autoClose={!!alertMessage}
-      />
+      <ScoreAlert message={alertMessage} type={alertType} onClose={() => setAlertMessage('')} autoClose={!!alertMessage} />
       <ToastContainer />
 
       {

@@ -1,7 +1,7 @@
 'use client';
 import { Flip, ToastContainer, toast } from 'react-toastify';
 import { Tooltip } from '@nextui-org/tooltip';
-import { useSocket } from '@/context/socketContext';
+import { useSocket } from '@/context/SocketContext';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/authContext';
 import 'react-toastify/dist/ReactToastify.css';

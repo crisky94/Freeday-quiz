@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+//Componente de la página de control-quiz, para eliminar jugadores y redirigir a home tanto al creador como a los jugadores.
 export default function EndGame({ onSend }) {
   const [isOpen, setIsOpen] = useState(false);
 
