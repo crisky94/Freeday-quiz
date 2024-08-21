@@ -10,10 +10,9 @@ import { useSocket } from '@/context/socketContext';
 import User from './User';
 import '../styles/header.css';
 import { useAuth } from '@/context/authContext';
-import Loading from '../loading';
 
 export default function Header() {
-  const { isSignedIn, loading } = useAuth();
+  const { isSignedIn } = useAuth();
   const socket = useSocket();
   const { fetchAvatar } = useAvatar();
   const [players, setPlayers] = useState([]);
@@ -29,16 +28,11 @@ export default function Header() {
       } else {
         setSocketId(socket.id);
         setPlayers(response.players);
-         await Promise.all(
+        await Promise.all(
           response.players.map(async (player) => {
             return { id: player.id };
           })
         );
-        // const avatarsMap = {};
-        // avatarsData.forEach(({ id, avatar }) => {
-        //   avatarsMap[id] = avatar;
-        // });
-        // setAvatars(avatarsMap);
       }
     };
 
@@ -47,14 +41,6 @@ export default function Header() {
       socket.off('getPlayers', handleGetPlayers);
     };
   }, [socket, fetchAvatar, players]);
-
-  if (loading) {
-    return (
-      <div className='h-screen w-screen flex items-center'>
-        <Loading />
-      </div>
-    ); // Indicador de carga
-  }
 
   return (
     <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 shadow-md shadow-slate-200 z-50 h-32'>
@@ -78,7 +64,7 @@ export default function Header() {
                   key={player.id}
                   className='flex flex-row flex-wrap justify-between items-center text-center gap-4 mb-0 w-auto'
                 >
-                  { player.socketId === socketId && (
+                  {player.socketId === socketId && (
                     <>
                       <div
                         className='border-2 border-white rounded-full'

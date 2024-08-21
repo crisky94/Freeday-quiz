@@ -6,7 +6,7 @@ import QRCode from 'qrcode.react';
 import { useSocket } from '@/context/socketContext';
 import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
-import usePlayerSocket from '../../../components/usePlayerSocket'; 
+import usePlayerSocket from '../../../components/usePlayerSocket';
 import PacManCountdown from '../../../components/PacManCountdown';
 
 const montserrat = Montserrat({
@@ -40,8 +40,6 @@ const PinPage = () => {
             console.error(response.error);
           } else {
             setGame(response.game);
-            console.log('Game data received:', response.game);
-
             socket.emit(
               'joinRoom',
               { code: response.game.codeGame },
@@ -80,16 +78,22 @@ const PinPage = () => {
     return <div>Cargando...</div>;
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SOCKET_IO || 'http://localhost:3000';
+
   return (
     <div className='mt-20 flex flex-col justify-between items-center'>
-      <h1 className={`${montserrat.className} text-4xl uppercase bold bg-hackBlack bg-opacity-90`}>
+      <h1
+        className={`${montserrat.className} text-4xl uppercase bold bg-hackBlack bg-opacity-90`}
+      >
         {game.nameGame}
       </h1>
-      <p className={`${montserrat.className} text-xl uppercase bold bg-hackBlack bg-opacity-90`}>
+      <p
+        className={`${montserrat.className} text-xl uppercase bold bg-hackBlack bg-opacity-90`}
+      >
         {game.detailGame}
       </p>
       <QRCode
-        value={`http://localhost:3000/nick-name-form/${game.codeGame}`}
+        value={`${baseUrl}/pages/nick-name-form/${game.codeGame}`}
         className='bg-white p-2 rounded mt-4'
       />
       <p className='bg-hackBlack p-2 rounded mt-4'>PIN: {game.codeGame}</p>
@@ -112,12 +116,14 @@ const PinPage = () => {
             <h2>Jugadores</h2>
             <ul>
               {players.map((player) => (
-                <li key={player.socketId} className="grid grid-cols-3">
-                  <div className={`${montserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}>
+                <li key={player.socketId} className='grid grid-cols-3'>
+                  <div
+                    className={`${montserrat.className} text-xl text-hackYellow col-span-1 w-[20%] p-4 uppercase bold`}
+                  >
                     {player.playerName}
                   </div>
-                  <div className="col-span-1 w-[10%] p-4 flex justify-center"></div>
-                  <div className="col-span-1 w-[70%] p-4 flex justify-center">
+                  <div className='col-span-1 w-[10%] p-4 flex justify-center'></div>
+                  <div className='col-span-1 w-[70%] p-4 flex justify-center'>
                     <div
                       className='border-2 border-white rounded-full'
                       dangerouslySetInnerHTML={{ __html: player.avatar }}

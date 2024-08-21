@@ -1,5 +1,4 @@
 export function gameEvents(socket, io, prisma) {
-
   //* Crear juego(create-quiz)
   // Escuchamos el evento 'createGame' y recibimos los datos del juego (gamedata)
   socket.on('createGame', async (gamedata, callback) => {
@@ -129,12 +128,12 @@ export function gameEvents(socket, io, prisma) {
     try {
       // Agregar un índice de orden a cada pregunta para preservar el orden
       const existingAsks = formData.asks
-        .filter(ask => ask.id)
-        .map((ask) => ({ ...ask}));
+        .filter((ask) => ask.id)
+        .map((ask) => ({ ...ask }));
 
       const newAsks = formData.asks
-        .filter(ask => !ask.id)
-        .map((ask) => ({ ...ask}));
+        .filter((ask) => !ask.id)
+        .map((ask) => ({ ...ask }));
 
       // Actualizar las preguntas existentes de forma secuencial
       for (const ask of existingAsks) {
@@ -183,7 +182,7 @@ export function gameEvents(socket, io, prisma) {
       // Obtener las preguntas actualizadas y ordenarlas por el índice
       const asks = await prisma.asks.findMany({
         where: { gameId: parseInt(gameId) },
-        orderBy: { id: 'asc' }  // Ordenar por el índice de orden
+        orderBy: { id: 'asc' }, // Ordenar por el índice de orden
       });
 
       // Emitir el evento 'updatedAsks' a todos los clientes en la sala correspondiente
@@ -197,7 +196,6 @@ export function gameEvents(socket, io, prisma) {
       callback({ error: 'Error al actualizar el juego' });
     }
   });
-
 
   //* Eliminar juego por id(games)
   socket.on('deleteGame', async ({ gameId }, callback) => {
@@ -214,7 +212,7 @@ export function gameEvents(socket, io, prisma) {
         where: {
           id: parseInt(gameId), // Aseguramos que gameId es un entero
         },
-      })
+      });
       // Llamamos al callback con un mensaje de éxito
       callback({ success: true });
     } catch (error) {
@@ -268,7 +266,7 @@ export function gameEvents(socket, io, prisma) {
           id: parseInt(askId), // Aseguramos que askId es un entero
         },
       });
-      io.emit('updateDeleteAsk', { data })
+      io.emit('updateDeleteAsk', { data });
       // Llamamos al callback con un mensaje de éxito
       callback({ success: true });
     } catch (error) {
