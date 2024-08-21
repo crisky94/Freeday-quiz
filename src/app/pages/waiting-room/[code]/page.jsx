@@ -1,11 +1,10 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/context/socketContext';
 import BeforeUnloadHandler from '../../../components/closePage';
-import PacManCountdown from '../../../components/PacManCountdown'; // Importa el nuevo componente
-import usePlayerSocket from '@/app/components/usePlayerSocket';
-
+import CountdownBall from '@/app/components/CountdownBall';
+import usePlayerSocket from '@/app/hooks/usePlayerSocket';
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -16,6 +15,14 @@ const WaitingRoom = ({ params }) => {
   const [description, setDescription] = useState('');
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
+
+
+  useEffect(() => {
+    const userNick = sessionStorage.getItem('nickname');
+    if (!userNick) {
+      router.push('/');
+    }
+  }, [router]);
 
 
   useEffect(() => {
@@ -93,8 +100,10 @@ const WaitingRoom = ({ params }) => {
       if (response.error) {
         console.error(response.error);
       } else {
+        sessionStorage.removeItem('pin');
+        sessionStorage.removeItem('nickname');
         console.log('Player eliminado con éxito');
-        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
+        router.push('/'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
   }, [socket, players, socketId, code, router]);
@@ -116,8 +125,9 @@ const WaitingRoom = ({ params }) => {
         {players.map((player) => (
           <div
             key={player.id}
-            className={`w-14 flex flex-col items-center p-1 mx-8 ${player.socketId === socketId ? 'text-secundary' : 'text-white'
-              }`}
+            className={`w-14 flex flex-col items-center p-1 mx-8 ${
+              player.socketId === socketId ? 'text-secundary' : 'text-white'
+            }`}
           >
             <div className='text-center flex flex-col items-center p-1 gap-1'>
               <div
@@ -141,8 +151,8 @@ const WaitingRoom = ({ params }) => {
       )}
       <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
         {countdown ? (
-          <PacManCountdown onCountdownFinish={handleCountdownFinish} />
-        ) : (// Muestra el componente de cuenta regresiva si 'countdown' es verdadero
+          <CountdownBall onCountdownFinish={handleCountdownFinish} />
+        ) : (
           <>
             <p className='pb-2'>Esperando inicio del juego...</p>
             <div className='loaderRoom'></div>

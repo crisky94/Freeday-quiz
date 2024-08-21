@@ -1,33 +1,36 @@
 'use client';
-import { useAuth } from '@/context/authContext';
-import AccesPin from './pages/access-pin/page';
-import GamesList from './pages/games/page';
+import React, { Suspense, lazy } from 'react';
+import { useUser } from '@clerk/clerk-react';
 import Loading from './loading';
+const AccesPin = lazy(() => import('./pages/access-pin/page'));
+const GamesList = lazy(() => import('./pages/games/page'));
+
 
 function HomePage() {
-  const { isSignedIn, loading } = useAuth();
+  const { isLoaded, isSignedIn } = useUser();
 
-
-  if (loading) {
+  if (!isLoaded) {
     return (
       <div className='h-screen flex items-center'>
         <Loading />
       </div>
-    ); // Indicador de carga
+    );
   }
-
+  // Renderiza el componente adecuado dependiendo del estado de autenticación
   return (
     <>
       {/* Si no esta registrado le aparece la página para insertar el pin del juego */}
       {!isSignedIn ? (
-        <AccesPin />
+        <Suspense fallback={<Loading />}>
+          <AccesPin />
+        </Suspense>
       ) : (
-        < div className='w-full min-h-screen md:min-h-[80vh] lg:min-h-[70vh]'>
-          {/* si está registrado le aparece la página de los juegos creados o un botón para poder crearlos */}
-          <GamesList />
-        </div >
-      )
-      }
+        <div className='w-full min-h-screen md:min-h-[80vh] lg:min-h-[70vh]'>
+          <Suspense fallback={<Loading />}>
+            <GamesList />
+          </Suspense>
+        </div>
+      )}
     </>
   );
 }

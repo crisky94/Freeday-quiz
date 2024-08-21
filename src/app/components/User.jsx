@@ -41,7 +41,7 @@ export default function User() {
         {user ? (
           <div className='flex items-center'>
             <p className=' mr-12 font-bold text-sm text-center  h-6 p-1  rounded-md'>
-              {user.firstName} {user.lastName} ({user.username})
+              {user.firstName} {user.lastName} {user.username}
             </p>
           </div>
         ) : null}
