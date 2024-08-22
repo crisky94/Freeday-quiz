@@ -139,14 +139,14 @@ export default function GamesList() {
                 draggable={true}
                 showDots={true}
               >
-                {games.map((game, i) => (
+                {games.map((game) => (
                   <div
                     key={game.id}
                     className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center  sm:mt-20 shadow-xl p-1 transition-all'
                   >
                     <div className='flex flex-col  card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
                       <h2 className='truncate card-title  font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
-                        {`${i + 1}. ${game.nameGame}`}
+                        {`${game.nameGame}`}
                       </h2>
                       <div className='text-xs p-4 pb-10 text-slate-300 '>
                         {game.updateAt ? (

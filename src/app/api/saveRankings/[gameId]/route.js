@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import prisma from '../../../../../src/lib/prismaClient.js';
 
 export async function GET(req, { params }) {
   const { gameId } = params;

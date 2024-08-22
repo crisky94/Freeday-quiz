@@ -8,6 +8,8 @@ import { useAuth } from '@/context/authContext';
 import { Montserrat } from 'next/font/google';
 import usePlayerSocket from '@/app/hooks/usePlayerSocket';
 import CountdownBall from '@/app/components/CountdownBall';
+import 'react-toastify/dist/ReactToastify.css';
+import { Flip, ToastContainer, toast } from 'react-toastify';
 
 const montserrat = Montserrat({
   weight: '400',
@@ -36,6 +38,7 @@ const PinPage = () => {
       socket.emit(
         'getGamesId',
         { gameId: parseInt(gameId, 10) },
+
         (response) => {
           if (response.error) {
             console.error(response.error);
@@ -61,7 +64,7 @@ const PinPage = () => {
   }, [gameId, socket]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !game?.codeGame) return;
 
     const fetchPlayers = () => {
       socket.emit('getPlayers', { code: game?.codeGame }, async (response) => {
@@ -69,7 +72,7 @@ const PinPage = () => {
           console.error(response.error);
         } else {
           const playersWithAvatars = await Promise.all(
-            response.players.map(async (player) => {
+            (response.players || []).map(async (player) => {
               return { ...player };
             })
           );
@@ -88,7 +91,20 @@ const PinPage = () => {
   }, [socket, game?.codeGame]);
 
   const startGame = () => {
-    if (!socket || !game) return;
+    if (!socket || !game || players.length === 0) {
+      toast.error('No se puede iniciar el juego sin jugadores.', {
+        position: 'top-right',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+        transition: Flip,
+      });
+
+      return;
+    }
     socket.emit('startGame', { code: game.codeGame }); // Emite un evento para iniciar el juego.
     setCountdown(true); // Activa la cuenta regresiva.
   };
@@ -110,6 +126,17 @@ const PinPage = () => {
 
   return (
     <div className='mt-20 flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8'>
+      <ToastContainer
+        position='top-right'
+        autoClose={2000}
+        limit={2}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        draggable
+        theme='light'
+      />
       <h1
         className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-primary text-center bg-hackBlack bg-opacity-90 p-2`}
       >
@@ -145,29 +172,34 @@ const PinPage = () => {
         <div className='modal bg-custom-linear p-1 flex flex-col justify-between items-center rounded'>
           <div className='bg-hackBlack p-3 rounded flex flex-col items-center'>
             <h2 className='text-xl sm:text-2xl'>Jugadores</h2>
-            <ul className='w-full'>
-              {players.map((player) => (
-                <li
-                  key={player.socketId}
-                  className='grid grid-cols-3 gap-2 items-center py-2'
-                >
-                  <div
-                    className={`${montserrat.className} text-base sm:text-xl text-hackYellow col-span-1 uppercase font-bold text-center`}
+            {players.length === 0 ? (
+              <p className='text-hackYellow'>No hay jugadores aún</p>
+            ) : (
+              <ul className='w-full'>
+                {players.map((player) => (
+                  <li
+                    key={player.socketId}
+                    className='grid grid-cols-3 gap-2 items-center py-2'
                   >
-                    {player.playerName}
-                  </div>
-                  <div className='col-span-1 flex justify-center'></div>
-                  <div
-                    className='col-span-1 flex justify-center rounded-full'
-                    dangerouslySetInnerHTML={{ __html: player.avatar }}
-                    style={{ maxWidth: '60%', height: 'auto' }}
-                  ></div>
-                </li>
-              ))}
-            </ul>
+                    <div
+                      className={`${montserrat.className} text-base sm:text-xl text-hackYellow col-span-1 uppercase font-bold text-center`}
+                    >
+                      {player.playerName}
+                    </div>
+                    <div className='col-span-1 flex justify-center'></div>
+                    <div
+                      className='col-span-1 flex justify-center rounded-full'
+                      dangerouslySetInnerHTML={{ __html: player.avatar }}
+                      style={{ maxWidth: '60%', height: 'auto' }}
+                    ></div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       )}
+
       {countdown && <CountdownBall onCountdownFinish={handleCountdownFinish} />}
     </div>
   );

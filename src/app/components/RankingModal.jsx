@@ -67,7 +67,7 @@ export default function RankingModal({ ranking, onSend }) {
             <div className='mt-4 flex justify-center text-black gap-10'>
               <button
                 onClick={onSend}
-                className='hoverGradiant bg-custom-linear px-5 text-sm h-8 md:h-12 rounded-lg hover:transition duration-200 font-bold'
+                className='hoverGradiant bg-custom-linear px-2 text-sm h-8 md:h-12 rounded-lg hover:transition duration-200 font-bold'
               >
                 Enviar Ranking
               </button>

@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-// Inicializa el cliente de Prisma
-const prisma = new PrismaClient();
+import prisma from '../../../lib/prismaClient.js';
 
 export default async function handler(req, res) {
   // Extrae el parámetro 'id' de la consulta (query)

@@ -29,7 +29,7 @@ const CountdownBall = ({ onCountdownFinish }) => {
       <p className={`${monserrat.className} text-xl text-hackYellow`}>
         El Juego comenzará en:
       </p>
-      <div className='flex gap-1'>
+      <div className='flex gap-1 my-1'>
         {[...Array(Math.max(timeLeft, 0))].map((_, index) => (
           <div
             key={index}
