@@ -14,7 +14,7 @@ export default function AnswerInput({
         maxLength={100}
         type='text'
         placeholder={`Añadir respuesta ${index + 1}`}
-        className='h-full w-full bg-transparent border-none placeholder-slate-600 focus:outline-none text-black '
+        className='h-full truncate w-full bg-transparent border-none placeholder-slate-600 focus:outline-none text-black '
         value={answer}
         onChange={(e) => onChange(index, e.target.value)}
       />

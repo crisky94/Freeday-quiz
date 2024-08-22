@@ -87,7 +87,7 @@ export default function CreateGame() {
     ) {
       toast('Completa todos los campos y marca la respuesta correcta.', {
         position: 'bottom-center',
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -104,7 +104,7 @@ export default function CreateGame() {
     if (numericTimeLimit < 3 || numericTimeLimit > 50) {
       toast('El tiempo límite debe estar entre 3 y 50 segundos.', {
         position: 'bottom-center',
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -192,9 +192,9 @@ export default function CreateGame() {
       !isValidInput(nickUser) ||
       asks.length === 0
     ) {
-      toast('Completa el titulo y al menos una pregunta', {
+      toast('Completa el titulo y al menos una pregunta.', {
         position: 'bottom-center',
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -246,10 +246,7 @@ export default function CreateGame() {
   };
 
   return (
-    <form
-      className=' fondo w-screen h-screen mt-20 -mx-2 '
-      onSubmit={handleSubmit}
-    >
+    <form className=' fondo w-screen h-screen mt-20  ' onSubmit={handleSubmit}>
       <ToastContainer
         position='bottom-center'
         autoClose={5000}
@@ -280,7 +277,7 @@ export default function CreateGame() {
             maxLength={200}
             type='text'
             placeholder='Escribe tu pregunta'
-            className=' text-center text-md uppercase rounded-md mt-4 h-14 m-5 w-full text-black  focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-500'
+            className=' text-center truncate px-1 text-md uppercase rounded-md mt-4 h-14 m-5 w-full text-black  focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-500'
             value={currentAsk}
             onChange={(e) => setCurrentAsk(e.target.value)}
           />
@@ -362,7 +359,7 @@ export default function CreateGame() {
             {' '}
             JUEGO CREADO CON ÉXITO
             <br />
-            PIN: <strong className='text-black'> {pin}</strong>
+            PIN: <strong className='text-secundary'> {pin}</strong>
           </p>
         </div>
       ) : (

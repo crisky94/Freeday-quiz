@@ -24,7 +24,7 @@ export default function ModalComponent({ value, onChange }) {
     <>
       <button
         type='button'
-        className='hoverGradiant bg-custom-linear text-black px-5 text-xs h-12 rounded-lg hover:transition duration-200 font-bold'
+        className='hoverGradiant bg-custom-linear text-black ml-5 text-xs h-12 p-1 rounded-lg hover:transition duration-200 font-bold'
         onClick={toggleModal}
       >
         Añadir descripción
