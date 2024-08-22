@@ -27,7 +27,7 @@ function AccessPin({ gameId }) {
           theme: 'light',
           transition: Flip,
           onClose: () => {
-            router.push(`/pages/nick-name-form/${code}`);// Dirige a los jugadores a la pagina para introducir nick
+            router.push(`/pages/nick-name-form/${code}`); // Dirige a los jugadores a la pagina para introducir nick
           },
         });
       } else {

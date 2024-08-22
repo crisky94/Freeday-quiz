@@ -22,11 +22,13 @@ const ScoreAlert = ({ message, onClose, autoClose }) => {
   if (!visible || !message) return null;
 
   return (
-    <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 text-black bg-white rounded-md`} role="alert">
+    <div
+      className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 text-black bg-white rounded-md`}
+      role='alert'
+    >
       <p>{message}</p>
     </div>
   );
 };
 
 export default ScoreAlert;
-

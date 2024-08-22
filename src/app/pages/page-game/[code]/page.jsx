@@ -10,13 +10,12 @@ import '../../../styles/page-game/pageGame.css';
 import BeforeUnloadHandler from '@/app/components/closePage';
 import ScoreAlert from '@/app/components/ScoreAlert';
 
-
 export default function GameQuizPage({ params }) {
   const [questions, setQuestions] = useState([]);
   const [gameId, setGameId] = useState(null);
   const [score, setScore] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);// Respuesta seleccionada por el jugador
+  const [selectedAnswer, setSelectedAnswer] = useState(null); // Respuesta seleccionada por el jugador
   const [isCorrect, setIsCorrect] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [socketId, setSocketId] = useState('');
@@ -26,22 +25,21 @@ export default function GameQuizPage({ params }) {
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('info');
-  const socket = useSocket();// Obtener instancia del socket
-  const code = parseInt(params.code);// Código del juego tomado de los parámetros
+  const socket = useSocket(); // Obtener instancia del socket
+  const code = parseInt(params.code); // Código del juego tomado de los parámetros
   const router = useRouter();
-
 
   // Verifica si el jugador tiene un nickname almacenado en la sesión
   useEffect(() => {
     const userNick = sessionStorage.getItem('nickname');
     if (!userNick) {
-      router.push('/');// Redirige al inicio si no hay nickname
+      router.push('/'); // Redirige al inicio si no hay nickname
     }
   }, [router]);
 
   useEffect(() => {
     if (!socket) {
-      router.push('/');// Redirige al inicio si el socket no está disponible
+      router.push('/'); // Redirige al inicio si el socket no está disponible
     } else {
       console.log(socketId);
 
@@ -60,13 +58,13 @@ export default function GameQuizPage({ params }) {
           (player) => player.socketId === socket.id
         );
         if (player) {
-          setPlayerName(player.playerName);// Almacena el nombre del jugador
+          setPlayerName(player.playerName); // Almacena el nombre del jugador
           setPlayerId(player.id); // Guarda el playerId aquí
         }
       }
     };
 
-    socket.emit('getPlayers', { code }, handleGetPlayers);// Solicita la lista de jugadores al servidor
+    socket.emit('getPlayers', { code }, handleGetPlayers); // Solicita la lista de jugadores al servidor
 
     return () => {
       socket.off('getPlayers', handleGetPlayers);
@@ -81,10 +79,10 @@ export default function GameQuizPage({ params }) {
           if (response.error) {
             console.error(response.error);
           } else {
-            setQuestions(response.asks);// Almacena las preguntas del juego
-            setCurrentQuestionIndex(0);// Reinicia el índice de preguntas
+            setQuestions(response.asks); // Almacena las preguntas del juego
+            setCurrentQuestionIndex(0); // Reinicia el índice de preguntas
             setTimeLeft((response.asks[0]?.timer || 0) * 1000); // Convertir a milisegundos
-            setGameId(response.game.id);// Guarda el ID del juego
+            setGameId(response.game.id); // Guarda el ID del juego
           }
         });
       };
@@ -108,11 +106,12 @@ export default function GameQuizPage({ params }) {
 
       socket.on('stopGame', () => {
         toast('El juego ha finalizado', {
-
-          position: "bottom-center", autoClose: 1000, toastId: 'custom-id-yes', onClose: () => {
+          position: 'bottom-center',
+          autoClose: 1000,
+          toastId: 'custom-id-yes',
+          onClose: () => {
             router.push(`/pages/ranking/${code}`);
-          }
-
+          },
         });
       });
       // Actualiza las preguntas cuando se recibe una actualización del servidor
@@ -169,7 +168,7 @@ export default function GameQuizPage({ params }) {
       setTimeLeft((prevTime) => {
         if (prevTime <= 1000) {
           clearInterval(intervalId);
-          handleTimeUp();// Maneja la acción cuando se acaba el tiempo
+          handleTimeUp(); // Maneja la acción cuando se acaba el tiempo
           return 0;
         }
         return prevTime - 1000;
@@ -199,7 +198,7 @@ export default function GameQuizPage({ params }) {
       const totalPoints = basePoints + timeBonus;
       const newScore = score + totalPoints;
       setScore(newScore);
-      await insertPlayer(gameId, playerName, totalPoints);// Inserta los puntos del jugador en el servidor
+      await insertPlayer(gameId, playerName, totalPoints); // Inserta los puntos del jugador en el servidor
     } else {
       await insertPlayer(gameId, playerName, 0); // Inserta cero puntos si la respuesta es incorrecta
     }
@@ -224,7 +223,7 @@ export default function GameQuizPage({ params }) {
   // Maneja la acción cuando se acaba el tiempo de una pregunta
   const handleTimeUp = async () => {
     setSelectedAnswer(true);
-    setShowCorrectAnswer(true);// Muestra la respuesta correcta
+    setShowCorrectAnswer(true); // Muestra la respuesta correcta
     setAlertMessage(`Puntos: ${score}px 🚀`);
     setAlertType('info');
     setTimeout(() => {
@@ -282,8 +281,8 @@ export default function GameQuizPage({ params }) {
     }
     return '';
   };
-  
- const formatTime = (milliseconds) => {
+
+  const formatTime = (milliseconds) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const remainingSeconds = totalSeconds % 60;
     return `${remainingSeconds.toString().padStart(2, '0')}`;
@@ -350,6 +349,5 @@ export default function GameQuizPage({ params }) {
         </div>
       )}
     </div>
-
   );
 }

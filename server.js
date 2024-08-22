@@ -2,11 +2,10 @@
 import next from 'next';
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
-import { PrismaClient } from '@prisma/client';
+import prisma from './src/lib/prismaClient.js';
 import { gameEvents } from './src/eventsServer/gameEvents.js';
 import { playerEvents } from './src/eventsServer/playerEvents.js';
 // Creamos una instancia del cliente de Prisma
-const prisma = new PrismaClient();
 
 // Definimos si estamos en modo desarrollo o producción
 const dev = process.env.NODE_ENV !== 'production';

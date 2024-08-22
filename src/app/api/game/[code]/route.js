@@ -1,9 +1,6 @@
 // Importa Prisma y NextResponse
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../../lib/prismaClient.js';
 import { NextResponse } from 'next/server';
-
-// Inicializa el cliente de Prisma
-const prisma = new PrismaClient();
 
 // Función para manejar las solicitudes GET
 export async function GET(req, { params }) {

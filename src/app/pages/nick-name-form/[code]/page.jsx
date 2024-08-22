@@ -9,12 +9,12 @@ import Image from 'next/image';
 import Loading from '@/app/loading';
 
 const NickNameForm = ({ params }) => {
-  const [nickname, setNickname] = useState('');// Estado para el nickname ingresado por el usuario.
-  const [isModalOpen, setIsModalOpen] = useState(false);// Estado para controlar la visibilidad del modal de reemplazo de nickname.
-  const [isModalAvatarOpen, setIsAvatarModalOpen] = useState(false);// Estado para controlar la visibilidad del modal de selección de avatar.
+  const [nickname, setNickname] = useState(''); // Estado para el nickname ingresado por el usuario.
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar la visibilidad del modal de reemplazo de nickname.
+  const [isModalAvatarOpen, setIsAvatarModalOpen] = useState(false); // Estado para controlar la visibilidad del modal de selección de avatar.
   const [selectedAvatar, setSelectedAvatar] = useState(null); // Estado para guardar el avatar seleccionado.
   const [avatars, setAvatars] = useState([]); // Estado para guardar la lista de avatares generados.
-  const [pendingNickname, setPendingNickname] = useState('');// Estado para manejar un nickname pendiente de confirmación.
+  const [pendingNickname, setPendingNickname] = useState(''); // Estado para manejar un nickname pendiente de confirmación.
   const [socketReady, setSocketReady] = useState(false);
   const code = parseInt(params.code);
   const router = useRouter();
@@ -77,7 +77,7 @@ const NickNameForm = ({ params }) => {
     if (nickname && selectedAvatar) {
       sessionStorage.setItem('nickname', nickname);
       setPendingNickname(nickname);
-      socket.emit('joinRoom', { nickname, code, avatar: selectedAvatar });// Envía el evento para unirse a la sala.
+      socket.emit('joinRoom', { nickname, code, avatar: selectedAvatar }); // Envía el evento para unirse a la sala.
     }
 
     if (!nickname && !selectedAvatar) {

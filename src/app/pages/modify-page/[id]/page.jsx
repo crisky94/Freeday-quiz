@@ -57,7 +57,7 @@ export default function EditGame({ params }) {
       });
     };
 
-    fetchData();// Llama a la función para obtener los datos
+    fetchData(); // Llama a la función para obtener los datos
     // Escucha las actualizaciones de las preguntas desde el servidor y actualiza el estado
     socket.on('updateQuestions', (updatedAsks) => {
       setFormData((prevData) => ({
@@ -112,9 +112,8 @@ export default function EditGame({ params }) {
   // Elimina una pregunta existente (ya guardada en el servidor) del formulario
   const handleRemoveQuestion = (askId) => {
     socket.emit('deleteAsk', { askId }, (response) => {
-
       if (response.success) {
-        setFormData(prevData => {
+        setFormData((prevData) => {
           // Filtrar las preguntas para eliminar la pregunta con askId
           const updatedAsks = prevData.asks.filter((ask) => ask.id !== askId);
           return {
@@ -166,7 +165,7 @@ export default function EditGame({ params }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const hasErrors = validateForm();// Valida el formulario antes de enviarlo
+    const hasErrors = validateForm(); // Valida el formulario antes de enviarlo
     if (hasErrors) {
       return;
     }
@@ -268,19 +267,22 @@ export default function EditGame({ params }) {
                   </label>
                   <div className='flex w-full relative'>
                     <input
-                      className={`${option === 'a'
-                        ? 'bg-red-500 focus:ring-red-800'
-                        : option === 'b'
+                      className={`${
+                        option === 'a'
+                          ? 'bg-red-500 focus:ring-red-800'
+                          : option === 'b'
                           ? 'bg-blue-500 focus:ring-blue-800'
                           : option === 'c'
-                            ? 'bg-green-500 focus:ring-green-800'
-                            : 'bg-yellow-500 focus:ring-yellow-600'
-                        } text-black text-center truncate rounded-md h-10 placeholder:text-justify focus:outline-none focus:ring-2 ring-yellow-400 mb-2 w-full resize-none overflow-hidden`}
+                          ? 'bg-green-500 focus:ring-green-800'
+                          : 'bg-yellow-500 focus:ring-yellow-600'
+                      } text-black text-center truncate rounded-md h-10 placeholder:text-justify focus:outline-none focus:ring-2 ring-yellow-400 mb-2 w-full resize-none overflow-hidden`}
                       id={`${option}-${index}`}
                       type='text'
                       name={`${option}-${index}`}
                       value={ask[option]}
-                      onChange={(e) => handleAskChange(index, option, e.target.value)}
+                      onChange={(e) =>
+                        handleAskChange(index, option, e.target.value)
+                      }
                       onInput={handleAutoResize}
                     />
                     <input
@@ -309,14 +311,17 @@ export default function EditGame({ params }) {
                   id={`timer-${index}`}
                   name={`timer-${index}`}
                   value={ask.timer}
-                  onChange={(e) => handleAskChange(index, 'timer', e.target.value)}
+                  onChange={(e) =>
+                    handleAskChange(index, 'timer', e.target.value)
+                  }
                 />
               </div>
               {/* Renderiza el componente adecuado para eliminar una pregunta dependiendo si es nueva o ya existente */}
-              {!ask.id ?
-                <DeleteNewAsk askId={index} onClick={handleRemoveNewQuestion} /> : (
-                  <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
-                )}
+              {!ask.id ? (
+                <DeleteNewAsk askId={index} onClick={handleRemoveNewQuestion} />
+              ) : (
+                <DeleteAsk askId={ask.id} onClick={handleRemoveQuestion} />
+              )}
             </div>
           </div>
         ))}
