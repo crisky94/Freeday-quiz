@@ -152,18 +152,20 @@ const PinPage = () => {
         value={`${baseUrl}/pages/nick-name-form/${game.codeGame}`}
         className='bg-white p-2 rounded mt-4'
       />
-      <p className='bg-hackBlack p-2 rounded mt-4 text-lg sm:text-xl font-bold'>
-        PIN: {game.codeGame}
+      <p className='bg-hackBlack tracking-widest p-2 rounded mt-4 text-lg sm:text-xl font-bold'>
+        PIN: <span className='text-secundary'>{game.codeGame}</span>
       </p>
       <div className='flex flex-col sm:flex-row justify-between items-center w-full sm:w-auto'>
         <div className='m-2 sm:m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
-          <button onClick={startGame}>
-            <span>Empezar Juego</span>
+          <button className='font-bold' onClick={startGame}>
+            Empezar Juego
           </button>
         </div>
         <div className='m-2 sm:m-5 hoverGradiant bg-custom-linear p-2 rounded-md text-black'>
           <button onClick={() => setShowModal(!showModal)}>
-            <span>{showModal ? 'Cerrar Jugadores' : 'Ver Jugadores'}</span>
+            <span className='font-bold'>
+              {showModal ? 'Cerrar Jugadores' : 'Ver Jugadores'}
+            </span>
           </button>
         </div>
       </div>

@@ -173,10 +173,10 @@ export default function EditGame({ params }) {
     socket.emit('updateGame', { formData, gameId }, (response) => {
       if (response.success) {
         // Muestra una notificación de éxito y redirige al usuario a la página principal
-        toast('Juego actualizado con éxito. Redirigiendo a Home 🚀', {
+        toast('Juego actualizado con éxito. Redirigiendo a inicio 🚀', {
           position: 'bottom-center',
           hideProgressBar: false,
-          autoClose: 1000,
+          autoClose: 2000,
           closeOnClick: false,
           pauseOnHover: false,
           draggable: false,
@@ -330,14 +330,14 @@ export default function EditGame({ params }) {
       <div className='flex justify-center mb-4 mt-4 gap-4'>
         <button
           type='button'
-          className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'
+          className='btn-add mt-5 font-bold hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'
           onClick={handleAddQuestion}
         >
           Añadir Pregunta
         </button>
         <button
           type='submit'
-          className='btn-add mt-5 hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'
+          className='btn-add mt-5 font-bold hoverGradiant bg-custom-linear text-black rounded-md px-4 py-2'
         >
           Guardar Cambios
         </button>
