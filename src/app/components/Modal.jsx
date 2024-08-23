@@ -30,7 +30,7 @@ export default function ModalComponent({ value, onChange }) {
         Añadir descripción
       </button>
       {isOpen && (
-        <div className='fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center  '>
+        <div className='fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-10'>
           <div className='bg-white m-5 p-5 rounded shadow-lg max-w-lg w-full'>
             <p className='text-gray-500 text-xs'>(opcional)</p>
             <h2 className='text-xl text-black font-bold mb-4'>Descripción:</h2>
