@@ -2,6 +2,7 @@
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
 import { Flip, ToastContainer, toast } from 'react-toastify';
+import { Tooltip } from '@nextui-org/tooltip';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
@@ -159,6 +160,12 @@ export default function EditGame({ params }) {
         );
         hasErrors = true;
       }
+      if (ask.timer < 3 || ask.timer > 50) {
+        toast.error(
+          `El temporizador tiene que ser mínimo 3s y máximo 50s.`
+        );
+        hasErrors = true;
+      }
     });
     return hasErrors;
   };
@@ -303,18 +310,18 @@ export default function EditGame({ params }) {
                 >
                   Temporizador (segundos):
                 </label>
-                <input
-                  className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#fcff00] mb-4 w-20'
-                  type='number'
-                  min={3}
-                  max={50}
-                  id={`timer-${index}`}
-                  name={`timer-${index}`}
-                  value={ask.timer}
-                  onChange={(e) =>
-                    handleAskChange(index, 'timer', e.target.value)
-                  }
-                />
+                <Tooltip
+                  content='min 3s - max 50s'
+                  className='bg-primary p-1 text-black rounded-md text-xs flex flex-col card-title w-full justify-center items-center'>
+                  <input
+                    className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#fcff00] mb-4 w-20'
+                    type='number'
+                    id={`timer-${index}`}
+                    name={`timer-${index}`}
+                    value={ask.timer}
+                    onChange={(e) => handleAskChange(index, 'timer', e.target.value)}
+                  />
+                </Tooltip>
               </div>
               {/* Renderiza el componente adecuado para eliminar una pregunta dependiendo si es nueva o ya existente */}
               {!ask.id ? (
