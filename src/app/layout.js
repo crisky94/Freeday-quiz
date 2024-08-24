@@ -11,6 +11,9 @@ import { dark } from '@clerk/themes';
 
 export const metadata = {
   title: 'HACK A BOSS | FreedayQuiz ⭐️',
+  icons: {
+    icon: '/logotipo.ico',
+  },
 };
 
 const monserrat = Montserrat({
@@ -34,7 +37,6 @@ export default function RootLayout({ children }) {
             <AuthProvider>
               <html lang='es'>
                 <head>
-                  <link rel='icon' href='/logotipo.png' />
                   <title>{metadata.title}</title>
                 </head>
                 <body className={`${monserrat.className} pt-20 `}>
