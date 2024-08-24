@@ -180,7 +180,6 @@ export default function CreateGame() {
   // Maneja el envío del formulario para crear el juego
   const handleSubmit = (event) => {
     event.preventDefault(); // Previene el comportamiento por defecto del formulario
-    numericTimeLimit()
     if (editIndex !== null) {
       addOrUpdateAsk();
       return;
@@ -300,7 +299,7 @@ export default function CreateGame() {
               value={timer}
               onChange={(e) => {
                 const value = e.target.value;
-                setTimer(value)
+                setTimer(value);
               }}
             />
           </Tooltip>
