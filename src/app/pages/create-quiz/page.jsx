@@ -85,7 +85,7 @@ export default function CreateGame() {
       correctAnswer === null ||
       !isValidInput(timer)
     ) {
-      toast('Completa todos los campos y marca la respuesta correcta.', {
+      toast.error('Completa todos los campos y marca la respuesta correcta.', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: false,
@@ -102,7 +102,7 @@ export default function CreateGame() {
     // Verifica que el tiempo límite esté dentro del rango permitido
     const numericTimeLimit = parseFloat(timer);
     if (numericTimeLimit < 3 || numericTimeLimit > 50) {
-      toast('El tiempo límite debe estar entre 3 y 50 segundos.', {
+      toast.error('El tiempo límite debe estar entre 3 y 50 segundos.', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: false,
@@ -180,7 +180,7 @@ export default function CreateGame() {
   // Maneja el envío del formulario para crear el juego
   const handleSubmit = (event) => {
     event.preventDefault(); // Previene el comportamiento por defecto del formulario
-
+    numericTimeLimit()
     if (editIndex !== null) {
       addOrUpdateAsk();
       return;
@@ -192,7 +192,7 @@ export default function CreateGame() {
       !isValidInput(nickUser) ||
       asks.length === 0
     ) {
-      toast('Completa el titulo y al menos una pregunta.', {
+      toast.error('Completa el titulo y al menos una pregunta.', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: false,
@@ -283,32 +283,24 @@ export default function CreateGame() {
           />
         </div>
 
-        <div className='flex justify-center items-center h-2'>
+        <div className='flex flex-col justify-center items-center h-12 gap-2'>
+          <label className='flex justify-center items-center h-2'>
+            Temporizador (segundos):
+          </label>
           <Tooltip
-            content='Coloca el tiempo para la pregunta (Segundos)'
+            content='min 3s - max 50s'
             className='bg-primary p-1 text-black rounded-md text-xs'
           >
             <input
               min={3}
               max={50}
               type='number'
-              placeholder='50s max'
-              className='text-center  text-xs uppercase rounded-md  h-8  w-24 text-black font-bold focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-400'
+              placeholder='Tiempo'
+              className='text-center  text-xs uppercase rounded-md  h-20  w-24 text-black font-bold focus:outline-none focus:ring-2 focus:ring-primary placeholder-slate-400'
               value={timer}
               onChange={(e) => {
                 const value = e.target.value;
-                if (isValidInput(value)) {
-                  const numericValue = parseFloat(value);
-                  if (numericValue < 3) {
-                    setTimer('3');
-                  } else if (numericValue > 50) {
-                    setTimer('50');
-                  } else {
-                    setTimer(value);
-                  }
-                } else {
-                  setTimer('');
-                }
+                setTimer(value)
               }}
             />
           </Tooltip>
