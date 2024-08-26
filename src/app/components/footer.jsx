@@ -6,14 +6,14 @@ const Footer = () => {
     <footer className="bg-hackBlack text-white py-4">
       <div className="grid grid-cols-1 sm:grid-cols-[30%,50%,20%] gap-4 items-center">
         <div className="flex flex-col items-center gap-2">
-          <p className="font-semibold text-lg text-primary">Desarrollado para Hack a Boss</p>
+          <p className="font-semibold text-lg text-primary">Desarrollado para  HACK A BOSS</p>
           <a href="https://www.linkedin.com/school/hackaboss" target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-500">
                   <FaLinkedin size={24} />
                 </a>
         </div>
 
         <div className="text-center">
-          <p className="font-bold text-lg mb-4 text-primary">Desarrolladores</p>
+          <p className="font-bold text-lg mb-4 text-primary">Developers</p>
           <div className="flex justify-center gap-8 flex-wrap">
             <div className="flex flex-col items-center">
               <p className="font-semibold text-sm">Victor Morales</p>
