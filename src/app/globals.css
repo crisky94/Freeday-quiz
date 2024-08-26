@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -61,6 +62,7 @@ body {
   background-position: center;
   /* background-repeat: no-repeat; */
   color: rgb(var(--foreground-rgb));
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* Estilos para pantallas más grandes que 768px (desktop y superiores) */
