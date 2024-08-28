@@ -147,9 +147,9 @@ export default function EditGame({ params }) {
         toast.error(`La pregunta ${index + 1} es requerida.`);
         hasErrors = true;
       }
-      if (!ask.a.trim() || !ask.b.trim() || !ask.c.trim() || !ask.d.trim()) {
+      if (!ask.a.trim() || !ask.b.trim()) {
         toast.error(
-          `Todas las respuestas para la pregunta ${index + 1} son requeridas.`
+          `Las respuestas A y B para la pregunta ${index + 1} son requeridas.`
         );
         hasErrors = true;
       }
@@ -212,7 +212,7 @@ export default function EditGame({ params }) {
           Nombre del Juego:
         </label>
         <input
-          className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full'
+          className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary mb-4 w-full'
           type='text'
           id='gameName'
           name='gameName'
@@ -226,7 +226,7 @@ export default function EditGame({ params }) {
           Detalle del Juego:
         </label>
         <textarea
-          className='text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 w-full resize-none overflow-hidden'
+          className='text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary mb-4 w-full resize-none overflow-hidden'
           id='gameDetail'
           name='gameDetail'
           value={formData.gameDetail}
@@ -248,7 +248,7 @@ export default function EditGame({ params }) {
                 Pregunta {index + 1}:
               </label>
               <textarea
-                className='text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-yellow-200 mb-4 p-2 w-full resize-none overflow-hidden'
+                className='text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary mb-4 p-2 w-full resize-none overflow-hidden'
                 id={`ask-${index}`}
                 name={`ask-${index}`}
                 value={ask.ask}
@@ -269,30 +269,43 @@ export default function EditGame({ params }) {
                     <input
                       className={`${
                         option === 'a'
-                          ? 'bg-red-500 focus:ring-red-800'
+                          ? 'bg-red-500 focus:ring-secundary'
                           : option === 'b'
-                          ? 'bg-blue-500 focus:ring-blue-800'
+                          ? 'bg-blue-500 focus:ring-secundary'
                           : option === 'c'
-                          ? 'bg-green-500 focus:ring-green-800'
-                          : 'bg-yellow-500 focus:ring-yellow-600'
-                      } text-black text-center truncate rounded-md h-10 placeholder:text-justify focus:outline-none focus:ring-2 ring-yellow-400 mb-2 w-full resize-none overflow-hidden`}
+                          ? 'bg-green-500 focus:ring-secundary'
+                          : 'bg-yellow-500 focus:ring-secundary'
+                      } text-black text-center truncate rounded-md min-h-10 placeholder-slate-600 placeholder:text-sm px-2 focus:outline-none focus:ring-2  mb-2 w-full resize-none overflow-hidden`}
                       id={`${option}-${index}`}
                       type='text'
                       name={`${option}-${index}`}
                       value={ask[option]}
+                      placeholder={`Añadir respuesta ${
+                        option === 'a'
+                          ? '1'
+                          : option === 'b'
+                          ? '2'
+                          : option === 'c'
+                          ? '3 (opcional)'
+                          : '4 (opcional)'
+                      }`}
                       onChange={(e) =>
                         handleAskChange(index, option, e.target.value)
                       }
                       onInput={handleAutoResize}
                     />
-                    <input
-                      className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-5'
-                      type='radio'
-                      value={ask[option]}
-                      name={`correctAnswer-${index}`}
-                      checked={ask.answer === option}
-                      onChange={() => handleCorrectAnswerChange(index, option)}
-                    />
+                    {ask[option] && (
+                      <input
+                        className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-5'
+                        type='radio'
+                        value={ask[option]}
+                        name={`correctAnswer-${index}`}
+                        checked={ask.answer === option}
+                        onChange={() =>
+                          handleCorrectAnswerChange(index, option)
+                        }
+                      />
+                    )}
                   </div>
                 </div>
               ))}

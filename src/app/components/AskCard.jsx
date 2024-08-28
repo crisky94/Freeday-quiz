@@ -11,12 +11,17 @@ export default function AskCard({ ask, index, onEdit, onDelete }) {
         <p className='truncate'>
           <strong>B:</strong> {ask.b}
         </p>
-        <p className='truncate'>
-          <strong>C:</strong> {ask.c}
-        </p>
-        <p className='truncate'>
-          <strong>D:</strong> {ask.d}
-        </p>
+        {ask.c && (
+          <p className='truncate'>
+            <strong>C:</strong> {ask.c}
+          </p>
+        )}
+        {ask.d && (
+          <p className='truncate'>
+            <strong>C:</strong> {ask.d}
+          </p>
+        )}
+
         <p>
           <strong>Tiempo:</strong> {ask.timer} segundos
         </p>
