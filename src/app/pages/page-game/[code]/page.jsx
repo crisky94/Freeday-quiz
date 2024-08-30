@@ -15,8 +15,7 @@ export default function GameQuizPage({ params }) {
   const [gameId, setGameId] = useState(null);
   const [score, setScore] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null); // Respuesta seleccionada por el jugador
-  const [isCorrect, setIsCorrect] = useState(null);
+  const [selectedAnswers, setSelectedAnswers] = useState([]); // Respuesta seleccionada por el jugador
   const [playerName, setPlayerName] = useState('');
   const [socketId, setSocketId] = useState('');
   const [playerId, setPlayerId] = useState(null);
@@ -184,25 +183,51 @@ export default function GameQuizPage({ params }) {
   }, [currentQuestionIndex, questions]);
 
   const handleAnswerClick = async (answerKey) => {
-    if (selectedAnswer !== null || isPaused) return; // Evita cambiar la respuesta si el juego está pausado
+    if (isPaused) return; // Evita cambiar la respuesta si el juego está pausado
 
     const currentQuestion = questions[currentQuestionIndex];
-    localStorage.setItem('indexQuestion', currentQuestionIndex + 1);
-    setSelectedAnswer(answerKey);
-    console.log(isCorrect);
-    setIsCorrect(answerKey === currentQuestion.answer.toLowerCase());
+    const isAnswerSelected = selectedAnswers.includes(answerKey);
 
-    if (answerKey === currentQuestion.answer.toLowerCase()) {
+    if (isAnswerSelected) {
+      // Desmarcar la respuesta si ya está seleccionada
+      setSelectedAnswers(selectedAnswers.filter(answer => answer !== answerKey));
+    } else {
+      // Marcar la respuesta como seleccionada
+      setSelectedAnswers([...selectedAnswers, answerKey]);
+    }
+
+    // Calcula si la respuesta seleccionada es correcta
+    const isSelectedAnswerCorrect =
+      (answerKey === 'a' && currentQuestion.isCorrectA) ||
+      (answerKey === 'b' && currentQuestion.isCorrectB) ||
+      (answerKey === 'c' && currentQuestion.isCorrectC) ||
+      (answerKey === 'd' && currentQuestion.isCorrectD);
+
+    if (isSelectedAnswerCorrect) {
+      // Si la respuesta seleccionada es correcta, suma los puntos
+      const correctAnswers = [
+        (currentQuestion.isCorrectA ? 'a' : null),
+        (currentQuestion.isCorrectB ? 'b' : null),
+        (currentQuestion.isCorrectC ? 'c' : null),
+        (currentQuestion.isCorrectD ? 'd' : null),
+      ].filter(Boolean);
+
+      const selectedCorrectCount = selectedAnswers.filter(answer => correctAnswers.includes(answer)).length;
+      const totalCorrectAnswers = correctAnswers.length;
+
       const basePoints = 10;
       const timeBonus = Math.floor(timeLeft / 200); // Bonus de puntos basado en el tiempo restante en milisegundos
-      const totalPoints = basePoints + timeBonus;
+      const totalPoints = (basePoints * (selectedCorrectCount / totalCorrectAnswers)) + timeBonus;
+
       const newScore = score + totalPoints;
       setScore(newScore);
       await insertPlayer(gameId, playerName, totalPoints); // Inserta los puntos del jugador en el servidor
     } else {
+      // Si la respuesta seleccionada es incorrecta, no suma puntos
       await insertPlayer(gameId, playerName, 0); // Inserta cero puntos si la respuesta es incorrecta
     }
   };
+
 
   // Inserta la puntuación del jugador en el servidor
   const insertPlayer = (gameId, playerName, score) => {
@@ -222,17 +247,16 @@ export default function GameQuizPage({ params }) {
   };
   // Maneja la acción cuando se acaba el tiempo de una pregunta
   const handleTimeUp = async () => {
-    setSelectedAnswer(true);
     setShowCorrectAnswer(true); // Muestra la respuesta correcta
     setAlertMessage(`Puntos: ${score}px 🚀`);
     setAlertType('info');
     setTimeout(() => {
-      setIsCorrect(false);
-      setSelectedAnswer(null);
+      setSelectedAnswers([]); // Limpia las respuestas seleccionadas
       setShowCorrectAnswer(false);
       moveToNextQuestion();
     }, 1000);
   };
+
   // Mueve a la siguiente pregunta o finaliza el juego si no hay más preguntas
   const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
@@ -270,18 +294,27 @@ export default function GameQuizPage({ params }) {
   const currentQuestion = questions[currentQuestionIndex];
 
   const getButtonClass = (answerKey) => {
+    const isSelected = selectedAnswers.includes(answerKey);
     if (showCorrectAnswer) {
-      if (answerKey === currentQuestion.answer.toLowerCase()) {
+      const isCorrectAnswer =
+        (answerKey === 'a' && currentQuestion.isCorrectA) ||
+        (answerKey === 'b' && currentQuestion.isCorrectB) ||
+        (answerKey === 'c' && currentQuestion.isCorrectC) ||
+        (answerKey === 'd' && currentQuestion.isCorrectD);
+
+      if (isCorrectAnswer) {
         return 'ring-4 ring-green-500';
       }
-      return answerKey === selectedAnswer ? 'ring-4 ring-red-500' : '';
+      if (isSelected) {
+        return 'ring-4 ring-red-500';
+      }
+      return '';
     }
-    if (answerKey === selectedAnswer) {
+    if (isSelected) {
       return 'ring-4 ring-white';
     }
     return '';
   };
-
   const formatTime = (milliseconds) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const remainingSeconds = totalSeconds % 60;
@@ -328,22 +361,26 @@ export default function GameQuizPage({ params }) {
               >
                 {currentQuestion.b}
               </div>
-              <div
-                onClick={() => handleAnswerClick('c')}
-                className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
-                  'c'
-                )} text-center overflow-wrap break-word text-sm sm:text-base`}
-              >
-                {currentQuestion.c}
-              </div>
-              <div
-                onClick={() => handleAnswerClick('d')}
-                className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
-                  'd'
-                )} text-center overflow-wrap break-word text-sm sm:text-base`}
-              >
-                {currentQuestion.d}
-              </div>
+              {currentQuestion.c ? (
+                <div
+                  onClick={() => handleAnswerClick('c')}
+                  className={` rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
+                    'c'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.c}
+                </div>
+              ): null}
+              {currentQuestion.d ? (
+                <div
+                  onClick={() => handleAnswerClick('d')}
+                  className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
+                    'd'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.d}
+                </div>
+              ): null}
             </div>
           </div>
         </div>

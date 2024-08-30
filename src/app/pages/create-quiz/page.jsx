@@ -10,82 +10,104 @@ import AskCard from '@/app/components/AskCard';
 import AnswerInput from '@/app/components/AnswerInput';
 import ModalComponent from '@/app/components/Modal';
 import { useRouter } from 'next/navigation';
-// Componente principal para crear un juego
+
 export default function CreateGame() {
   const router = useRouter();
-  const socket = useSocket(); // Obteniendo el socket desde el contexto
-  const { user } = useAuth(User); // Obteniendo el usuario autenticado desde el contexto de autenticación
-  const [nameGame, setNameGame] = useState(''); // Estado para el nombre del juego
-  const [nickUser, setNickUser] = useState(''); // Estado para el nickname del usuario
-  const [asks, setAsks] = useState([]); // Estado para las preguntas del juego
-  const [currentAsk, setCurrentAsk] = useState(''); // Estado para la pregunta actual
-  const [answers, setAnswers] = useState(['', '', '', '']); // Estado para las respuestas actuales (cuatro en total)
-  const [correctAnswer, setCorrectAnswer] = useState(null); // Estado para la respuesta correcta (índice)
-  const [timer, setTimer] = useState('5'); // Estado para el tiempo límite de la pregunta
-  const [editIndex, setEditIndex] = useState(null); // Estado para el índice de la pregunta que está siendo editada
-  const [pin, setPin] = useState(''); // Estado para el PIN del juego
-  const [detailGame, setDetailGame] = useState('');
-  const [gameId, setGameId] = useState(null); // Nuevo estado para el gameId
+  const socket = useSocket();
+  const { user } = useAuth(User);
 
+  const [nameGame, setNameGame] = useState('');
+  const [nickUser, setNickUser] = useState('');
+  const [asks, setAsks] = useState([]);
+  const [currentAsk, setCurrentAsk] = useState('');
+  const [answers, setAnswers] = useState(['', '', '', '']);
+  const [isCorrectA, setIsCorrectA] = useState(false); // Cambios aquí para manejar estados booleanos
+  const [isCorrectB, setIsCorrectB] = useState(false);
+  const [isCorrectC, setIsCorrectC] = useState(false);
+  const [isCorrectD, setIsCorrectD] = useState(false);
+  const [timer, setTimer] = useState('5');
+  const [editIndex, setEditIndex] = useState(null);
+  const [pin, setPin] = useState('');
+  const [detailGame, setDetailGame] = useState('');
+  const [gameId, setGameId] = useState(null);
+
+  const isValidInput = (input) => {
+    return input.trim() !== ''; // trim quita los espacios en blanco al inicio y al final y luego verifica que el input no sea una cadena vacía
+  };
   useEffect(() => {
     if (user) {
-      setNickUser(`${user.firstName} ${user.lastName}`); // Setea el nickname del usuario usando su primer y último nombre
+      setNickUser(`${user.firstName} ${user.lastName}`);
     }
   }, [user]);
 
   useEffect(() => {
-    // Recupera los datos almacenados en LocalStorage al cargar el componente
+    if (pin) {
+      const timer = setTimeout(() => {
+        router.push(`/pages/pinPage/${gameId}`); // Redirige a la página del juego usando el PIN
+      }, 5000);
+
+      return () => clearTimeout(timer); // Limpia el temporizador si el componente se desmonta antes de que se cumpla el tiempo
+    }
+  }, [pin]);
+
+  useEffect(() => {
     const storedNameGame = localStorage.getItem('nameGame');
     const storeTime = localStorage.getItem('timer');
     const storeCurrentAsk = localStorage.getItem('currentAsk');
-    const storedCorrectAnswer = localStorage.getItem('correctAnswer');
     const storedAnswers = JSON.parse(localStorage.getItem('answers'));
     const storeAsks = JSON.parse(localStorage.getItem('asks'));
     const storeDetail = localStorage.getItem('detail');
     if (storedNameGame) setNameGame(storedNameGame);
     if (storeCurrentAsk) setCurrentAsk(storeCurrentAsk);
     if (storeTime) setTimer(storeTime);
-    if (storedCorrectAnswer !== null)
-      setCorrectAnswer(parseInt(storedCorrectAnswer, 10));
     if (storedAnswers) setAnswers(storedAnswers);
     if (storeAsks) setAsks(storeAsks);
     if (storeDetail) setDetailGame(storeDetail);
   }, []);
 
   useEffect(() => {
-    // Guarda los datos en LocalStorage cuando cambian los estados
     localStorage.setItem('nameGame', nameGame);
     localStorage.setItem('currentAsk', currentAsk);
     localStorage.setItem('timer', timer);
     localStorage.setItem('detail', detailGame);
-    if (correctAnswer !== null) {
-      localStorage.setItem('correctAnswer', correctAnswer.toString());
-    }
-  }, [nameGame, currentAsk, timer, correctAnswer, detailGame]);
+  }, [nameGame, currentAsk, timer, detailGame]);
 
-  // Maneja el cambio en el input de las respuestas
   const handleInputChange = (index, value) => {
-    const newAnswers = [...answers]; // Copia el array de respuestas
-    newAnswers[index] = value; // Cambia el valor de la respuesta en el índice especificado
-    setAnswers(newAnswers); // Actualiza el estado de las respuestas
-    localStorage.setItem('answers', JSON.stringify(newAnswers)); // Guarda las respuestas en LocalStorage
+    const newAnswers = [...answers];
+    newAnswers[index] = value;
+    setAnswers(newAnswers);
+    localStorage.setItem('answers', JSON.stringify(newAnswers));
   };
 
-  // Verifica si la entrada es válida (no vacía y sin solo espacios)
-  const isValidInput = (input) => {
-    return input.trim() !== ''; // trim quita los espacios en blanco al inicio y al final y luego verifica que el input no sea una cadena vacía
+  const handleSelectAnswer = (index) => {
+    switch (index) {
+      case 0:
+        setIsCorrectA(!isCorrectA); // Cambiar el estado booleano correspondiente
+        break;
+      case 1:
+        setIsCorrectB(!isCorrectB);
+        break;
+      case 2:
+        setIsCorrectC(!isCorrectC);
+        break;
+      case 3:
+        setIsCorrectD(!isCorrectD);
+        break;
+      default:
+        break;
+    }
   };
 
-  // Añade una nueva pregunta al juego o guarda cambios en una pregunta existente
   const addOrUpdateAsk = () => {
-    // Verifica que la pregunta y todas las respuestas estén completas y que haya una respuesta correcta seleccionada
     if (
-      !isValidInput(currentAsk) ||
-      answers.some((answer) => !isValidInput(answer)) ||
-      correctAnswer === null ||
-      !isValidInput(timer)
+      !nameGame.trim() ||
+      !nickUser.trim() ||
+      !currentAsk.trim() ||
+      answers.every(answer => !answer.trim()) ||
+      (!isCorrectA && !isCorrectB && !isCorrectC && !isCorrectD) ||
+      !timer.trim()
     ) {
-      toast.error('Completa todos los campos y marca la respuesta correcta.', {
+      toast.error('Completa todos los campos y marca al menos una respuesta correcta.', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: false,
@@ -99,7 +121,6 @@ export default function CreateGame() {
       return;
     }
 
-    // Verifica que el tiempo límite esté dentro del rango permitido
     const numericTimeLimit = parseFloat(timer);
     if (numericTimeLimit < 3 || numericTimeLimit > 50) {
       toast.error('El tiempo límite debe estar entre 3 y 50 segundos.', {
@@ -116,14 +137,16 @@ export default function CreateGame() {
       return;
     }
 
-    // Crea una nueva pregunta o actualiza la existente
     const newAsk = {
       ask: currentAsk,
       a: answers[0],
       b: answers[1],
-      c: answers[2],
-      d: answers[3],
-      answer: ['a', 'b', 'c', 'd'][correctAnswer],
+      c: answers[2] || null,
+      d: answers[3] || null,
+      isCorrectA,
+      isCorrectB,
+      isCorrectC,
+      isCorrectD,
       timer: numericTimeLimit,
     };
 
@@ -134,64 +157,49 @@ export default function CreateGame() {
       setAsks(updatedAsks);
       setEditIndex(null);
     } else {
-      updatedAsks = [...asks, newAsk]; // Añade la nueva pregunta al array de preguntas
+      updatedAsks = [...asks, newAsk];
       setAsks(updatedAsks);
     }
-    localStorage.setItem('asks', JSON.stringify(updatedAsks)); // Guarda las preguntas en LocalStorage
+    localStorage.setItem('asks', JSON.stringify(updatedAsks));
 
-    // Resetea los campos del formulario
     setCurrentAsk('');
     setAnswers(['', '', '', '']);
-    setCorrectAnswer(null);
+    setIsCorrectA(false); // Restablecer estados
+    setIsCorrectB(false);
+    setIsCorrectC(false);
+    setIsCorrectD(false);
     setTimer('5');
     localStorage.removeItem('answers');
     localStorage.removeItem('correctAnswer');
   };
 
-  // Maneja la edición de una pregunta existente
   const handleEdit = (index) => {
     const askToEdit = asks[index];
     setCurrentAsk(askToEdit.ask);
-    setAnswers([askToEdit.a, askToEdit.b, askToEdit.c, askToEdit.d]);
-    setCorrectAnswer(['a', 'b', 'c', 'd'].indexOf(askToEdit.answer));
+    setAnswers([askToEdit.a, askToEdit.b, askToEdit.c || '', askToEdit.d || '']);
+    setIsCorrectA(askToEdit.isCorrectA); // Cargar estados booleanos desde la pregunta
+    setIsCorrectB(askToEdit.isCorrectB);
+    setIsCorrectC(askToEdit.isCorrectC || false);
+    setIsCorrectD(askToEdit.isCorrectD || false);
     setTimer(askToEdit.timer.toString());
     setEditIndex(index);
   };
 
-  // Maneja la eliminación de una pregunta existente
   const handleDelete = (index) => {
     const updatedAsks = asks.filter((_, i) => i !== index);
     setAsks(updatedAsks);
-    localStorage.setItem('asks', JSON.stringify(updatedAsks)); // Actualiza las preguntas en LocalStorage
+    localStorage.setItem('asks', JSON.stringify(updatedAsks));
   };
-  const handleSelectCorrectAnswer = (index) => {
-    setCorrectAnswer(index);
-  };
-  useEffect(() => {
-    if (pin) {
-      const timer = setTimeout(() => {
-        router.push(`/pages/pinPage/${gameId}`); // Redirige a la página del juego usando el PIN
-      }, 5000);
 
-      return () => clearTimeout(timer); // Limpia el temporizador si el componente se desmonta antes de que se cumpla el tiempo
-    }
-  }, [pin]);
-
-  // Maneja el envío del formulario para crear el juego
   const handleSubmit = (event) => {
-    event.preventDefault(); // Previene el comportamiento por defecto del formulario
+    event.preventDefault();
     if (editIndex !== null) {
       addOrUpdateAsk();
       return;
     }
 
-    // Verifica que el nombre del juego, el nickname del usuario y al menos una pregunta estén completos
-    if (
-      !isValidInput(nameGame) ||
-      !isValidInput(nickUser) ||
-      asks.length === 0
-    ) {
-      toast.error('Completa el titulo y al menos una pregunta.', {
+    if (!isValidInput(nameGame) || !isValidInput(nickUser) || asks.length === 0) {
+      toast.error('Completa el título y al menos una pregunta.', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: false,
@@ -205,23 +213,35 @@ export default function CreateGame() {
       return;
     }
 
-    // Crea los datos del juego
     const gameData = {
       nameGame: nameGame.trim(),
       detailGame: detailGame,
       nickUser: nickUser.trim(),
-      asks,
+      asks: asks.map((ask) => ({
+        ask: ask.ask,
+        a: ask.a,
+        b: ask.b,
+        c: ask.c,
+        d: ask.d,
+        isCorrectA: ask.isCorrectA,
+        isCorrectB: ask.isCorrectB,
+        isCorrectC: ask.isCorrectC,
+        isCorrectD: ask.isCorrectD,
+        timer: ask.timer,
+      }))
     };
 
-    // Emite un evento al servidor para crear el juego
+    // Enviar juego a través del socket
     socket.emit('createGame', gameData, (response) => {
+      console.log(response, 'patata');
+
+      // Suponiendo que el backend devuelve un objeto con `pin` y `gameId`
       if (response.game.codeGame) {
-        setPin(response.game.codeGame); // Setea el PIN del juego
+        setPin(response.game.codeGame);
         setGameId(response.game.id);
-        localStorage.removeItem('asks');
         toast.success('Redirigiendo a control quiz ✨', {
           position: 'bottom-center',
-          autoClose: 4000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -230,19 +250,37 @@ export default function CreateGame() {
           theme: 'light',
           transition: Flip,
         });
+        localStorage.removeItem('nameGame');
+        localStorage.removeItem('currentAsk');
+        localStorage.removeItem('timer');
+        localStorage.removeItem('answers');
+        localStorage.removeItem('asks');
+        localStorage.removeItem('detail');
       } else {
-        alert('Error al crear el juego'); // Muestra un mensaje de error
+        toast.error('Error al crear el juego.', {
+          position: 'bottom-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Flip,
+        });
       }
     });
-
-    // Resetea el formulario
     setNameGame('');
     setAnswers(['', '', '', '']);
     setAsks([]);
-    setCorrectAnswer(null);
+    setIsCorrectA(false); // Restablecer estados
+    setIsCorrectB(false);
+    setIsCorrectC(false);
+    setIsCorrectD(false);
     setCurrentAsk('');
     setDetailGame('');
   };
+
 
   return (
     <form className=' fondo w-screen h-screen mt-20  ' onSubmit={handleSubmit}>
@@ -311,9 +349,14 @@ export default function CreateGame() {
               key={index}
               index={index}
               answer={answer}
-              correctAnswer={correctAnswer}
-              onSelect={handleSelectCorrectAnswer}
               onChange={handleInputChange}
+              isCorrect={
+                index === 0 ? isCorrectA :
+                  index === 1 ? isCorrectB :
+                    index === 2 ? isCorrectC :
+                      index === 3 ? isCorrectD : false
+              }
+              onSelect={() => handleSelectAnswer(index)}
             />
           ))}
         </div>
