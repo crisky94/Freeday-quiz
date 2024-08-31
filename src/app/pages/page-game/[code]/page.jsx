@@ -328,22 +328,26 @@ export default function GameQuizPage({ params }) {
               >
                 {currentQuestion.b}
               </div>
-              <div
-                onClick={() => handleAnswerClick('c')}
-                className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
-                  'c'
-                )} text-center overflow-wrap break-word text-sm sm:text-base`}
-              >
-                {currentQuestion.c}
-              </div>
-              <div
-                onClick={() => handleAnswerClick('d')}
-                className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
-                  'd'
-                )} text-center overflow-wrap break-word text-sm sm:text-base`}
-              >
-                {currentQuestion.d}
-              </div>
+              {currentQuestion.c && (
+                <div
+                  onClick={() => handleAnswerClick('c')}
+                  className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
+                    'c'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.c}
+                </div>
+              )}
+              {currentQuestion.d && (
+                <div
+                  onClick={() => handleAnswerClick('d')}
+                  className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
+                    'd'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.d}
+                </div>
+              )}
             </div>
           </div>
         </div>

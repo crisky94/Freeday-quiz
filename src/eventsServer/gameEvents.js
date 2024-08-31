@@ -24,8 +24,8 @@ export function gameEvents(socket, io, prisma) {
         ask: ask.ask, // Pregunta
         a: ask.a, // Opción a
         b: ask.b, // Opción b
-        c: ask.c, // Opción c
-        d: ask.d, // Opción d
+        c: ask.c || null, // Si C está vacío, almacena null
+        d: ask.d || null, // Si D está vacío, almacena null
         answer: ask.answer, // Respuesta correcta
         timer: ask.timer,
       }));

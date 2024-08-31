@@ -49,8 +49,8 @@ model Asks {
   ask       String  @db.VarChar(255)
   a         String  @db.VarChar(255)
   b         String  @db.VarChar(255)
-  c         String  @db.VarChar(255)
-  d         String  @db.VarChar(255)
+  c         String?  @db.VarChar(255)
+  d         String? @db.VarChar(255)
   answer    String  @db.VarChar(1)
   timer Int
   game      Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)

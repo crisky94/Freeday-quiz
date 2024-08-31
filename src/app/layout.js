@@ -1,6 +1,6 @@
 import Header from '@/app/components/Header';
 import Sidebar from '@/app/components/Sidebar';
-import Footer from '@/app/components/footer'; 
+import Footer from '@/app/components/footer';
 import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from '@/context/authContext';
 import { SocketProvider } from '@/context/socketContext';
