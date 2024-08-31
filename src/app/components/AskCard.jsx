@@ -1,5 +1,6 @@
 export default function AskCard({ ask, index, onEdit, onDelete }) {
   return (
+
     <div className=' bg-custom-linear'>
       <div className=' bounce-in-bck flex flex-col justify-between bg-black text-white w-48 h-40 p-2  m-1 '>
         <p className='truncate'>
@@ -39,7 +40,7 @@ export default function AskCard({ ask, index, onEdit, onDelete }) {
           </button>
           <button
             type='button'
-            className='hoverGradiant bg-custom-linear text-black px-4 py-1 rounded-lg shadow  hover:transition duration-200'
+            className='hoverGradiant bg-custom-linear text-black px-4 py-1 rounded-lg shadow hover:transition duration-200'
             onClick={() => onDelete(index)}
           >
             Eliminar

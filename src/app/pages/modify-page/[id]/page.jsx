@@ -40,7 +40,10 @@ export default function EditGame({ params }) {
               c: question.c || '',
               d: question.d || '',
               timer: question.timer || 5,
-              answer: question.answer || null,
+              isCorrectA: question.isCorrectA || false,
+              isCorrectB: question.isCorrectB || false,
+              isCorrectC: question.isCorrectC || false,
+              isCorrectD: question.isCorrectD || false,
             })),
           }));
         }
@@ -92,12 +95,12 @@ export default function EditGame({ params }) {
     });
   }, []);
   // Maneja cambios en la opción correcta seleccionada para una pregunt
-  const handleCorrectAnswerChange = useCallback((index, option) => {
+  const handleCorrectAnswerChange = useCallback((index, option, isCorrect) => {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
       newAsks[index] = {
         ...newAsks[index],
-        answer: option,
+        [option]: isCorrect,
       };
       return { ...prevData, asks: newAsks };
     });
@@ -156,9 +159,9 @@ export default function EditGame({ params }) {
         );
         hasErrors = true;
       }
-      if (ask.answer === '') {
+      if (!ask.isCorrectA && !ask.isCorrectB && !ask.isCorrectC && !ask.isCorrectD) {
         toast.error(
-          `Selecciona una respuesta correcta para la pregunta ${index + 1}.`
+          `Selecciona al menos una respuesta correcta para la pregunta ${index + 1}.`
         );
         hasErrors = true;
       }
@@ -301,19 +304,20 @@ export default function EditGame({ params }) {
                         handleAskChange(index, option, e.target.value)
                       }
                       onInput={handleAutoResize}
-                    />
-                    {ask[option] && (
+                    /> {ask[option] && (
                       <input
-                        className=' transition duration-700 ease-in-out transform hover:scale-150 absolute radio right-0 top-1/2    -mt-4 mx-2  w-7 h-7'
-                        type='radio'
-                        value={ask[option]}
-                        name={`correctAnswer-${index}`}
-                        checked={ask.answer === option}
-                        onChange={() =>
-                          handleCorrectAnswerChange(index, option)
+                        className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-5 radio'
+                        type='checkbox'
+                        checked={ask[`isCorrect${option.toUpperCase()}`]}
+                        onChange={(e) =>
+                          handleCorrectAnswerChange(
+                            index,
+                            `isCorrect${option.toUpperCase()}`,
+                            e.target.checked
+                          )
                         }
                       />
-                    )}
+                    )} 
                   </div>
                 </div>
               ))}

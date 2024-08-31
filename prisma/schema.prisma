@@ -8,50 +8,54 @@ generator client {
 }
 
 model Games {
-  id           Int       @id @default(autoincrement())
-  nickUser     String    @db.VarChar(255)
-  nameGame     String    @db.VarChar(255)
-  codeGame     Int       @unique
-  detailGame   String?   @db.VarChar(255)
-  endedAt      DateTime? // Nueva columna para registrar la fecha de finalización del juego
-  updateAt     DateTime?
-  players      Players[]
-  asks         Asks[]
-  rankings     Rankings[]  // Relación con Rankings
+  id         Int        @id @default(autoincrement())
+  nickUser   String     @db.VarChar(255)
+  nameGame   String     @db.VarChar(255)
+  codeGame   Int        @unique
+  detailGame String?    @db.VarChar(255)
+  endedAt    DateTime? // Nueva columna para registrar la fecha de finalización del juego
+  updateAt   DateTime?
+  players    Players[]
+  asks       Asks[]
+  rankings   Rankings[] // Relación con Rankings
 }
 
 model Players {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   gameId     Int
-  playerName String  @db.VarChar(255)
+  playerName String   @db.VarChar(255)
   score      Int
   socketId   String?
-  avatar     String? @db.Text
-  game       Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  avatar     String?  @db.Text
+  game       Games    @relation(fields: [gameId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
 }
+
 model Rankings {
-  id        Int       @id @default(autoincrement())
-  gameId    Int
-  playerId  Int?
-  playerName String   // Incluye el nombre del jugador
-  playerScore Int    // Incluye el score del jugador
-  rank      Int
-  game      Games     @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  createdAt DateTime  @default(now())
+  id          Int      @id @default(autoincrement())
+  gameId      Int
+  playerId    Int?
+  playerName  String // Incluye el nombre del jugador
+  playerScore Int // Incluye el score del jugador
+  rank        Int
+  game        Games    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
 
-}
 model Asks {
-  id        Int     @id @default(autoincrement())
-  gameId    Int
-  ask       String  @db.VarChar(255)
-  a         String  @db.VarChar(255)
-  b         String  @db.VarChar(255)
-  c         String?  @db.VarChar(255)
-  d         String? @db.VarChar(255)
-  answer    String  @db.VarChar(1)
-  timer Int
-  game      Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  id         Int     @id @default(autoincrement())
+  gameId     Int
+  ask        String  @db.VarChar(255)
+  a          String  @db.VarChar(255)
+  b          String  @db.VarChar(255)
+  c          String? @db.VarChar(255)
+  d          String? @db.VarChar(255)
+  isCorrectA Boolean
+  isCorrectB Boolean
+  isCorrectC Boolean?
+  isCorrectD Boolean?
+  timer      Int
+  game       Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
 }
+

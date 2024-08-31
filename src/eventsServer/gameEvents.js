@@ -1,9 +1,9 @@
 export function gameEvents(socket, io, prisma) {
   //* Crear juego(create-quiz)
-  // Escuchamos el evento 'createGame' y recibimos los datos del juego (gamedata)
   socket.on('createGame', async (gamedata, callback) => {
+    console.log('Datos de gamedata:', gamedata);
     try {
-      // Generamos un código aleatorio de 4 dígitos para el juego
+      // Generamos un código aleatorio de 6 dígitos para el juego
       const codeGame = Math.floor(100000 + Math.random() * 900000);
       console.log(codeGame);
 
@@ -14,11 +14,10 @@ export function gameEvents(socket, io, prisma) {
           nickUser: gamedata.nickUser, // Nombre del usuario
           nameGame: gamedata.nameGame, // Nombre del juego
           codeGame: codeGame, // Código del juego
-          endedAt: new Date(), //Fecha creado
+          endedAt: new Date(), // Fecha de creación
         },
       });
 
-      // Preparamos las preguntas del juego para insertarlas en la base de datos
       const asks = gamedata.asks.map((ask) => ({
         gameId: game.id, // ID del juego relacionado
         ask: ask.ask, // Pregunta
@@ -26,14 +25,21 @@ export function gameEvents(socket, io, prisma) {
         b: ask.b, // Opción b
         c: ask.c || null, // Si C está vacío, almacena null
         d: ask.d || null, // Si D está vacío, almacena null
-        answer: ask.answer, // Respuesta correcta
         timer: ask.timer,
+        isCorrectA: ask.isCorrectA || false, // Insertamos el valor de isCorrectA
+        isCorrectB: ask.isCorrectB || false, // Insertamos el valor de isCorrectB
+        isCorrectC: ask.isCorrectC || false, // Insertamos el valor de isCorrectC
+        isCorrectD: ask.isCorrectD || false, 
       }));
-
-      // Insertamos las preguntas en la base de datos
+      // Insertamos las preguntas en la base de datos y obtenemos los IDs generados
+   
       await prisma.asks.createMany({
         data: asks,
       });
+      // Verificamos los datos de respuestas correctas
+      
+
+      // Insertamos las respuestas correctas en la base de datos
 
       // Llamamos al callback con la información del juego creado
       callback({ game });
@@ -43,8 +49,6 @@ export function gameEvents(socket, io, prisma) {
       callback({ error: 'Error al crear juego' });
     }
   });
-
-  //*Obtener lista de juegos(games)
   socket.on('getGames', async ({ user }, callback) => {
     try {
       console.log('Usuario recibido:', user); // Verifica que el usuario sea el esperado
@@ -109,8 +113,11 @@ export function gameEvents(socket, io, prisma) {
           b: true,
           c: true,
           d: true,
-          answer: true,
           timer: true,
+          isCorrectA: true,
+          isCorrectB: true,
+          isCorrectC: true,
+          isCorrectD: true,
         },
       });
 
@@ -146,7 +153,10 @@ export function gameEvents(socket, io, prisma) {
             c: ask.c,
             d: ask.d,
             timer: parseInt(ask.timer),
-            answer: ask.answer,
+            isCorrectA: ask.isCorrectA || false,
+            isCorrectB: ask.isCorrectB || false,
+            isCorrectC: ask.isCorrectC || false,
+            isCorrectD: ask.isCorrectD || false,
           },
         });
       }
@@ -161,7 +171,10 @@ export function gameEvents(socket, io, prisma) {
             c: ask.c,
             d: ask.d,
             timer: parseInt(ask.timer),
-            answer: ask.answer,
+            isCorrectA: ask.isCorrectA || false,
+            isCorrectB: ask.isCorrectB || false,
+            isCorrectC: ask.isCorrectC || false,
+            isCorrectD: ask.isCorrectD || false,
             gameId: parseInt(gameId),
           },
         });
@@ -241,7 +254,10 @@ export function gameEvents(socket, io, prisma) {
               b: true,
               c: true,
               d: true,
-              answer: true,
+              isCorrectA: true,
+              isCorrectB: true,
+              isCorrectC: true,
+              isCorrectD: true,
               timer: true,
             },
           },

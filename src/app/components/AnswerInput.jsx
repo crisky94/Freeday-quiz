@@ -6,7 +6,7 @@ export default function AnswerInput({
   index,
   answer,
   onChange,
-  correctAnswer,
+  isCorrect,
   onSelect,
 }) {
   const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500'];
@@ -46,8 +46,8 @@ export default function AnswerInput({
           type='radio'
           className='h-7 w-7 mt-1 radio transition duration-700 ease-in-out transform hover:scale-150 '
           name='answer'
-          checked={correctAnswer === index}
-          onChange={() => onSelect(index)}
+          checked={isCorrect}
+          onChange={() => onSelect()}
         />
       )}
     </div>
