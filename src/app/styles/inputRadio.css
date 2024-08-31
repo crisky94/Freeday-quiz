@@ -1,0 +1,24 @@
+.radio {
+  cursor: pointer;
+  appearance: none;
+  border: 2px solid #23ffdd; /* Borde gris */
+  border-radius: 50%;
+}
+
+/* Estilo cuando el radio está marcado (checked) */
+.radio:checked {
+  border-color: #111;
+  background-color: #23ffdd;
+}
+
+/* Check dentro del radio cuando está marcado */
+.radio:checked::before {
+  transition: all;
+  transform: scale();
+  text-align: center;
+  font-weight: bold;
+  content: '✔'; /* El símbolo de check */
+  display: block;
+  color: #111; /* Color del check */
+  font-size: 18px; /* Tamaño del check */
+}

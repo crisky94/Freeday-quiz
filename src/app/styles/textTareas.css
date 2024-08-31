@@ -1,0 +1,9 @@
+/* Ocultar barra de scroll en navegadores WebKit (Chrome, Safari, etc.) */
+.custom-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Para Firefox */
+.custom-scroll {
+  scrollbar-width: none; /* Ocultar barra de scroll en Firefox */
+}

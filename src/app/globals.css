@@ -6,16 +6,14 @@
 :root {
   --foreground-rgb: 255, 255, 255;
   --number-of-characters: 21;
-  --bgroom:linear-gradient(200deg,
-      rgba(28, 255, 228, 1) 0%,
-      rgba(17, 17, 17, 1) 20%,
-      rgba(17, 17, 17, 1) 42%,
-      rgba(17, 17, 17, 1) 79%,
-      rgba(252, 255, 0, 1) 100%);;
-}
-
-.bgroom {
-  background: var(--bgroom);
+  --bgroom: linear-gradient(
+    200deg,
+    rgba(28, 255, 228, 1) 0%,
+    rgba(17, 17, 17, 1) 20%,
+    rgba(17, 17, 17, 1) 42%,
+    rgba(17, 17, 17, 1) 79%,
+    rgba(252, 255, 0, 1) 100%
+  );
 }
 
 /* Header */
@@ -51,6 +49,7 @@
   border-radius: 3em;
   height: 20px;
 }
+
 /* Body */
 body {
   overflow-x: hidden;
