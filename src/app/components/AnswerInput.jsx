@@ -1,4 +1,6 @@
 'use client';
+import '../styles/inputRadio.css';
+import '@/app/styles/textTareas.css';
 import { useState } from 'react';
 export default function AnswerInput({
   index,
@@ -21,24 +23,28 @@ export default function AnswerInput({
 
   return (
     <div
-      className={`${colorClass} flex items-center p-4 rounded-lg  ${
+      className={`${colorClass} flex items-center p-2 rounded-lg  ${
         isFocused ? 'ring-2 ring-secundary' : ''
       }`}
     >
-      <input
-        maxLength={100}
-        type='text'
+      <textarea
+        maxLength={120}
         placeholder={placeholderText}
-        className='h-full truncate w-full bg-transparent border-none placeholder-slate-600 focus:outline-none text-black '
+        className='h-20  w-full px-1  resize-none overflow-hidden bg-transparent border-none placeholder-slate-600 focus:outline-none text-black custom-scroll'
         value={answer}
         onChange={(e) => onChange(index, e.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        style={{
+          lineHeight: '1.2',
+          overflowY: 'scroll', // Permitir scroll vertical
+        }}
       />
+
       {answer && (
         <input
           type='radio'
-          className='h-5 w-5 mt-1'
+          className='h-7 w-7 mt-1 radio transition duration-700 ease-in-out transform hover:scale-150 '
           name='answer'
           checked={correctAnswer === index}
           onChange={() => onSelect(index)}

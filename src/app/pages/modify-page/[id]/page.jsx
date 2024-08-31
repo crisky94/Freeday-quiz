@@ -2,10 +2,13 @@
 import { useSocket } from '@/context/socketContext';
 import { useState, useEffect, useCallback } from 'react';
 import { Flip, ToastContainer, toast } from 'react-toastify';
+import { Tooltip } from '@nextui-org/tooltip';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
 import DeleteNewAsk from '@/app/components/DeleteNewAsk';
+import '@/app/styles/inputRadio.css';
+import '@/app/styles/textTareas.css';
 
 export default function EditGame({ params }) {
   // Estado inicial del formulario para el nombre, detalle del juego y preguntas
@@ -159,6 +162,10 @@ export default function EditGame({ params }) {
         );
         hasErrors = true;
       }
+      if (ask.timer < 3 || ask.timer > 50) {
+        toast.error(`El temporizador tiene que ser mínimo 3s y máximo 50s.`);
+        hasErrors = true;
+      }
     });
     return hasErrors;
   };
@@ -248,25 +255,21 @@ export default function EditGame({ params }) {
                 Pregunta {index + 1}:
               </label>
               <textarea
-                className='text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary mb-4 p-2 w-full resize-none overflow-hidden'
+                className='text-black custom-scroll text-center rounded-md placeholder:text-sm placeholder-slate-600    focus:outline-none focus:ring-2 focus:ring-secundary mb-4 p-2 w-full resize-none max-h-24'
                 id={`ask-${index}`}
                 name={`ask-${index}`}
                 value={ask.ask}
                 onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
                 onInput={handleAutoResize}
+                maxLength={150}
+                placeholder='Escribe tu pregunta'
               />
             </div>
             <div className='card-body w-full'>
               {['a', 'b', 'c', 'd'].map((option) => (
                 <div className='flex items-center' key={option}>
-                  <label
-                    className='text-md p-1 font-bold uppercase mb-4 h-6 rounded-md'
-                    htmlFor={`${option}-${index}`}
-                  >
-                    {option.toUpperCase()}:
-                  </label>
                   <div className='flex w-full relative'>
-                    <input
+                    <textarea
                       className={`${
                         option === 'a'
                           ? 'bg-red-500 focus:ring-secundary'
@@ -275,19 +278,24 @@ export default function EditGame({ params }) {
                           : option === 'c'
                           ? 'bg-green-500 focus:ring-secundary'
                           : 'bg-yellow-500 focus:ring-secundary'
-                      } text-black text-center truncate rounded-md min-h-10 placeholder-slate-600 placeholder:text-sm px-2 focus:outline-none focus:ring-2  mb-2 w-full resize-none overflow-hidden`}
+                      } text-black custom-scroll p-2 pr-9 rounded-md  min-h-24   w-full placeholder-slate-600 text-sm  placeholder:text-sm px-2 focus:outline-none focus:ring-2  mb-2 resize-none overflow-hidden`}
                       id={`${option}-${index}`}
                       type='text'
                       name={`${option}-${index}`}
                       value={ask[option]}
+                      maxLength={120}
+                      style={{
+                        // Ajusta este valor según la altura del textarea
+                        lineHeight: '1.2', // Ajusta la altura de línea para el texto
+                      }}
                       placeholder={`Añadir respuesta ${
                         option === 'a'
-                          ? '1'
+                          ? 'A'
                           : option === 'b'
-                          ? '2'
+                          ? 'B'
                           : option === 'c'
-                          ? '3 (opcional)'
-                          : '4 (opcional)'
+                          ? 'C (opcional)'
+                          : 'D (opcional)'
                       }`}
                       onChange={(e) =>
                         handleAskChange(index, option, e.target.value)
@@ -296,7 +304,7 @@ export default function EditGame({ params }) {
                     />
                     {ask[option] && (
                       <input
-                        className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-5'
+                        className=' transition duration-700 ease-in-out transform hover:scale-150 absolute radio right-0 top-1/2    -mt-4 mx-2  w-7 h-7'
                         type='radio'
                         value={ask[option]}
                         name={`correctAnswer-${index}`}
@@ -316,18 +324,21 @@ export default function EditGame({ params }) {
                 >
                   Temporizador (segundos):
                 </label>
-                <input
-                  className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#fcff00] mb-4 w-20'
-                  type='number'
-                  min={3}
-                  max={50}
-                  id={`timer-${index}`}
-                  name={`timer-${index}`}
-                  value={ask.timer}
-                  onChange={(e) =>
-                    handleAskChange(index, 'timer', e.target.value)
-                  }
-                />
+                <Tooltip
+                  content='min 3s - max 50s'
+                  className='bg-primary p-1 text-black rounded-md text-xs flex flex-col card-title w-full justify-center items-center'
+                >
+                  <input
+                    className='text-black text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#fcff00] mb-4 w-20'
+                    type='number'
+                    id={`timer-${index}`}
+                    name={`timer-${index}`}
+                    value={ask.timer}
+                    onChange={(e) =>
+                      handleAskChange(index, 'timer', e.target.value)
+                    }
+                  />
+                </Tooltip>
               </div>
               {/* Renderiza el componente adecuado para eliminar una pregunta dependiendo si es nueva o ya existente */}
               {!ask.id ? (

@@ -10,6 +10,7 @@ import AskCard from '@/app/components/AskCard';
 import AnswerInput from '@/app/components/AnswerInput';
 import ModalComponent from '@/app/components/Modal';
 import { useRouter } from 'next/navigation';
+import '@/app/styles/textTareas.css';
 // Componente principal para crear un juego
 export default function CreateGame() {
   const router = useRouter();
@@ -189,7 +190,6 @@ export default function CreateGame() {
   // Maneja el envío del formulario para crear el juego
   const handleSubmit = (event) => {
     event.preventDefault(); // Previene el comportamiento por defecto del formulario
-
     if (editIndex !== null) {
       addOrUpdateAsk();
       return;
@@ -229,17 +229,20 @@ export default function CreateGame() {
         setPin(response.game.codeGame); // Setea el PIN del juego
         setGameId(response.game.id);
         localStorage.removeItem('asks');
-        toast.success('Redirigiendo a control quiz ✨', {
-          position: 'bottom-center',
-          autoClose: 4000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light',
-          transition: Flip,
-        });
+        toast.success(
+          '¡Quiz creado con éxito! Redirigiendo a la página de PIN 🚀.',
+          {
+            position: 'bottom-center',
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Flip,
+          }
+        );
       } else {
         alert('Error al crear el juego'); // Muestra un mensaje de error
       }
@@ -255,7 +258,7 @@ export default function CreateGame() {
   };
 
   return (
-    <form className=' fondo w-screen h-screen mt-20  ' onSubmit={handleSubmit}>
+    <form className=' fondo w-[95%] h-full mt-20  ' onSubmit={handleSubmit}>
       <ToastContainer
         position='bottom-center'
         autoClose={5000}
@@ -274,50 +277,41 @@ export default function CreateGame() {
         <input
           maxLength={100}
           placeholder='Coloca un título'
-          className=' text-center truncate p-2 md:mx-28  text-md placeholder-slate-500 uppercase rounded-md h-12 w-2/3 mx-5   text-black font-bold focus:outline-none focus:ring-2 ring-secundary'
+          className=' text-center truncate p-2 md:mx-28   text-md placeholder-slate-500 uppercase rounded-md h-12 w-2/3 mx-5   text-black font-bold focus:outline-none focus:ring-2 ring-secundary'
           type='text'
           value={nameGame}
           onChange={(e) => setNameGame(e.target.value)}
         />
       </div>
       <div className='w-full h-full '>
-        <div className='flex justify-center w-full'>
-          <input
-            maxLength={200}
-            type='text'
+        <div className='flex justify-center w-full '>
+          <textarea
+            maxLength={150}
             placeholder='Escribe tu pregunta'
-            className=' text-center truncate px-1 text-md uppercase rounded-md mt-4 h-14 m-5 w-full text-black  focus:outline-none focus:ring-2 ring-secundary placeholder-slate-500'
+            className=' text-center resize-none px-1 py-4 text-md uppercase rounded-md mt-4 h-14 max-h-24 m-5 w-full text-black  focus:outline-none focus:ring-2 ring-secundary placeholder-slate-500 custom-scroll'
             value={currentAsk}
             onChange={(e) => setCurrentAsk(e.target.value)}
           />
         </div>
 
-        <div className='flex justify-center items-center h-2'>
+        <div className='flex flex-col justify-center items-center h-12 gap-2'>
+          <label className='flex justify-center items-center h-6 text-sm rounded-md bg-[#111] '>
+            Temporizador (segundos)
+          </label>
           <Tooltip
-            content='Coloca el tiempo para la pregunta (Segundos)'
+            content='min 3s - max 50s'
             className='bg-primary p-1 text-black rounded-md text-xs'
           >
             <input
               min={3}
               max={50}
               type='number'
-              placeholder='50s max'
-              className='text-center  text-xs uppercase rounded-md  h-8  w-24 text-black font-bold focus:outline-none focus:ring-2 ring-secundary placeholder-slate-400'
+              placeholder='Tiempo'
+              className='text-center  text-xs uppercase rounded-md  h-20  w-24 text-black font-bold focus:outline-none focus:ring-2 focus:ring-secundary placeholder-slate-400'
               value={timer}
               onChange={(e) => {
                 const value = e.target.value;
-                if (isValidInput(value)) {
-                  const numericValue = parseFloat(value);
-                  if (numericValue < 3) {
-                    setTimer('3');
-                  } else if (numericValue > 50) {
-                    setTimer('50');
-                  } else {
-                    setTimer(value);
-                  }
-                } else {
-                  setTimer('');
-                }
+                setTimer(value);
               }}
             />
           </Tooltip>
@@ -362,18 +356,6 @@ export default function CreateGame() {
           ))}
         </div>
       </div>
-      {pin ? (
-        <div className='flex  -mt-52 justify-center items-center transform transition-transform duration-700'>
-          <p className='rounded-md bg-white text-black w-48 text-center'>
-            {' '}
-            JUEGO CREADO CON ÉXITO
-            <br />
-            PIN: <strong className='text-secundary'> {pin}</strong>
-          </p>
-        </div>
-      ) : (
-        ''
-      )}
     </form>
   );
 }
