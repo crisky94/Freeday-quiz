@@ -3,7 +3,7 @@ import { FaLinkedin, FaGithub } from 'react-icons/fa';
 
 const Footer = () => {
   return (
-    <footer className='bg-hackBlack mx-4  text-white py-4 mt-14'>
+    <footer className='bg-hackBlack  text-white py-4 '>
       <div className='grid grid-cols-1 sm:grid-cols-[25%,50%,25%] gap-4 items-center'>
         <div className='flex flex-col items-center gap-2'>
           <p className='font-semibold text-lg text-primary'>
