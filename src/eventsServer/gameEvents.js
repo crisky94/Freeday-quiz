@@ -25,7 +25,6 @@ export function gameEvents(socket, io, prisma) {
         b: ask.b, // Opción b
         c: ask.c || null, // Si C está vacío, almacena null
         d: ask.d || null, // Si D está vacío, almacena null
-        answer: ask.answer, // Respuesta correcta
         timer: ask.timer,
         isCorrectA: ask.isCorrectA || false, // Insertamos el valor de isCorrectA
         isCorrectB: ask.isCorrectB || false, // Insertamos el valor de isCorrectB
@@ -154,7 +153,6 @@ export function gameEvents(socket, io, prisma) {
             c: ask.c,
             d: ask.d,
             timer: parseInt(ask.timer),
-            answer: ask.answer,
             isCorrectA: ask.isCorrectA || false,
             isCorrectB: ask.isCorrectB || false,
             isCorrectC: ask.isCorrectC || false,

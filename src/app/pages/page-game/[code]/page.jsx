@@ -228,7 +228,6 @@ export default function GameQuizPage({ params }) {
     }
   };
 
-
   // Inserta la puntuación del jugador en el servidor
   const insertPlayer = (gameId, playerName, score) => {
     return new Promise((resolve, reject) => {
@@ -330,61 +329,61 @@ export default function GameQuizPage({ params }) {
         autoClose={!!alertMessage}
       />
       <ToastContainer />
-      {currentQuestion && (
-        <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
-          <div
-            key={currentQuestion.id}
-            className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
-          >
-            <div className='flex flex-col items-center justify-center'>
-              <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
-                {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
-              </p>
-            </div>
-            <p className='mt-10 mb-10 text-white text-center text-lg overflow-wrap break-word'>
-              {`${currentQuestionIndex + 1}.${currentQuestion.ask}`}
-            </p>
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 w-full'>
-              <div
-                onClick={() => handleAnswerClick('a')}
-                className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass(
-                  'a'
-                )} text-center overflow-wrap break-word text-sm sm:text-base`}
-              >
-                {currentQuestion.a}
-              </div>
-              <div
-                onClick={() => handleAnswerClick('b')}
-                className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass(
-                  'b'
-                )} text-center overflow-wrap break-word text-sm sm:text-base`}
-              >
-                {currentQuestion.b}
-              </div>
-              {currentQuestion.c ? (
-                <div
-                  onClick={() => handleAnswerClick('c')}
-                  className={` rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass(
-                    'c'
-                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
-                >
-                  {currentQuestion.c}
-                </div>
-              ): null}
-              {currentQuestion.d ? (
-                <div
-                  onClick={() => handleAnswerClick('d')}
-                  className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
-                    'd'
-                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
-                >
-                  {currentQuestion.d}
-                </div>
-              ): null}
-            </div>
-          </div>
+     {currentQuestion && (
+  <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
+    <div
+      key={currentQuestion.id}
+      className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
+    >
+      <div className='flex flex-col items-center justify-center'>
+        <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
+          {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
+        </p>
+      </div>
+      <p className='mt-10 mb-8 text-white text-center text-lg overflow-wrap break-word'>
+        {`${currentQuestionIndex + 1}. ${currentQuestion.ask}`}
+      </p>
+      <div className={`grid gap-5 w-full py-5  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'}`}>
+        <div
+          onClick={() => handleAnswerClick('a')}
+          className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}
+        >
+          {currentQuestion.a}
         </div>
-      )}
+        <div
+          onClick={() => handleAnswerClick('b')}
+          className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass('b')} text-center overflow-wrap break-word text-sm sm:text-base`}
+        >
+          {currentQuestion.b}
+        </div>
+
+        {currentQuestion.c && (
+          <div
+            onClick={() => handleAnswerClick('c')}
+            className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass('c')} text-center overflow-wrap break-word text-sm sm:text-base ${
+              !currentQuestion.d ? 'col-span-2 justify-self-center min-w-[302px]' : ''
+            }`}
+          >
+            {currentQuestion.c}
+          </div>
+        )}
+
+        {currentQuestion.d && (
+          <div
+            onClick={() => handleAnswerClick('d')}
+            className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass('d')} text-center overflow-wrap break-word text-sm sm:text-base ${
+              !currentQuestion.c ? 'col-span-2' : 'centered-col'
+            }`}
+          >
+            {currentQuestion.d}
+          </div>
+        )}
+      </div>
     </div>
+  </div>
+)}
+
+    </div>
+
   );
 }
