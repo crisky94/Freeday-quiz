@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
 import DeleteAsk from '@/app/components/DeleteAsk';
 import DeleteNewAsk from '@/app/components/DeleteNewAsk';
-import '@/app/styles/inputRadio.css';
+import '@/app/styles/inputCheckBox.css';
 import '@/app/styles/textTareas.css';
 
 export default function EditGame({ params }) {
@@ -159,9 +159,16 @@ export default function EditGame({ params }) {
         );
         hasErrors = true;
       }
-      if (!ask.isCorrectA && !ask.isCorrectB && !ask.isCorrectC && !ask.isCorrectD) {
+      if (
+        !ask.isCorrectA &&
+        !ask.isCorrectB &&
+        !ask.isCorrectC &&
+        !ask.isCorrectD
+      ) {
         toast.error(
-          `Selecciona al menos una respuesta correcta para la pregunta ${index + 1}.`
+          `Selecciona al menos una respuesta correcta para la pregunta ${
+            index + 1
+          }.`
         );
         hasErrors = true;
       }
@@ -304,9 +311,10 @@ export default function EditGame({ params }) {
                         handleAskChange(index, option, e.target.value)
                       }
                       onInput={handleAutoResize}
-                    /> {ask[option] && (
+                    />{' '}
+                    {ask[option] && (
                       <input
-                        className='absolute right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-5 radio'
+                        className='absolute transition duration-700 ease-in-out  hover:scale-150 right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-8 w-8 checkBox'
                         type='checkbox'
                         checked={ask[`isCorrect${option.toUpperCase()}`]}
                         onChange={(e) =>
@@ -317,7 +325,7 @@ export default function EditGame({ params }) {
                           )
                         }
                       />
-                    )} 
+                    )}
                   </div>
                 </div>
               ))}

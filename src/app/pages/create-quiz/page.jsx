@@ -104,21 +104,24 @@ export default function CreateGame() {
       !nameGame.trim() ||
       !nickUser.trim() ||
       !currentAsk.trim() ||
-      answers.every(answer => !answer.trim()) ||
+      answers.every((answer) => !answer.trim()) ||
       (!isCorrectA && !isCorrectB && !isCorrectC && !isCorrectD) ||
       !timer.trim()
     ) {
-      toast.error('Completa todos los campos y marca al menos una respuesta correcta.', {
-        position: 'bottom-center',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-        transition: Flip,
-      });
+      toast.error(
+        'Completa todos los campos y marca al menos una respuesta correcta.',
+        {
+          position: 'bottom-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Flip,
+        }
+      );
       return;
     }
 
@@ -177,7 +180,12 @@ export default function CreateGame() {
   const handleEdit = (index) => {
     const askToEdit = asks[index];
     setCurrentAsk(askToEdit.ask);
-    setAnswers([askToEdit.a, askToEdit.b, askToEdit.c || '', askToEdit.d || '']);
+    setAnswers([
+      askToEdit.a,
+      askToEdit.b,
+      askToEdit.c || '',
+      askToEdit.d || '',
+    ]);
     setIsCorrectA(askToEdit.isCorrectA); // Cargar estados booleanos desde la pregunta
     setIsCorrectB(askToEdit.isCorrectB);
     setIsCorrectC(askToEdit.isCorrectC || false);
@@ -199,7 +207,11 @@ export default function CreateGame() {
       return;
     }
 
-    if (!isValidInput(nameGame) || !isValidInput(nickUser) || asks.length === 0) {
+    if (
+      !isValidInput(nameGame) ||
+      !isValidInput(nickUser) ||
+      asks.length === 0
+    ) {
       toast.error('Completa el título y al menos una pregunta.', {
         position: 'bottom-center',
         autoClose: 3000,
@@ -229,7 +241,7 @@ export default function CreateGame() {
         isCorrectC: ask.isCorrectC,
         isCorrectD: ask.isCorrectD,
         timer: ask.timer,
-      }))
+      })),
     };
 
     // Enviar juego a través del socket
@@ -279,7 +291,6 @@ export default function CreateGame() {
     setCurrentAsk('');
     setDetailGame('');
   };
-
 
   return (
     <form className=' fondo w-[95%] h-full mt-20  ' onSubmit={handleSubmit}>
@@ -349,10 +360,15 @@ export default function CreateGame() {
               answer={answer}
               onChange={handleInputChange}
               isCorrect={
-                index === 0 ? isCorrectA :
-                  index === 1 ? isCorrectB :
-                    index === 2 ? isCorrectC :
-                      index === 3 ? isCorrectD : false
+                index === 0
+                  ? isCorrectA
+                  : index === 1
+                  ? isCorrectB
+                  : index === 2
+                  ? isCorrectC
+                  : index === 3
+                  ? isCorrectD
+                  : false
               }
               onSelect={() => handleSelectAnswer(index)}
             />
@@ -381,6 +397,7 @@ export default function CreateGame() {
               index={index}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              isCorret={isCorrectA || isCorrectB || isCorrectC || isCorrectD}
             />
           ))}
         </div>

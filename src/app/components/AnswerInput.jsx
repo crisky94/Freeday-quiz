@@ -1,5 +1,5 @@
 'use client';
-import '../styles/inputRadio.css';
+import '../styles/inputCheckBox.css';
 import '@/app/styles/textTareas.css';
 import { useState } from 'react';
 export default function AnswerInput({
@@ -43,8 +43,8 @@ export default function AnswerInput({
 
       {answer && (
         <input
-          type='radio'
-          className='h-7 w-7 mt-1 radio transition duration-700 ease-in-out transform hover:scale-150 '
+          type='checkbox'
+          className='h-8 w-8 mt-1 checkBox transition duration-700 ease-in-out transform hover:scale-150 '
           name='answer'
           checked={isCorrect}
           onChange={() => onSelect()}

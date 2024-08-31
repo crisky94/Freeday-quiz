@@ -16,6 +16,9 @@
   );
 }
 
+.bgroom {
+  background: var(--bgroom);
+}
 /* Header */
 
 .header {

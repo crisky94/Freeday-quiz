@@ -1,6 +1,10 @@
 export default function AskCard({ ask, index, onEdit, onDelete }) {
+  const correctAnswers = [];
+  if (ask.isCorrectA) correctAnswers.push('A');
+  if (ask.isCorrectB) correctAnswers.push('B');
+  if (ask.isCorrectC) correctAnswers.push('C');
+  if (ask.isCorrectD) correctAnswers.push('D');
   return (
-
     <div className=' bg-custom-linear'>
       <div className=' bounce-in-bck flex flex-col justify-between bg-black text-white w-48 h-40 p-2  m-1 '>
         <p className='truncate'>
@@ -27,8 +31,8 @@ export default function AskCard({ ask, index, onEdit, onDelete }) {
           <strong>Tiempo:</strong> {ask.timer} segundos
         </p>
         <p>
-          <strong>Respuesta Correcta:</strong>{' '}
-          <span className='uppercase'> {ask.answer}</span>
+          <strong>Respuestas correctas:</strong>{' '}
+          <span className='text-xs'>{correctAnswers.join(', ')}</span>
         </p>
         <div className='flex justify-between mt-2 '>
           <button

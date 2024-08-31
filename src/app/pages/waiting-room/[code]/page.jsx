@@ -16,7 +16,6 @@ const WaitingRoom = ({ params }) => {
   const [socketId, setSocketId] = useState('');
   const [countdown, setCountdown] = useState(false);
 
-
   useEffect(() => {
     const userNick = sessionStorage.getItem('nickname');
     if (!userNick) {
@@ -24,30 +23,29 @@ const WaitingRoom = ({ params }) => {
     }
   }, [router]);
 
-
   useEffect(() => {
     if (!socket) {
-      router.push('/');// Redirige a la página principal si no hay conexión al socket
+      router.push('/'); // Redirige a la página principal si no hay conexión al socket
     } else {
-      setSocketId(socket.id);// Guarda el ID del socket si está disponible
+      setSocketId(socket.id); // Guarda el ID del socket si está disponible
     }
   }, [socket, router]);
 
   useEffect(() => {
     if (!code) {
       console.error('Code parameter is missing.');
-      router.push('/');//Redirige a la página principal si falta el código
+      router.push('/'); //Redirige a la página principal si falta el código
       return;
     }
 
     const fetchGameInfo = async () => {
       try {
-        const response = await fetch(`/api/game/${code}`);// Solicita información del juego al servidor
+        const response = await fetch(`/api/game/${code}`); // Solicita información del juego al servidor
         const game = await response.json();
 
         if (response.ok) {
-          setTitle(game.nameGame);// Establece el título del juego
-          setDescription(game.detailGame || '');// Establece la descripción del juego
+          setTitle(game.nameGame); // Establece el título del juego
+          setDescription(game.detailGame || ''); // Establece la descripción del juego
         } else {
           console.error('Error fetching game info');
         }
@@ -56,7 +54,7 @@ const WaitingRoom = ({ params }) => {
       }
     };
 
-    fetchGameInfo();// Llama a la función para obtener la información del juego
+    fetchGameInfo(); // Llama a la función para obtener la información del juego
   }, [code, router]);
   // Hook personalizado para manejar eventos del socket relacionados con jugadores
   usePlayerSocket({ socket, setPlayers, setCountdown });
@@ -78,7 +76,7 @@ const WaitingRoom = ({ params }) => {
         }
       });
     };
-    socket.on('connect', fetchPlayers);// Escucha el evento de conexión y actualiza los jugadores
+    socket.on('connect', fetchPlayers); // Escucha el evento de conexión y actualiza los jugadores
     fetchPlayers();
 
     return () => {
@@ -115,17 +113,17 @@ const WaitingRoom = ({ params }) => {
   return (
     <div className='w-screen h-screen bgroom'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
-      <div className='h-60 flex flex-col mt-14 flex-wrap mx-5'>
+      <div className='h-auto flex flex-col mt-14 flex-wrap mx-5 '>
         <h1 className='text-primary font-extrabold text-4xl uppercase'>
           {title}
         </h1>
-        <p className='text-wrap break-words w-full'>{description}</p>
+        <p className='text-wrap break-words w-full  '>{description}</p>
       </div>
-      <div className='flex flex-wrap -mt-9 '>
+      <div className='flex flex-wrap -mt-14 '>
         {players.map((player) => (
           <div
             key={player.id}
-            className={`w-14 flex flex-col items-center p-1 mx-8 ${
+            className={`w-14 flex flex-col items-center py-4 mx-4 ${
               player.socketId === socketId ? 'text-secundary' : 'text-white'
             }`}
           >
