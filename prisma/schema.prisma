@@ -23,7 +23,7 @@ model Games {
 model Players {
   id         Int      @id @default(autoincrement())
   gameId     Int
-  playerName String   @db.VarChar(255)
+  playerName String   @db.VarChar(30)
   score      Int
   socketId   String?
   avatar     String?  @db.Text
