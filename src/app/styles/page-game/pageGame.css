@@ -6,5 +6,26 @@
   word-break: break-word;
   width: 100%;
 }
+.answers-grid {
+  display: grid;
+  gap: 1.25rem;
+  /* 20px */
+  width: 100%;
+  padding: 1rem;
+}
 
+@media (min-width: 768px) {
 
+  /* Medida aproximada de pantallas md en Tailwind */
+  .answers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+
+  /* Para pantallas pequeñas */
+  .answers-grid {
+    grid-template-columns: 1fr;
+  }
+}

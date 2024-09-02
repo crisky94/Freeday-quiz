@@ -330,7 +330,7 @@ export default function GameQuizPage({ params }) {
       />
       <ToastContainer />
      {currentQuestion && (
-  <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear'>
+  <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen'>
     <div
       key={currentQuestion.id}
       className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
@@ -343,16 +343,16 @@ export default function GameQuizPage({ params }) {
       <p className='mt-10 mb-8 text-white text-center text-lg overflow-wrap break-word'>
         {`${currentQuestionIndex + 1}. ${currentQuestion.ask}`}
       </p>
-      <div className={`grid gap-5 w-full py-5  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'}`}>
+            <div className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : 'grid-cols-1'}`}>
         <div
           onClick={() => handleAnswerClick('a')}
-          className={`rounded-md p-4 cursor-pointer bg-red-600 ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}
+                className={`rounded-md p-4 cursor-pointer w-full bg-red-600 ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}
         >
           {currentQuestion.a}
         </div>
         <div
           onClick={() => handleAnswerClick('b')}
-          className={`rounded-md p-4 cursor-pointer bg-blue-600 ${getButtonClass('b')} text-center overflow-wrap break-word text-sm sm:text-base`}
+                className={`rounded-md p-4 cursor-pointer w-full bg-blue-600 ${getButtonClass('b')} text-center overflow-wrap break-word text-sm sm:text-base  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''}`}
         >
           {currentQuestion.b}
         </div>
@@ -360,8 +360,8 @@ export default function GameQuizPage({ params }) {
         {currentQuestion.c && (
           <div
             onClick={() => handleAnswerClick('c')}
-            className={`rounded-md p-4 cursor-pointer bg-yellow-600 ${getButtonClass('c')} text-center overflow-wrap break-word text-sm sm:text-base ${
-              !currentQuestion.d ? 'col-span-2 justify-self-center min-w-[302px]' : ''
+            className={`rounded-md p-4 cursor-pointer bg-yellow-600 col-span-1 w-full ${getButtonClass('c')} text-center overflow-wrap break-word text-sm sm:text-base ${
+              !currentQuestion.d ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]' : ''
             }`}
           >
             {currentQuestion.c}
@@ -372,7 +372,7 @@ export default function GameQuizPage({ params }) {
           <div
             onClick={() => handleAnswerClick('d')}
             className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass('d')} text-center overflow-wrap break-word text-sm sm:text-base ${
-              !currentQuestion.c ? 'col-span-2' : 'centered-col'
+              !currentQuestion.c ? 'col-span-2' : ''
             }`}
           >
             {currentQuestion.d}
