@@ -102,6 +102,7 @@ const NickNameForm = ({ params }) => {
             type='text'
             placeholder='NICKNAME'
             value={nickname}
+            maxLength={25}
             onChange={(e) => setNickname(e.target.value)}
           />
           {selectedAvatar && (

@@ -119,7 +119,6 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
         },
       });
 
-      // socket.leave(`game-${code}`);
       io.to(`game-${code}`).emit('exitPlayer', playerId);
       callback({ success: true });
     } catch (error) {

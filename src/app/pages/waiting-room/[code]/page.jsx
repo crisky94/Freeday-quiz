@@ -5,6 +5,7 @@ import { useSocket } from '@/context/socketContext';
 import BeforeUnloadHandler from '../../../components/closePage';
 import CountdownBall from '@/app/components/CountdownBall';
 import usePlayerSocket from '@/app/hooks/usePlayerSocket';
+import { toast, Flip, ToastContainer } from 'react-toastify';
 
 const WaitingRoom = ({ params }) => {
   const router = useRouter();
@@ -101,7 +102,7 @@ const WaitingRoom = ({ params }) => {
         sessionStorage.removeItem('pin');
         sessionStorage.removeItem('nickname');
         console.log('Player eliminado con éxito');
-        router.push('/'); // Redirigir a la página principal después de eliminar al jugador
+        router.push('/pages/access-pin'); // Redirigir a la página principal después de eliminar al jugador
       }
     });
   }, [socket, players, socketId, code, router]);
@@ -110,35 +111,61 @@ const WaitingRoom = ({ params }) => {
     router.push(`/pages/page-game/${code}`);
   };
 
+  useEffect(() => {
+    if (!socket) return;
+
+    // Escuchar cuando un nuevo jugador se une a la partida
+    socket.on('newPlayer', (player) => {
+      // Mostrar un toast para todos los jugadores cuando alguien se une
+      toast(`${player.playerName} se ha unido a la partida`, {
+        position: 'top-right',
+        autoClose: 2000,
+        closeOnClick: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+        transition: Flip,
+      });
+    });
+
+    // Cleanup: Limpiar los eventos cuando el componente se desmonte
+    return () => {
+      socket.off('newPlayer');
+    };
+  }, [socket]);
+
   return (
-    <div className='w-screen h-screen bgroom'>
+    <div className='w-screen h-screen max450:h-full bgroom'>
+      <ToastContainer />
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
       <div className='h-auto flex flex-col mt-14 flex-wrap mx-5 '>
         <h1 className='text-primary font-extrabold text-4xl uppercase'>
           {title}
         </h1>
-        <p className='text-wrap break-words w-full  '>{description}</p>
+        <p className='text-wrap break-words w-full '>{description}</p>
       </div>
-      <div className='flex flex-wrap -mt-14 '>
+      <div className='flex flex-wrap  mt-4 gap-6 m-4 '>
         {players.map((player) => (
           <div
             key={player.id}
-            className={`w-14 flex flex-col items-center py-4 mx-4 ${
+            className={`w-20 flex flex-col items-center  ${
               player.socketId === socketId ? 'text-secundary' : 'text-white'
             }`}
           >
-            <div className='text-center flex flex-col items-center p-1 gap-1'>
+            <div className='text-center flex flex-col  items-center p-1 gap-1'>
               <div
-                className='border-2 border-white rounded-full'
+                className='border-2  border-white rounded-full'
                 dangerouslySetInnerHTML={{ __html: player.avatar }}
               />
-              <p>{player.playerName}</p>
+              <p className=' text-wrap  text-xs font-semibold'>
+                {player.playerName}
+              </p>
             </div>
           </div>
         ))}
       </div>
       {socketId && (
-        <div className='flex justify-center mt-4'>
+        <div className='flex justify-center mt-10'>
           <button
             onClick={deletePlayer}
             className='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-900'
@@ -147,14 +174,14 @@ const WaitingRoom = ({ params }) => {
           </button>
         </div>
       )}
-      <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap '>
+      <div className='flex items-center justify-center mt-4 flex-col m-2 text-center text-wrap  '>
         {countdown ? (
           <CountdownBall onCountdownFinish={handleCountdownFinish} />
         ) : (
-          <>
+          <div>
             <p className='pb-2'>Esperando inicio del juego...</p>
             <div className='loaderRoom'></div>
-          </>
+          </div>
         )}
       </div>
     </div>
