@@ -58,3 +58,4 @@ model Asks {
   timer      Int
   game       Games   @relation(fields: [gameId], references: [id], onDelete: Cascade)
 }
+
