@@ -159,6 +159,23 @@ export default function GameQuizPage({ params }) {
     };
   }, [socket, code, router, playerName]);
 
+    // Aquí se escucha el evento 'allPlayersAnswered'
+    useEffect(() => {
+      if (socket) {
+        // Escuchar el evento 'allPlayersAnswered' emitido por el servidor
+        socket.on('allPlayersAnswered', () => {
+          console.log ("Pasar proxima pregunta, todos respondieron");
+          moveToNextQuestion(); // Mueve a la siguiente pregunta
+        });
+  
+        // Limpieza para evitar múltiples suscripciones
+        return () => {
+          socket.off('allPlayersAnswered');
+        };
+      }
+    }, [socket, currentQuestionIndex]);
+  
+
   useEffect(() => {
     // Maneja el temporizador de las preguntas
     if (timeLeft === null || isPaused) return;
@@ -184,10 +201,10 @@ export default function GameQuizPage({ params }) {
 
   const handleAnswerClick = async (answerKey) => {
     if (isPaused) return; // Evita cambiar la respuesta si el juego está pausado
-
+  
     const currentQuestion = questions[currentQuestionIndex];
     const isAnswerSelected = selectedAnswers.includes(answerKey);
-
+  
     if (isAnswerSelected) {
       // Desmarcar la respuesta si ya está seleccionada
       setSelectedAnswers(selectedAnswers.filter(answer => answer !== answerKey));
@@ -195,38 +212,46 @@ export default function GameQuizPage({ params }) {
       // Marcar la respuesta como seleccionada
       setSelectedAnswers([...selectedAnswers, answerKey]);
     }
-
+  
     // Calcula si la respuesta seleccionada es correcta
     const isSelectedAnswerCorrect =
       (answerKey === 'a' && currentQuestion.isCorrectA) ||
       (answerKey === 'b' && currentQuestion.isCorrectB) ||
       (answerKey === 'c' && currentQuestion.isCorrectC) ||
       (answerKey === 'd' && currentQuestion.isCorrectD);
-
+  
     if (isSelectedAnswerCorrect) {
       // Si la respuesta seleccionada es correcta, suma los puntos
       const correctAnswers = [
-        (currentQuestion.isCorrectA ? 'a' : null),
-        (currentQuestion.isCorrectB ? 'b' : null),
-        (currentQuestion.isCorrectC ? 'c' : null),
-        (currentQuestion.isCorrectD ? 'd' : null),
+        currentQuestion.isCorrectA ? 'a' : null,
+        currentQuestion.isCorrectB ? 'b' : null,
+        currentQuestion.isCorrectC ? 'c' : null,
+        currentQuestion.isCorrectD ? 'd' : null,
       ].filter(Boolean);
-
+  
       const selectedCorrectCount = selectedAnswers.filter(answer => correctAnswers.includes(answer)).length;
       const totalCorrectAnswers = correctAnswers.length;
-
+  
       const basePoints = 10;
       const timeBonus = Math.floor(timeLeft / 200); // Bonus de puntos basado en el tiempo restante en milisegundos
       const totalPoints = (basePoints * (selectedCorrectCount / totalCorrectAnswers)) + timeBonus;
-
+  
       const newScore = score + totalPoints;
       setScore(newScore);
-      await insertPlayer(gameId, playerName, totalPoints); // Inserta los puntos del jugador en el servidor
+  
+      // Inserta los puntos del jugador en el servidor
+      await insertPlayer(gameId, playerName, totalPoints);
+  
+      // Emitir evento de socket solo si se han seleccionado todas las respuestas correctas
+      if (selectedAnswers.length === totalCorrectAnswers) {
+        socket.emit('playerAnswered', { gameId });
+      }
     } else {
       // Si la respuesta seleccionada es incorrecta, no suma puntos
       await insertPlayer(gameId, playerName, 0); // Inserta cero puntos si la respuesta es incorrecta
     }
   };
+  
 
   // Inserta la puntuación del jugador en el servidor
   const insertPlayer = (gameId, playerName, score) => {
@@ -329,7 +354,7 @@ export default function GameQuizPage({ params }) {
         autoClose={!!alertMessage}
       />
       <ToastContainer />
-     {currentQuestion && (
+      {currentQuestion && (
   <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen'>
     <div
       key={currentQuestion.id}

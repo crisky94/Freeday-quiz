@@ -101,6 +101,13 @@ export default function GameControlPage({ params }) {
         });
       }
     });
+
+      // Escuchar evento 'allPlayersAnswered' y pasar a la siguiente pregunta
+      socket.on('allPlayersAnswered', () => {
+        console.log ("Pasa a la siguiente pregunta, todos han contestado.")
+        moveToNextQuestion();
+      });
+
     //Para avtualizar en tiempo real las preguntas
     socket.on('updateDeleteAsk', (response) => {
       if (response.data) {

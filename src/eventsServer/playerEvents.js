@@ -187,7 +187,45 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
     }
   });
 
-  //* Valiidar el pin(access-pin)
+ //* Recibe aviso si los jugadores han respondido y emite cuando todos los jugadores han respondido.  
+const totalPlayers = {}; // Guardará el número total de jugadores por gameId
+const playersAnswered = {}; // Guardará el número de jugadores que han respondido por gameId
+
+socket.on('playerAnswered', async ({ gameId }) => {
+  try {
+    // Verificar si gameId no es null o undefined
+    if (gameId) {
+      // Obtener la cantidad total de jugadores conectados al juego
+      const totalPlayersCount = await prisma.players.count({
+        where: { gameId },
+      });
+      
+      if (totalPlayersCount) {
+        totalPlayers[gameId] = totalPlayersCount; // Guardar la cantidad en `totalPlayers+gameId`
+
+        // Comprobar si la variable `playersAnswered+gameId` ya existe
+        if (!playersAnswered[gameId]) {
+          playersAnswered[gameId] = 1; // Inicializa a 1 si no existe
+        } else {
+          playersAnswered[gameId] += 1; // Aumenta en 1 si ya existe
+        }
+
+        console.log(`Game ID: ${gameId} - Players Answered: ${playersAnswered[gameId]} / Total Players: ${totalPlayers[gameId]}`);
+
+        // Comprobar si todos los jugadores han respondido
+        if (playersAnswered[gameId] === totalPlayers[gameId]) {
+          io.to(gameId).emit('allPlayersAnswered'); // Emitir evento a todos los jugadores en el juego
+          playersAnswered[gameId] = 0; // Reiniciar el contador de respuestas
+          console.log(`Todos los jugadores han respondido en el juego ${gameId}`);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error en playerAnswered:', error);
+  }
+});
+
+  //* Validar el pin(access-pin)
   socket.on('correctCodeGame', async ({ code }, callback) => {
     try {
       const game = await prisma.games.findUnique({
