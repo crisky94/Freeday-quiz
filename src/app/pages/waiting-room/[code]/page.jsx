@@ -135,7 +135,7 @@ const WaitingRoom = ({ params }) => {
   }, [socket]);
 
   return (
-    <div className='w-screen h-screen max450:h-full bgroom'>
+    <div className='w-screen min-h-screen  bgroom flex flex-col'>
       <ToastContainer />
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
       <div className='h-auto flex flex-col mt-14 flex-wrap mx-5 '>

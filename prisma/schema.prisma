@@ -51,6 +51,7 @@ model Asks {
   b          String  @db.VarChar(255)
   c          String? @db.VarChar(255)
   d          String? @db.VarChar(255)
+  image      String? @db.VarChar(255)
   isCorrectA Boolean
   isCorrectB Boolean
   isCorrectC Boolean?

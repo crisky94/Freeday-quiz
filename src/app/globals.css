@@ -15,9 +15,15 @@
     rgba(252, 255, 0, 1) 100%
   );
 }
-
+.drop {
+  backdrop-filter: blur(30px);
+  box-shadow: 0px 0px 30px rgb(227, 228, 237, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.303);
+}
 .bgroom {
   background: var(--bgroom);
+  background-size: cover;
+  background-position: center;
 }
 /* Header */
 
@@ -62,7 +68,6 @@ body {
   background-color: black;
   background-size: cover;
   background-position: center;
-  /* background-repeat: no-repeat; */
   color: rgb(var(--foreground-rgb));
   font-family: 'Montserrat', sans-serif;
 }
@@ -99,10 +104,25 @@ body {
 
 .hoverGradiant:hover {
   color: white;
-  box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.54) inset;
-  -webkit-box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.54) inset;
-  -moz-box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.54) inset;
+  box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0.6) inset;
+  -webkit-box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0, 0.6) inset;
+  -moz-box-shadow: 5px 1px 86px -13px rgba(0, 0, 0, 0, 0.6) inset;
+  background-image: linear-gradient(
+    90deg,
+    #fcff00 0%,
+    #b2fe00 20%,
+    #23ffdd 50%,
+    #b2fe00 80%,
+    #fcff00 100%
+  );
+  animation: slidernbw 5s linear infinite;
 }
+@keyframes slidernbw {
+  to {
+    background-position: 20vw;
+  }
+}
+/* >>>>>> */
 
 /* !LOADING PRINCIPAL*/
 .spinner {

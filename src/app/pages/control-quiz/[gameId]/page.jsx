@@ -221,7 +221,7 @@ export default function GameControlPage({ params }) {
         if (response.error) {
           console.error(response.error);
         } else {
-          toast('Quiz finalizado', {
+          toast('Quiz finalizado, enviando jugadores al inicio', {
             autoClose: 2000,
             onClose: () => {
               router.push('/');
@@ -274,10 +274,10 @@ export default function GameControlPage({ params }) {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen w-full pt-16'>
-      <div className='bg-custom-linear flex mb-2'>
-        <div className='flex flex-col p-14 m-1 h-auto w-58 sm:w-full items-center bg-black gap-5'>
-          <h1 className='uppercase font-bold text-xl text-center'>
+    <div className='flex flex-col items-center justify-center h-full w-full pt-8'>
+      <div className=' flex '>
+        <div className='flex flex-col p-8  h-screen w-screen items-center bg-[#111] gap-5'>
+          <h1 className='uppercase font-bold text-2xl text-center'>
             Sala de control del juego
           </h1>
           <div className='text-[#1cffe4] font-bold uppercase'>{message}</div>
@@ -290,7 +290,7 @@ export default function GameControlPage({ params }) {
                   setMessage('El juego está en marcha');
                 }
               }}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black hoverGradiant font-bold bg-custom-linear w-32 h-10 rounded-md px-2'
             >
               Reanudar
             </button>
@@ -303,7 +303,7 @@ export default function GameControlPage({ params }) {
                   setMessage('El juego está pausado');
                 }
               }}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black hoverGradiant font-bold bg-custom-linear w-32 h-10 rounded-md px-2'
             >
               Pausar
             </button>
@@ -311,30 +311,35 @@ export default function GameControlPage({ params }) {
           {!showEndGame && (
             <button
               onClick={handleStopGame}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black hoverGradiant font-bold bg-custom-linear w-32 h-10 rounded-md px-2'
             >
               Finalizar
             </button>
           )}
           {showEndGame && <EndGame onSend={handleSendMainScreen} />}
           <Link
-            className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center'
+            className='btn-edit text-black hoverGradiant font-bold bg-custom-linear w-48 h-10 rounded-md py-2 text-center'
             href={`/pages/modify-page/${gameId}`}
             target='_blank'
           >
             Modificar juego
           </Link>
-          <div className='flex flex-col p-5 m-1 items-center bg-black gap-5'>
-            <p className='break-word'>
-              Preguntas: {currentQuestionIndex + 1} de {questions.length}
-            </p>
-            <div className='text-lg text-center'>
-              {currentQuestionIndex + 1}. {currentQuestion?.ask}
-            </div>
-            <div className='text-xl font-bold text-center mt-4 text-red-500'>
-              Tiempo restante: {formatTime(timeLeft)}
+          <div className='bg-custom-linear max-w-full p-1'>
+            <div className='flex flex-col p-2  w-full  items-center rounded-sm bg-[#111] '>
+              <p className='break-words font-semibold'>
+                Preguntas: {currentQuestionIndex + 1} de {questions.length}
+              </p>
+              <div className='text-md text-center w-full  mx-8    p-2 px-8'>
+                <p className=' break-words  whitespace-normal '>
+                  {currentQuestion?.ask}
+                </p>
+              </div>
+              <div className='text-xl font-bold text-center mt-1 text-red-500'>
+                Tiempo restante: {formatTime(timeLeft)}
+              </div>
             </div>
           </div>
+
           {showRankingModal && (
             <RankingModal
               code={code}

@@ -9,7 +9,7 @@ export default function NotFound() {
       </p>
       <Link href={'/'}>
         <div className='hoverGradiant bg-custom-linear flex items-center justify-center  h-12 w-60 rounded-md'>
-          <p className=' font-bold text-black'>Llevame a home 😬</p>
+          <p className=' font-bold text-black'>Llevame a inicio 😬</p>
         </div>
       </Link>
     </div>
