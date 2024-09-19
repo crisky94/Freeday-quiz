@@ -190,7 +190,9 @@ export default function GameQuizPage({ params }) {
 
     if (isAnswerSelected) {
       // Desmarcar la respuesta si ya está seleccionada
-      setSelectedAnswers(selectedAnswers.filter(answer => answer !== answerKey));
+      setSelectedAnswers(
+        selectedAnswers.filter((answer) => answer !== answerKey)
+      );
     } else {
       // Marcar la respuesta como seleccionada
       setSelectedAnswers([...selectedAnswers, answerKey]);
@@ -206,18 +208,21 @@ export default function GameQuizPage({ params }) {
     if (isSelectedAnswerCorrect) {
       // Si la respuesta seleccionada es correcta, suma los puntos
       const correctAnswers = [
-        (currentQuestion.isCorrectA ? 'a' : null),
-        (currentQuestion.isCorrectB ? 'b' : null),
-        (currentQuestion.isCorrectC ? 'c' : null),
-        (currentQuestion.isCorrectD ? 'd' : null),
+        currentQuestion.isCorrectA ? 'a' : null,
+        currentQuestion.isCorrectB ? 'b' : null,
+        currentQuestion.isCorrectC ? 'c' : null,
+        currentQuestion.isCorrectD ? 'd' : null,
       ].filter(Boolean);
 
-      const selectedCorrectCount = selectedAnswers.filter(answer => correctAnswers.includes(answer)).length;
+      const selectedCorrectCount = selectedAnswers.filter((answer) =>
+        correctAnswers.includes(answer)
+      ).length;
       const totalCorrectAnswers = correctAnswers.length;
 
       const basePoints = 10;
       const timeBonus = Math.floor(timeLeft / 200); // Bonus de puntos basado en el tiempo restante en milisegundos
-      const totalPoints = (basePoints * (selectedCorrectCount / totalCorrectAnswers)) + timeBonus;
+      const totalPoints =
+        basePoints * (selectedCorrectCount / totalCorrectAnswers) + timeBonus;
 
       const newScore = score + totalPoints;
       setScore(newScore);
@@ -319,6 +324,7 @@ export default function GameQuizPage({ params }) {
     const remainingSeconds = totalSeconds % 60;
     return `${remainingSeconds.toString().padStart(2, '0')}`;
   };
+
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
@@ -329,61 +335,90 @@ export default function GameQuizPage({ params }) {
         autoClose={!!alertMessage}
       />
       <ToastContainer />
-     {currentQuestion && (
-  <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen'>
-    <div
-      key={currentQuestion.id}
-      className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
-    >
-      <div className='flex flex-col items-center justify-center'>
-        <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
-          {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
-        </p>
-      </div>
-      <p className='mt-10 mb-8 text-white text-center text-lg overflow-wrap break-word'>
-        {`${currentQuestionIndex + 1}. ${currentQuestion.ask}`}
-      </p>
-            <div className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : 'grid-cols-1'}`}>
-        <div
-          onClick={() => handleAnswerClick('a')}
-                className={`rounded-md p-4 cursor-pointer w-full bg-red-600 ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}
-        >
-          {currentQuestion.a}
-        </div>
-        <div
-          onClick={() => handleAnswerClick('b')}
-                className={`rounded-md p-4 cursor-pointer w-full bg-blue-600 ${getButtonClass('b')} text-center overflow-wrap break-word text-sm sm:text-base  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''}`}
-        >
-          {currentQuestion.b}
-        </div>
-
-        {currentQuestion.c && (
+      {currentQuestion && (
+        <div className='flex flex-col items-center rounded-md mt-12 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen'>
           <div
-            onClick={() => handleAnswerClick('c')}
-            className={`rounded-md p-4 cursor-pointer bg-yellow-600 col-span-1 w-full ${getButtonClass('c')} text-center overflow-wrap break-word text-sm sm:text-base ${
-              !currentQuestion.d ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]' : ''
-            }`}
+            key={currentQuestion.id}
+            className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
           >
-            {currentQuestion.c}
+            <div className='flex flex-col items-center justify-center'>
+              <p className='text-red-600 text-4xl font-bold border-b-2 border-b-red-600 w-20 text-center'>
+                {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
+              </p>
+            </div>
+            <p className='mt-5 mb-8 text-white text-center text-lg overflow-wrap break-word'>
+              <strong className='font-bold'>{`${
+                currentQuestionIndex + 1
+              }`}</strong>
+              {` : ${currentQuestion.ask}`}
+            </p>
+            {currentQuestion.image && (
+              <div className='w-full min-h-72   max-w-[400px] rounded-md flex justify-center drop '>
+                <img
+                  src={currentQuestion.image}
+                  alt={`Imagen de la pregunta ${currentQuestionIndex + 1}`}
+                  className='w-full h-auto rounded-md'
+                />
+              </div>
+            )}
+
+            <div
+              className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${
+                currentQuestion.c && currentQuestion.d
+                  ? 'grid-cols-1'
+                  : 'grid-cols-1'
+              }`}
+            >
+              <div
+                onClick={() => handleAnswerClick('a')}
+                className={`rounded-md p-4 cursor-pointer w-full bg-red-600 ${getButtonClass(
+                  'a'
+                )} text-center overflow-wrap break-word text-sm sm:text-base`}
+              >
+                {currentQuestion.a}
+              </div>
+              <div
+                onClick={() => handleAnswerClick('b')}
+                className={`rounded-md p-4 cursor-pointer w-full bg-blue-600 ${getButtonClass(
+                  'b'
+                )} text-center overflow-wrap break-word text-sm sm:text-base  ${
+                  currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''
+                }`}
+              >
+                {currentQuestion.b}
+              </div>
+
+              {currentQuestion.c && (
+                <div
+                  onClick={() => handleAnswerClick('c')}
+                  className={`rounded-md p-4 cursor-pointer bg-yellow-600 col-span-1 w-full ${getButtonClass(
+                    'c'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base ${
+                    !currentQuestion.d
+                      ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]'
+                      : ''
+                  }`}
+                >
+                  {currentQuestion.c}
+                </div>
+              )}
+
+              {currentQuestion.d && (
+                <div
+                  onClick={() => handleAnswerClick('d')}
+                  className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
+                    'd'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base ${
+                    !currentQuestion.c ? 'col-span-2' : ''
+                  }`}
+                >
+                  {currentQuestion.d}
+                </div>
+              )}
+            </div>
           </div>
-        )}
-
-        {currentQuestion.d && (
-          <div
-            onClick={() => handleAnswerClick('d')}
-            className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass('d')} text-center overflow-wrap break-word text-sm sm:text-base ${
-              !currentQuestion.c ? 'col-span-2' : ''
-            }`}
-          >
-            {currentQuestion.d}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-
-    </div>
-
   );
 }

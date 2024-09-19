@@ -15,11 +15,13 @@
     rgba(252, 255, 0, 1) 100%
   );
 }
+/* shadow para las imagenes */
 .drop {
   backdrop-filter: blur(30px);
   box-shadow: 0px 0px 30px rgb(227, 228, 237, 0.37);
   border: 1px solid rgba(255, 255, 255, 0.303);
 }
+/* fondo para la room de espera  */
 .bgroom {
   background: var(--bgroom);
   background-size: cover;

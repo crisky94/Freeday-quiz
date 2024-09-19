@@ -1,30 +1,4 @@
-// import uploadToCloudinary from '../lib/uploadCloudinary.js';
-// import multer from 'multer';
-// import express from 'express';
-
 export function gameEvents(socket, io, prisma) {
-  // // Escuchar el evento de subida de imágenes
-  // const upload = multer({ dest: 'uploads/' }); // Middleware para guardar el archivo temporalmente
-  // const router = express.Router();
-
-  // // Ruta para subir imágenes
-  // router.post('/upload', upload.single('image'), (req, res) => {
-  //   const imagePath = req.file?.path; // Asegúrate de que req.file exista
-
-  //   if (!imagePath) {
-  //     return res.status(400).json({ error: 'No se ha subido ninguna imagen.' });
-  //   }
-
-  //   uploadToCloudinary(imagePath)
-  //     .then((uploadedImage) => {
-  //       res.json({ imageUrl: uploadedImage.url });
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error al subir imagen a Cloudinary:', error);
-  //       res.status(500).json({ error: 'Error al subir imagen a Cloudinary' });
-  //     });
-  // });
-
   socket.on('createGame', async (gameData, callback) => {
     try {
       const codeGame = Math.floor(100000 + Math.random() * 900000);

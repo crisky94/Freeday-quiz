@@ -17,6 +17,7 @@ export default function CreateGame() {
   const socket = useSocket();
   const { user } = useAuth(User);
   const [previewImage, setPreviewImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [nameGame, setNameGame] = useState('');
   const [nickUser, setNickUser] = useState('');
   const [asks, setAsks] = useState([]);
@@ -31,6 +32,7 @@ export default function CreateGame() {
   const [pin, setPin] = useState('');
   const [detailGame, setDetailGame] = useState('');
   const [gameId, setGameId] = useState(null);
+  const [imageUrls, setImageUrls] = useState([]);
 
   const isValidInput = (input) => {
     return input.trim() !== ''; // trim quita los espacios en blanco al inicio y al final y luego verifica que el input no sea una cadena vacía
@@ -99,7 +101,7 @@ export default function CreateGame() {
     }
   };
 
-  const addOrUpdateAsk = () => {
+  const addOrUpdateAsk = async () => {
     if (
       !nameGame.trim() ||
       !nickUser.trim() ||
@@ -141,6 +143,27 @@ export default function CreateGame() {
       return;
     }
 
+    // Upload image if there is one
+    let imageUrl = null;
+    if (selectedFile) {
+      try {
+        imageUrl = await uploadImage(selectedFile);
+      } catch (error) {
+        toast.error('Error al subir la imagen.', {
+          position: 'bottom-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Flip,
+        });
+        return;
+      }
+    }
+
     const newAsk = {
       ask: currentAsk,
       a: answers[0],
@@ -152,31 +175,34 @@ export default function CreateGame() {
       isCorrectC,
       isCorrectD,
       timer: numericTimeLimit,
-      image: previewImage || null,
+      image: imageUrl || null,
     };
 
     let updatedAsks;
     if (editIndex !== null) {
       updatedAsks = [...asks];
       updatedAsks[editIndex] = newAsk;
-      setAsks(updatedAsks);
+      setImageUrls(
+        imageUrls.map((url, i) => (i === editIndex ? imageUrl : url))
+      );
       setEditIndex(null);
     } else {
       updatedAsks = [...asks, newAsk];
-      setAsks(updatedAsks);
+      setImageUrls([...imageUrls, imageUrl]);
     }
+    setAsks(updatedAsks);
     localStorage.setItem('asks', JSON.stringify(updatedAsks));
 
+    // Reset form state
     setCurrentAsk('');
     setAnswers(['', '', '', '']);
-    setIsCorrectA(false); // Restablecer estados
+    setIsCorrectA(false);
     setIsCorrectB(false);
     setIsCorrectC(false);
     setIsCorrectD(false);
     setTimer('5');
     setPreviewImage(null);
-    localStorage.removeItem('answers');
-    localStorage.removeItem('correctAnswer');
+    setSelectedFile(null);
   };
 
   const handleEdit = (index) => {
@@ -210,12 +236,13 @@ export default function CreateGame() {
       const imageUrl = URL.createObjectURL(file);
 
       setPreviewImage(imageUrl); // Guarda el archivo en lugar del Data URL
+      setSelectedFile(file); // Guarda el archivo para subirlo más tarde
     }
   };
 
   const handleDeleteImg = () => {
     if (previewImage) {
-      URL.revokeObjectURL(previewImage); // Libera la URL
+      // URL.revokeObjectURL(previewImage); // Libera la URL
     }
     setPreviewImage(null);
   };
@@ -244,7 +271,6 @@ export default function CreateGame() {
     }
   };
 
-  // Function to handle quiz creation
   const createQuiz = (gameData) => {
     socket.emit('createGame', gameData, (response) => {
       if (response.game && response.game.codeGame) {
@@ -281,7 +307,6 @@ export default function CreateGame() {
     });
   };
 
-  // Main handleSubmit function
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -290,7 +315,6 @@ export default function CreateGame() {
       return;
     }
 
-    // Validation checks
     if (
       !isValidInput(nameGame) ||
       !isValidInput(nickUser) ||
@@ -311,28 +335,21 @@ export default function CreateGame() {
     }
 
     try {
-      // Upload image if there is one
-      let imageUrl = null;
-      if (previewImage) {
-        imageUrl = await uploadImage(previewImage);
-      }
-
       // Prepare the game data to be sent to the server
       const gameData = {
         nameGame: nameGame.trim(),
         detailGame: detailGame,
         nickUser: nickUser.trim(),
-        asks: asks.map((ask) => ({
-          ...ask, // Include ask details
-          image: imageUrl || null, // Add image URL or null if no image
+        asks: asks.map((ask, index) => ({
+          ...ask,
+          image: imageUrls[index] || null,
         })),
       };
 
       console.log('Submitting game data:', gameData);
-      createQuiz(gameData); // Call createQuiz with the prepared data
+      createQuiz(gameData);
     } catch (error) {
-      // Handle errors (for example, image upload failure)
-      toast.error('Error en la creación del juego o subida de imagen.', {
+      toast.error('Error en la creación del juego.', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: false,
@@ -345,16 +362,13 @@ export default function CreateGame() {
       });
     }
 
-    // Reset form state
-    setNameGame('');
-    setAnswers(['', '', '', '']);
-    setAsks([]);
-    setIsCorrectA(false);
-    setIsCorrectB(false);
-    setIsCorrectC(false);
-    setIsCorrectD(false);
-    setCurrentAsk('');
-    setDetailGame('');
+    localStorage.removeItem('nameGame');
+    localStorage.removeItem('currentAsk');
+    localStorage.removeItem('timer');
+    localStorage.removeItem('answers');
+    localStorage.removeItem('correctAnswer');
+    localStorage.removeItem('asks');
+    localStorage.removeItem('detail');
   };
 
   return (
@@ -420,14 +434,14 @@ export default function CreateGame() {
         <div className='w-full h-96 my-2 rounded-md  flex justify-center items-center'>
           <div className='flex flex-col items-center rounded-md justify-center drop w-96 h-full'>
             {previewImage ? (
-              <div className='h-full relative'>
+              <div className='h-full relative w-full'>
                 <img
                   src={previewImage}
                   alt='Preview'
-                  className='w-full h-full object-cover bg-center rounded-md'
+                  className='w-full h-full object-cover  bg-center rounded-md'
                 />
                 <button
-                  className='button absolute bottom-10 left-2 '
+                  className='button absolute bottom-11 left-5 '
                   onClick={handleDeleteImg}
                 >
                   <svg
@@ -473,7 +487,7 @@ export default function CreateGame() {
 
               // Si no hay imagen cargada, mostrar el mensaje y el botón
               <>
-                <p className='text-white'>Selecciona o arrastra la imagen</p>
+                <p className='text-white font-bold'>Selecciona una imagen</p>
                 <button
                   title='Add New'
                   type='button'

@@ -243,6 +243,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
           isCorrectC: true,
           isCorrectD: true,
           timer: true,
+          image: true,
         },
       });
 
