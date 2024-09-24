@@ -324,7 +324,6 @@ export default function GameQuizPage({ params }) {
     const remainingSeconds = totalSeconds % 60;
     return `${remainingSeconds.toString().padStart(2, '0')}`;
   };
-
   return (
     <div className='flex justify-center items-center w-full min-h-screen'>
       <BeforeUnloadHandler onBeforeUnload={deletePlayer} />
@@ -336,85 +335,90 @@ export default function GameQuizPage({ params }) {
       />
       <ToastContainer />
       {currentQuestion && (
-        <div className='flex flex-col items-center rounded-md mt-12 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen'>
+        <div className='flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen'>
           <div
             key={currentQuestion.id}
             className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
           >
             <div className='flex flex-col items-center justify-center'>
-              <p className='text-red-600 text-4xl font-bold border-b-2 border-b-red-600 w-20 text-center'>
+              <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 border-b-red-600 w-20 text-center'>
                 {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
               </p>
+              {currentQuestion.image && (
+                <div className='w-full min-h-72   max-w-[400px] rounded-md flex justify-center drop '>
+                  <img
+                    src={currentQuestion.image}
+                    alt={`Imagen de la pregunta ${currentQuestionIndex + 1}`}
+                    className='w-full h-auto rounded-md'
+                  />
+                </div>
+              )}{' '}
             </div>
-            <p className='mt-5 mb-8 text-white text-center text-lg overflow-wrap break-word'>
-              <strong className='font-bold'>{`${
-                currentQuestionIndex + 1
-              }`}</strong>
-              {` : ${currentQuestion.ask}`}
+            <p className='mt-10 mb-8 text-white text-center text-lg overflow-wrap break-word'>
+              {`${currentQuestionIndex + 1}. ${currentQuestion.ask}`}
             </p>
-            {currentQuestion.image && (
-              <div className='w-full min-h-72   max-w-[400px] rounded-md flex justify-center drop '>
-                <img
-                  src={currentQuestion.image}
-                  alt={`Imagen de la pregunta ${currentQuestionIndex + 1}`}
-                  className='w-full h-auto rounded-md'
-                />
-              </div>
-            )}
-
             <div
-              className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${
+              className={`grid gap-5 w-full py-4 md:grid-cols-2   sm:grid-cols-1 xs:grid-cols-1  ${
                 currentQuestion.c && currentQuestion.d
                   ? 'grid-cols-1'
                   : 'grid-cols-1'
               }`}
             >
-              <div
-                onClick={() => handleAnswerClick('a')}
-                className={`rounded-md p-4 cursor-pointer w-full bg-red-600 ${getButtonClass(
-                  'a'
-                )} text-center overflow-wrap break-word text-sm sm:text-base`}
-              >
-                {currentQuestion.a}
-              </div>
-              <div
-                onClick={() => handleAnswerClick('b')}
-                className={`rounded-md p-4 cursor-pointer w-full bg-blue-600 ${getButtonClass(
-                  'b'
-                )} text-center overflow-wrap break-word text-sm sm:text-base  ${
-                  currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''
-                }`}
-              >
-                {currentQuestion.b}
+              <div className='bg-custom-linear p-1'>
+                <div
+                  onClick={() => handleAnswerClick('a')}
+                  className={` p-4 cursor-pointer w-full bg-[#111] ${getButtonClass(
+                    'a'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
+                >
+                  {currentQuestion.a}
+                </div>
               </div>
 
-              {currentQuestion.c && (
+              <div className='bg-custom-linear p-1'>
                 <div
-                  onClick={() => handleAnswerClick('c')}
-                  className={`rounded-md p-4 cursor-pointer bg-yellow-600 col-span-1 w-full ${getButtonClass(
-                    'c'
-                  )} text-center overflow-wrap break-word text-sm sm:text-base ${
-                    !currentQuestion.d
-                      ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]'
-                      : ''
+                  onClick={() => handleAnswerClick('b')}
+                  className={` p-4 cursor-pointer w-full bg-[#111] ${getButtonClass(
+                    'b'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base  ${
+                    currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''
                   }`}
                 >
-                  {currentQuestion.c}
+                  {currentQuestion.b}
                 </div>
-              )}
+              </div>
 
-              {currentQuestion.d && (
-                <div
-                  onClick={() => handleAnswerClick('d')}
-                  className={`rounded-md p-4 cursor-pointer bg-green-600 ${getButtonClass(
-                    'd'
-                  )} text-center overflow-wrap break-word text-sm sm:text-base ${
-                    !currentQuestion.c ? 'col-span-2' : ''
-                  }`}
-                >
-                  {currentQuestion.d}
-                </div>
-              )}
+              <div className='bg-custom-linear p-1'>
+                {currentQuestion.c && (
+                  <div
+                    onClick={() => handleAnswerClick('c')}
+                    className={` p-4 cursor-pointer bg-[#111] col-span-1 w-full ${getButtonClass(
+                      'c'
+                    )} text-center overflow-wrap break-word text-sm sm:text-base ${
+                      !currentQuestion.d
+                        ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]'
+                        : ''
+                    }`}
+                  >
+                    {currentQuestion.c}
+                  </div>
+                )}
+              </div>
+
+              <div className='bg-custom-linear p-1'>
+                {currentQuestion.d && (
+                  <div
+                    onClick={() => handleAnswerClick('d')}
+                    className={` p-4 cursor-pointer bg-[#111] ${getButtonClass(
+                      'd'
+                    )} text-center overflow-wrap break-word text-sm sm:text-base ${
+                      !currentQuestion.c ? 'col-span-2' : ''
+                    }`}
+                  >
+                    {currentQuestion.d}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

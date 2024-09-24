@@ -177,13 +177,14 @@ export default function CreateGame() {
       timer: numericTimeLimit,
       image: imageUrl || null,
     };
+    const newImageUrl = imageUrl !== null ? imageUrl : imageUrls[editIndex];
 
     let updatedAsks;
     if (editIndex !== null) {
       updatedAsks = [...asks];
       updatedAsks[editIndex] = newAsk;
       setImageUrls(
-        imageUrls.map((url, i) => (i === editIndex ? imageUrl : url))
+        imageUrls.map((url, i) => (i === editIndex ? newImageUrl : url))
       );
       setEditIndex(null);
     } else {
@@ -220,6 +221,8 @@ export default function CreateGame() {
     setIsCorrectD(askToEdit.isCorrectD || false);
     setTimer(askToEdit.timer.toString());
     setEditIndex(index);
+    setPreviewImage(askToEdit.image || null);
+    setSelectedFile(null); // Dejar esto en null porque no tienes acceso al archivo original
   };
 
   const handleDelete = (index) => {
@@ -242,13 +245,18 @@ export default function CreateGame() {
 
   const handleDeleteImg = () => {
     if (previewImage) {
-      // URL.revokeObjectURL(previewImage); // Libera la URL
+      URL.revokeObjectURL(previewImage); // Libera la URL
+    }
+    // Eliminar la URL de la imagen correspondiente si estás editando
+    if (editIndex !== null) {
+      const updatedImageUrls = [...imageUrls];
+      updatedImageUrls[editIndex] = null; // O puedes eliminar el valor completamente si prefieres.
+      setImageUrls(updatedImageUrls);
     }
     setPreviewImage(null);
+    setSelectedFile(null);
   };
 
-  //* funcion de envio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-  // Function to handle image upload
   const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
@@ -431,6 +439,7 @@ export default function CreateGame() {
           </Tooltip>
         </div>
         {/* >>>>>>>>>>>>>>> */}
+
         <div className='w-full h-96 my-2 rounded-md  flex justify-center items-center'>
           <div className='flex flex-col items-center rounded-md justify-center drop w-96 h-full'>
             {previewImage ? (
