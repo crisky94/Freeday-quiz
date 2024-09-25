@@ -39,7 +39,7 @@
 /* DOTS*/
 .custom-dot {
   background-color: transparent;
-  padding: 5px;
+  padding: 1px;
   cursor: pointer;
 }
 
@@ -49,6 +49,7 @@
   background-color: var(--bg-dot);
   border-radius: 50%;
   display: inline-block;
+  border: 1px black solid;
 }
 
 .custom-dot--active .dot {

@@ -68,7 +68,7 @@ const DeleteConfirmation = ({ gameId, onDelete }) => {
           <div className='fixed top-0 left-0 w-full h-full flex justify-center items-center z-50'>
             <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-sm w-full text-white'>
               <p className='text-lg font-semibold mb-4'>
-                ¿Estás seguro que deseas eliminar este juego?
+                ¿Estás seguro/a que deseas eliminar este juego?
               </p>
               <div className='flex justify-end'>
                 <button

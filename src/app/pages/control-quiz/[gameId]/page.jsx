@@ -66,7 +66,7 @@ export default function GameControlPage({ params }) {
         case 'resumed':
           toast('El juego está en marcha', {
             position: 'bottom-center',
-            autoClose: 4000,
+            autoClose: 5000,
             transition: Bounce,
           });
           break;
@@ -83,14 +83,15 @@ export default function GameControlPage({ params }) {
       console.log(gameState);
     };
     // Escuchar eventos del socket para actualizar el estado del juego en tiempo real
-    // socket.on('pauseGame', () => {setIsPaused(true)
-    //   handleReloadPlayersData(); 
-    // });
     socket.on('pauseGame', async () => {
       setIsPaused(true);
       await handleReloadPlayersData(); // Recarga los datos de los jugadores al pausar
     });
-    socket.on('resumeGame', () => setIsPaused(false));
+    socket.on('resumeGame', () => {
+      setTimeout(()=>{
+        setIsPaused(false)
+      }, 3050)
+    })
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
         setQuestions((prevQuestions) => {
@@ -178,14 +179,6 @@ export default function GameControlPage({ params }) {
     setTimeLeft(0);
   };
   // Función para detener el juego
-  // const handleStopGame = () => {
-  //   if (socket) {
-  //     socket.emit('stopGame'); // Emitir un evento para detener el juego
-  //     setGameState('stopped');
-  //     setMessage('El juego ha finalizado ');
-  //     moveToLastQuestion(); // Moverse a la última pregunta
-  //   }
-  // };
   const handleStopGame = async () => {
     if (socket) {
       // Primero recarga los datos de los jugadores
@@ -196,7 +189,7 @@ export default function GameControlPage({ params }) {
       setGameState('stopped');
       setMessage('El juego ha finalizado');
       moveToLastQuestion();
-
+      setIsPaused(true);
       // Finalmente, muestra el modal con el ranking actualizado
       setShowRankingModal(true);
     }
@@ -204,20 +197,6 @@ export default function GameControlPage({ params }) {
 
 
   // Función para recargar los datos de los jugadores
-  // const handleReloadPlayersData = () => {
-  //   if (socket) {
-  //     socket.emit('getPlayers', { code }, (response) => {
-  //       if (response.error) {
-  //         console.error(response.error);
-  //       } else {
-  //         setPlayers(response.players); // Actualizar la lista de jugadores
-  //         setPlayerId(response.players.id);
-  //       }
-  //     });
-  //     console.log(playerId);
-  //   }
-  // };
-
   const handleReloadPlayersData = async () => {
     return new Promise((resolve, reject) => {
       if (socket) {
@@ -231,6 +210,7 @@ export default function GameControlPage({ params }) {
             resolve(); // Resuelve la promesa al terminar
           }
         });
+        console.log(playerId);       
       }
     });
   };
@@ -331,7 +311,7 @@ export default function GameControlPage({ params }) {
                   setMessage('El juego está en marcha');
                 }
               }}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black hoverGradiant bg-custom-linear w-48 h-12 rounded-md px-2'
             >
               Reanudar
             </button>
@@ -344,7 +324,7 @@ export default function GameControlPage({ params }) {
                   setMessage('El juego está pausado');
                 }
               }}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+                className='text-black hoverGradiant bg-custom-linear w-48 h-12 rounded-md px-2'
             >
               Pausar
             </button>
@@ -352,14 +332,14 @@ export default function GameControlPage({ params }) {
           {!showEndGame && (
             <button
               onClick={handleStopGame}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black hoverGradiant bg-custom-linear w-48 h-12 rounded-md px-2'
             >
               Finalizar
             </button>
           )}
           {showEndGame && <EndGame onSend={handleSendMainScreen} />}
           <Link
-            className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center'
+            className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-12 rounded-md p-3 md:p-2 text-center'
             href={`/pages/modify-page/${gameId}`}
             target='_blank'
           >
