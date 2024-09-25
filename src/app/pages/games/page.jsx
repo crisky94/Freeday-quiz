@@ -21,6 +21,7 @@ export default function GamesList() {
   const [nickUser, setNickUser] = useState(''); // Estado para almacenar el nombre del usuario creador.
   const { user, isSignedIn } = useUser(); // Obtiene el usuario autenticado del contexto de autenticación.
   const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
+  const [asks, setAsks] = useState([]); 
   const [hoveredQuestions, setHoveredQuestions] = useState({}); // Estado para manejar las preguntas que se muestran en la vista previa.
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function GamesList() {
       if (response.error) {
         console.error(response.error);
       } else {
+        setAsks(response.game.asks)
         const firstQuestion = response.game.asks[0];
         const timeLeft = firstQuestion.timer * 1000; // Convertir a milisegundos
         setHoveredQuestions((prev) => ({
@@ -77,7 +79,7 @@ export default function GamesList() {
           [gameId]: { question: firstQuestion, timeLeft },
         }));
       }
-    });
+    });   
   };
 
   // Maneja el evento cuando el usuario retira el ratón sobre vista previa.
@@ -148,7 +150,7 @@ export default function GamesList() {
                       <h2 className='truncate card-title  font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
                         {`${game.nameGame}`}
                       </h2>
-                      <div className='text-xs p-4 pb-10 text-slate-300 '>
+                      <div className='text-xs p-4 pb-14 text-slate-300 '>
                         {game.updateAt ? (
                           <p className='text-slate-300'>
                             Actualizado: {formatDate(game.updateAt)}
@@ -163,7 +165,6 @@ export default function GamesList() {
                       <div className=''>
                         <GameRankings gameId={game.id} />
                       </div>
-
                       <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
                         <Link href={`/pages/modify-page/${game.id}.jsx`}>
                           <button className='edit-button'>
@@ -177,24 +178,23 @@ export default function GamesList() {
                           onDelete={handleDelete}
                         />
                       </div>
-
                       <Link
                         className='m-2 font-bold hoverGradiant text-xs bg-custom-linear w-44 p-1 rounded-md text-black uppercase'
                         href={`/pages/pinPage/${game.id}`}
                       >
                         <span>Seleccionar</span>
                       </Link>
-
                       <div
-                        className='w-full h-4 bottom-36 my-14 px-14 pt-3  absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black'
+                        className='w-full h-6 bottom-36 my-14 px-14 pt-2  absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black '
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
-                        <p className='rounded-md w-full  text-white border-2 hover:bg-primary hover:border-none hover:text-black '>
+                        <p className='rounded-md w-full  text-white border-2 '>
                           Vista previa
                         </p>
                         {hoveredQuestions[game.id] && (
-                          <div className='bg-transparent '>
+                          <div className='bg-transparent bg-white'>
+                              <p className='font-bold bg-black text-white'>{`Número de preguntas: `}<span className='text-primary ml-2 text-lg'> {asks.length}</span></p>                  
                             <DemoPreview
                               question={hoveredQuestions[game.id].question}
                               timeLeft={hoveredQuestions[game.id].timeLeft}

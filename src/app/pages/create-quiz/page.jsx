@@ -278,7 +278,6 @@ export default function CreateGame() {
       throw error;
     }
   };
-
   const createQuiz = (gameData) => {
     socket.emit('createGame', gameData, (response) => {
       if (response.game && response.game.codeGame) {
@@ -415,7 +414,6 @@ export default function CreateGame() {
             onChange={(e) => setCurrentAsk(e.target.value)}
           />
         </div>
-
         <div className='flex flex-col justify-center items-center h-12 gap-2'>
           <label className='flex justify-center items-center h-6 text-sm rounded-md bg-[#111] '>
             Temporizador (segundos)
@@ -544,12 +542,12 @@ export default function CreateGame() {
                 index === 0
                   ? isCorrectA
                   : index === 1
-                  ? isCorrectB
-                  : index === 2
-                  ? isCorrectC
-                  : index === 3
-                  ? isCorrectD
-                  : false
+                    ? isCorrectB
+                    : index === 2
+                      ? isCorrectC
+                      : index === 3
+                        ? isCorrectD
+                        : false
               }
               onSelect={() => handleSelectAnswer(index)}
             />

@@ -18,4 +18,6 @@ export const uploadToCloudinary = (imagePath) => {
   });
 };
 
+
 export default uploadToCloudinary;
+
