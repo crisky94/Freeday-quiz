@@ -30,6 +30,7 @@ export function gameEvents(socket, io, prisma) {
         isCorrectB: ask.isCorrectB || false, // Insertamos el valor de isCorrectB
         isCorrectC: ask.isCorrectC || false, // Insertamos el valor de isCorrectC
         isCorrectD: ask.isCorrectD || false, 
+        image: ask.image || null,
       }));
       // Insertamos las preguntas en la base de datos y obtenemos los IDs generados
    
@@ -114,6 +115,7 @@ export function gameEvents(socket, io, prisma) {
           c: true,
           d: true,
           timer: true,
+          image: true,
           isCorrectA: true,
           isCorrectB: true,
           isCorrectC: true,
@@ -157,6 +159,7 @@ export function gameEvents(socket, io, prisma) {
             isCorrectB: ask.isCorrectB || false,
             isCorrectC: ask.isCorrectC || false,
             isCorrectD: ask.isCorrectD || false,
+            image: ask.image || null,
           },
         });
       }
@@ -175,6 +178,7 @@ export function gameEvents(socket, io, prisma) {
             isCorrectB: ask.isCorrectB || false,
             isCorrectC: ask.isCorrectC || false,
             isCorrectD: ask.isCorrectD || false,
+            image: ask.image || null,
             gameId: parseInt(gameId),
           },
         });
@@ -259,6 +263,7 @@ export function gameEvents(socket, io, prisma) {
               isCorrectC: true,
               isCorrectD: true,
               timer: true,
+              image: true,
             },
           },
         },

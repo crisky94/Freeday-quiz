@@ -201,12 +201,12 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       });
       const gameId = game.id;
       if (game && game.codeGame === code) {
-        callback({ success: true, message: 'Pin correcto!', gameId });
+        callback({ success: true, message: '¡Pin correcto!', gameId });
       } else {
-        callback({ success: false, message: 'Pin incorrecto!' });
+        callback({ success: false, message: '¡Pin incorrecto!' });
       }
     } catch (error) {
-      console.error('Error al buscar el juego:', error);
+      console.error('¡Pin incorrecto!', error);
       callback({ success: false, message: 'Error al buscar el juego' });
     }
   });
@@ -243,6 +243,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
           isCorrectC: true,
           isCorrectD: true,
           timer: true,
+          image: true,
         },
       });
 

@@ -163,7 +163,6 @@ export default function GamesList() {
                       <div className=''>
                         <GameRankings gameId={game.id} />
                       </div>
-
                       <div className='flex flex-row card-actions justify-center items-center text-center mt-4 gap-2 sm:gap-4'>
                         <Link href={`/pages/modify-page/${game.id}.jsx`}>
                           <button className='edit-button'>
@@ -177,14 +176,12 @@ export default function GamesList() {
                           onDelete={handleDelete}
                         />
                       </div>
-
                       <Link
                         className='m-2 font-bold hoverGradiant text-xs bg-custom-linear w-44 p-1 rounded-md text-black uppercase'
                         href={`/pages/pinPage/${game.id}`}
                       >
                         <span>Seleccionar</span>
                       </Link>
-
                       <div
                         className='w-full h-4 bottom-36 my-14 px-14 pt-3  absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
@@ -194,7 +191,7 @@ export default function GamesList() {
                           Vista previa
                         </p>
                         {hoveredQuestions[game.id] && (
-                          <div className='bg-transparent '>
+                          <div className='bg-transparent'>
                             <DemoPreview
                               question={hoveredQuestions[game.id].question}
                               timeLeft={hoveredQuestions[game.id].timeLeft}
