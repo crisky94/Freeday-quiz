@@ -1,55 +1,47 @@
 export function gameEvents(socket, io, prisma) {
-  //* Crear juego(create-quiz)
-  socket.on('createGame', async (gamedata, callback) => {
-    console.log('Datos de gamedata:', gamedata);
+  socket.on('createGame', async (gameData, callback) => {
     try {
-      // Generamos un código aleatorio de 6 dígitos para el juego
       const codeGame = Math.floor(100000 + Math.random() * 900000);
-      console.log(codeGame);
+      console.log('Received game data:', gameData);
 
-      // Insertamos en la base de datos la información del juego que se va a crear
+      // Crear el juego en la base de datos
       const game = await prisma.games.create({
         data: {
-          detailGame: gamedata.detailGame,
-          nickUser: gamedata.nickUser, // Nombre del usuario
-          nameGame: gamedata.nameGame, // Nombre del juego
-          codeGame: codeGame, // Código del juego
-          endedAt: new Date(), // Fecha de creación
+          detailGame: gameData.detailGame,
+          nickUser: gameData.nickUser,
+          nameGame: gameData.nameGame,
+          codeGame: codeGame,
+          endedAt: new Date(),
         },
       });
 
-      const asks = gamedata.asks.map((ask) => ({
-        gameId: game.id, // ID del juego relacionado
-        ask: ask.ask, // Pregunta
-        a: ask.a, // Opción a
-        b: ask.b, // Opción b
-        c: ask.c || null, // Si C está vacío, almacena null
-        d: ask.d || null, // Si D está vacío, almacena null
+      // Crear preguntas en la base de datos con URLs de imágenes
+      const asks = gameData.asks.map((ask) => ({
+        gameId: game.id,
+        ask: ask.ask,
+        a: ask.a,
+        b: ask.b,
+        c: ask.c || null,
+        d: ask.d || null,
         timer: ask.timer,
-        isCorrectA: ask.isCorrectA || false, // Insertamos el valor de isCorrectA
-        isCorrectB: ask.isCorrectB || false, // Insertamos el valor de isCorrectB
-        isCorrectC: ask.isCorrectC || false, // Insertamos el valor de isCorrectC
-        isCorrectD: ask.isCorrectD || false, 
+        isCorrectA: ask.isCorrectA || false,
+        isCorrectB: ask.isCorrectB || false,
+        isCorrectC: ask.isCorrectC || false,
+        isCorrectD: ask.isCorrectD || false,
         image: ask.image || null,
       }));
-      // Insertamos las preguntas en la base de datos y obtenemos los IDs generados
-   
+
       await prisma.asks.createMany({
         data: asks,
       });
-      // Verificamos los datos de respuestas correctas
-      
 
-      // Insertamos las respuestas correctas en la base de datos
-
-      // Llamamos al callback con la información del juego creado
       callback({ game });
     } catch (e) {
-      console.error('error:', e);
-      // Llamamos al callback con un error si algo sale mal
+      console.error('Error:', e);
       callback({ error: 'Error al crear juego' });
     }
   });
+
   socket.on('getGames', async ({ user }, callback) => {
     try {
       console.log('Usuario recibido:', user); // Verifica que el usuario sea el esperado

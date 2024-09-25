@@ -327,6 +327,7 @@ export default function EditGame({ params }) {
           value={formData.gameDetail}
           onChange={handleChange}
           onInput={handleAutoResize}
+          maxLength={250}
         />
       </div>
       <div className='w-full flex flex-wrap gap-4'>
@@ -448,55 +449,53 @@ export default function EditGame({ params }) {
                 placeholder='Escribe tu pregunta'
               />
             </div>
-            <div className='card-body w-full'>
+            <div className='card-body w-full '>
               {['a', 'b', 'c', 'd'].map((option) => (
-                <div className='flex items-center' key={option}>
-                  <div className='flex w-full relative'>
-                    <textarea
-                      className={`${option === 'a'
-                        ? 'bg-red-500 focus:ring-secundary'
-                        : option === 'b'
-                          ? 'bg-blue-500 focus:ring-secundary'
-                          : option === 'c'
-                            ? 'bg-green-500 focus:ring-secundary'
-                            : 'bg-yellow-500 focus:ring-secundary'
-                        } text-black custom-scroll p-2 pr-9 rounded-md  min-h-24   w-full placeholder-slate-600 text-sm  placeholder:text-sm px-2 focus:outline-none focus:ring-2  mb-2 resize-none overflow-hidden`}
-                      id={`${option}-${index}`}
-                      type='text'
-                      name={`${option}-${index}`}
-                      value={ask[option]}
-                      maxLength={120}
-                      style={{
-                        // Ajusta este valor según la altura del textarea
-                        lineHeight: '1.2', // Ajusta la altura de línea para el texto
-                      }}
-                      placeholder={`Añadir respuesta ${option === 'a'
-                        ? 'A'
-                        : option === 'b'
-                          ? 'B'
-                          : option === 'c'
+                <div className='bg-custom-linear p-1 my-4'>
+                  <div className='flex items-center ' key={option}>
+                    <div className='flex w-full relative'>
+                      <textarea
+                        className={`
+                      bg-[#111]
+                       text-white custom-scroll p-2 pr-10   min-h-24   w-full placeholder-slate-400 text-sm  placeholder:text-sm px-2 focus:outline-none focus:ring-8 ring-secundary   resize-none overflow-hidden`}
+                        id={`${option}-${index}`}
+                        type='text'
+                        name={`${option}-${index}`}
+                        value={ask[option]}
+                        maxLength={120}
+                        style={{
+                          // Ajusta este valor según la altura del textarea
+                          lineHeight: '1.2', // Ajusta la altura de línea para el texto
+                        }}
+                        placeholder={`Añadir respuesta ${
+                          option === 'a'
+                            ? 'A'
+                            : option === 'b'
+                            ? 'B'
+                            : option === 'c'
                             ? 'C (opcional)'
                             : 'D (opcional)'
                         }`}
-                      onChange={(e) =>
-                        handleAskChange(index, option, e.target.value)
-                      }
-                      onInput={handleAutoResize}
-                    />{' '}
-                    {ask[option] && (
-                      <input
-                        className='absolute transition duration-700 ease-in-out  hover:scale-150 right-0 top-1/2 transform -translate-y-1/2 -mt-1 mx-1 h-8 w-8 checkBox'
-                        type='checkbox'
-                        checked={ask[`isCorrect${option.toUpperCase()}`]}
                         onChange={(e) =>
-                          handleCorrectAnswerChange(
-                            index,
-                            `isCorrect${option.toUpperCase()}`,
-                            e.target.checked
-                          )
+                          handleAskChange(index, option, e.target.value)
                         }
-                      />
-                    )}
+                        onInput={handleAutoResize}
+                      />{' '}
+                      {ask[option] && (
+                        <input
+                          className='absolute transition duration-700 ease-in-out  hover:scale-150 right-0 top-1/2 transform -translate-y-1/2  mx-2 h-8 w-8 checkBox'
+                          type='checkbox'
+                          checked={ask[`isCorrect${option.toUpperCase()}`]}
+                          onChange={(e) =>
+                            handleCorrectAnswerChange(
+                              index,
+                              `isCorrect${option.toUpperCase()}`,
+                              e.target.checked
+                            )
+                          }
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

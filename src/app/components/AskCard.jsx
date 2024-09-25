@@ -37,14 +37,14 @@ export default function AskCard({ ask, index, onEdit, onDelete }) {
         <div className='flex justify-between mt-2 '>
           <button
             type='button'
-            className='hoverGradiant bg-custom-linear text-black px-4 py-1 rounded-lg shadow hover:transition duration-200'
+            className='hoverGradiant bg-custom-linear font-bold text-black px-4 py-1 rounded-lg shadow hover:transition duration-200'
             onClick={() => onEdit(index)}
           >
             Editar
           </button>
           <button
             type='button'
-            className='hoverGradiant bg-custom-linear text-black px-4 py-1 rounded-lg shadow hover:transition duration-200'
+            className='hoverGradiant bg-custom-linear font-bold text-black px-4 py-1 rounded-lg shadow hover:transition duration-200'
             onClick={() => onDelete(index)}
           >
             Eliminar

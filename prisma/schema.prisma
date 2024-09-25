@@ -46,12 +46,12 @@ model Rankings {
 model Asks {
   id         Int      @id @default(autoincrement())
   gameId     Int
-  ask        String   @db.VarChar(255)
-  a          String   @db.VarChar(255)
-  b          String   @db.VarChar(255)
-  c          String?  @db.VarChar(255)
-  d          String?  @db.VarChar(255)
-  image      String?  @db.VarChar(255)
+  ask        String  @db.VarChar(255)
+  a          String  @db.VarChar(255)
+  b          String  @db.VarChar(255)
+  c          String? @db.VarChar(255)
+  d          String? @db.VarChar(255)
+  image      String? @db.VarChar(255)
   isCorrectA Boolean
   isCorrectB Boolean
   isCorrectC Boolean?

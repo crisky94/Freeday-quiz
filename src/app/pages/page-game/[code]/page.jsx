@@ -193,7 +193,9 @@ export default function GameQuizPage({ params }) {
 
     if (isAnswerSelected) {
       // Desmarcar la respuesta si ya está seleccionada
-      setSelectedAnswers(selectedAnswers.filter(answer => answer !== answerKey));
+      setSelectedAnswers(
+        selectedAnswers.filter((answer) => answer !== answerKey)
+      );
     } else {
       // Marcar la respuesta como seleccionada
       setSelectedAnswers([...selectedAnswers, answerKey]);
@@ -209,18 +211,21 @@ export default function GameQuizPage({ params }) {
     if (isSelectedAnswerCorrect) {
       // Si la respuesta seleccionada es correcta, suma los puntos
       const correctAnswers = [
-        (currentQuestion.isCorrectA ? 'a' : null),
-        (currentQuestion.isCorrectB ? 'b' : null),
-        (currentQuestion.isCorrectC ? 'c' : null),
-        (currentQuestion.isCorrectD ? 'd' : null),
+        currentQuestion.isCorrectA ? 'a' : null,
+        currentQuestion.isCorrectB ? 'b' : null,
+        currentQuestion.isCorrectC ? 'c' : null,
+        currentQuestion.isCorrectD ? 'd' : null,
       ].filter(Boolean);
 
-      const selectedCorrectCount = selectedAnswers.filter(answer => correctAnswers.includes(answer)).length;
+      const selectedCorrectCount = selectedAnswers.filter((answer) =>
+        correctAnswers.includes(answer)
+      ).length;
       const totalCorrectAnswers = correctAnswers.length;
 
       const basePoints = 10;
       const timeBonus = Math.floor(timeLeft / 200); // Bonus de puntos basado en el tiempo restante en milisegundos
-      const totalPoints = (basePoints * (selectedCorrectCount / totalCorrectAnswers)) + timeBonus;
+      const totalPoints =
+        basePoints * (selectedCorrectCount / totalCorrectAnswers) + timeBonus;
 
       const newScore = score + totalPoints;
       setScore(newScore);
@@ -398,8 +403,6 @@ export default function GameQuizPage({ params }) {
           </div>
         </div>
       )}
-
     </div>
-
   );
 }
