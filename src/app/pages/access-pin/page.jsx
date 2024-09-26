@@ -42,8 +42,8 @@ function AccessPin({ gameId }) {
   };
   return (
     <div className='flex flex-col items-center justify-center min-h-screen w-full'>
-      <div className='flex bg-black h-20 text-center items-center mb-12 md:mb-20 lg:mb-20'>
-        <h1 className='text-4xl md:text-6xl lg:text-6xl text-center gradient-text'>¡ Bienvenido/a a FreedayQuiz !</h1>
+      <div className='flex bg-black h-auto text-center items-center mb-12 md:mb-20 lg:mb-20'>
+        <h1 className='text-4xl md:text-6xl lg:text-6xl gradient-text break-words'>¡Bienvenido/a a <span className='uppercase'>FreedayQuiz</span>!</h1>
       </div>
       <div className='bg-custom-linear flex '>
         <div className='flex flex-col p-8 m-1 w-full items-center bg-black '>
