@@ -12,7 +12,7 @@
 }
 
 .card2 {
-  min-height: 300px;
+  min-height: 350px;
   box-sizing: border-box;
   background: #111;
   border-radius: 20px;
@@ -39,7 +39,7 @@
 /* DOTS*/
 .custom-dot {
   background-color: transparent;
-  padding: 1px;
+  padding: 2px;
   cursor: pointer;
 }
 

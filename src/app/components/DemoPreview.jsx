@@ -14,7 +14,6 @@ export default function DemoPreview({ question, timeLeft }) {
             </div>
           )}
         </div>
-
         <section className='grid grid-cols-2 grid-rows-2 gap-1 mx-1 mt-2'>
           {question.a && (
             <div className='bg-red-500 truncate rounded-md p-1'>
@@ -39,7 +38,7 @@ export default function DemoPreview({ question, timeLeft }) {
         </section>
 
         <div className='mt-2'>
-          <p className='text-red-500 font-bold'>{timeLeft / 1000} ⏰</p>
+          <p className='text-red-500 font-bold text-sm'>{timeLeft / 1000} ⏰</p>
         </div>
       </div>
     </div>

@@ -257,7 +257,7 @@ export default function EditGame({ params }) {
 
     socket.emit('updateGame', { formData: updatedFormData, gameId }, (response) => {
       if (response.success) {
-        toast('Juego actualizado con éxito. Redirigiendo a inicio.', {
+        toast('Juego actualizado con éxito. Redirigiendo a inicio. 🚀', {
           position: 'bottom-center',
           autoClose: 1000,
           hideProgressBar: false,
@@ -296,7 +296,7 @@ export default function EditGame({ params }) {
 
   return (
     <form
-      className='flex flex-col items-center w-full  max-w-3xl mx-auto p-4 min-h-screen pt-16'
+      className='flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16'
       onSubmit={(e) => { handleSubmit(e) }}
     >
       <div className='card-body w-full border-2 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-center text-center mx-14 items-center mb-5 py-5 px-5'>
@@ -353,7 +353,7 @@ export default function EditGame({ params }) {
                         id={`${index + 1}`}
                         src={ask.image || ask.previewImage}
                         alt='Preview'
-                        className=' w-80 h-72 object-fit  bg-center rounded-md'
+                        className=' w-80 h-full object-fit bg-center rounded-md'
                       />
                       <button
                         className='button absolute bottom-11 left-5 '
