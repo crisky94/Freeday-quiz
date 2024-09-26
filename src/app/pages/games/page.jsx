@@ -125,7 +125,7 @@ export default function GamesList() {
   return (
     <section>
       {isSignedIn ? (
-        <div className='min-h-screen p-2  '>
+        <div className='min-h-screen p-2'>
           {games.length > 0 ? (
             <>
               <div className='mt-12 mb-2 mx-4'>
@@ -136,7 +136,6 @@ export default function GamesList() {
                 customDot={<CustomDot />}
                 swipeable={true}
                 arrows={true}
-                keyBoardControl={true}
                 removeArrowOnDeviceType={['tablet', 'mobile']}
                 draggable={true}
                 showDots={true}
@@ -185,16 +184,16 @@ export default function GamesList() {
                         <span>Seleccionar</span>
                       </Link>
                       <div
-                        className='w-full h-6 bottom-36 my-14 px-14 pt-2  absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black '
+                        className='w-full h-8 bottom-36 my-16 px-16 pt-6 md:pt-2 lg:pt-2 absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
-                        <p className='rounded-md w-full  text-white border-2 '>
+                        <p className='rounded-md w-full text-white border-2 '>
                           Vista previa
                         </p>
                         {hoveredQuestions[game.id] && (
                           <div className='bg-transparent bg-white'>
-                              <p className='font-bold bg-black text-white'>{`Número de preguntas: `}<span className='text-primary ml-2 text-lg'> {asks.length}</span></p>                  
+                              <p className='font-bold bg-black text-white'>{`Número de preguntas: `}<span className='text-primary ml-2 text-sm md:text-lg lg:text-lg'> {asks.length}</span></p>                  
                             <DemoPreview
                               question={hoveredQuestions[game.id].question}
                               timeLeft={hoveredQuestions[game.id].timeLeft}
@@ -212,7 +211,7 @@ export default function GamesList() {
               <div className='mt-16 mb-4'>
                 <CreateButton />
               </div>
-              <h1 className='font-bold  bg-[#111] text-[#fed500]'>
+              <h1 className='font-bold bg-[#111] text-[#fed500]'>
                 Aún no tienes juegos creados
               </h1>
             </div>
