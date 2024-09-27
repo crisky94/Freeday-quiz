@@ -71,7 +71,7 @@ export default function GamesList() {
       if (response.error) {
         console.error(response.error);
       } else {
-        setAsks(response.game.asks)
+        setAsks(response.game.asks);
         const firstQuestion = response.game.asks[0];
         const timeLeft = firstQuestion.timer * 1000; // Convertir a milisegundos
         setHoveredQuestions((prev) => ({

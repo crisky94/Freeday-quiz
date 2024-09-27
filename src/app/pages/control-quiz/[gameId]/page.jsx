@@ -89,9 +89,9 @@ export default function GameControlPage({ params }) {
     });
     socket.on('resumeGame', () => {
       setTimeout(()=>{
-        setIsPaused(false)
-      }, 3050)
-    })
+        setIsPaused(false);
+      }, 3050);
+    });
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
         setQuestions((prevQuestions) => {

@@ -297,7 +297,7 @@ export default function EditGame({ params }) {
   return (
     <form
       className='flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16'
-      onSubmit={(e) => { handleSubmit(e) }}
+      onSubmit={(e) => { handleSubmit(e);}}
     >
       <div className='card-body w-full border-2 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-center text-center mx-14 items-center mb-5 py-5 px-5'>
         <label
@@ -357,7 +357,7 @@ export default function EditGame({ params }) {
                       />
                       <button
                         className='button absolute bottom-11 left-5 '
-                        onClick={(e) => { handleDeleteImg(e, index) }}
+                        onClick={(e) => { handleDeleteImg(e, index);}}
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
