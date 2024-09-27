@@ -1,5 +1,5 @@
 'use client';
-
+import '@/app/styles/TitleAnimation.css';
 import { useState } from 'react';
 import { useSocket } from '@/context/socketContext';
 import { Flip, ToastContainer, toast } from 'react-toastify';
@@ -42,8 +42,10 @@ function AccessPin({ gameId }) {
   };
   return (
     <div className='flex flex-col items-center justify-center min-h-screen w-full'>
-      <div className='flex bg-black h-auto text-center items-center mb-12 md:mb-20 lg:mb-20'>
-        <h1 className='text-4xl md:text-6xl lg:text-6xl gradient-text break-words'>¡Bienvenido/a a <span className='uppercase'>FreedayQuiz</span>!</h1>
+      <div className='flex w-full h-auto bg-[#111] text-center justify-center items-center mb-32 '>
+        <h1 className='title text-4xl md:text-6xl lg:text-6xl gradient-text font-bold '>
+          ¡Bienvenido/a a <span className='uppercase'>FreedayQuiz</span>!
+        </h1>
       </div>
       <div className='bg-custom-linear flex '>
         <div className='flex flex-col p-8 m-1 w-full items-center bg-black '>
@@ -53,7 +55,7 @@ function AccessPin({ gameId }) {
             placeholder='PIN'
             onChange={handleInputChange}
             name='pin'
-            className='text-black text-center  rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+            className='text-black text-center  rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary focus:border-transparent'
           />
           <ToastContainer />
           <button

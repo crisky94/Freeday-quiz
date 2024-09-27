@@ -94,11 +94,11 @@ export default function EditGame({ params }) {
           ...newAsks[index],
           previewImage: imageUrl,
           selectedFile: file,
-          image: imageUrl // Asegúrate de que `image` se actualice aquí si es necesario
+          image: imageUrl, // Asegúrate de que `image` se actualice aquí si es necesario
         };
         return {
           ...prevData,
-          asks: newAsks
+          asks: newAsks,
         };
       });
     } else {
@@ -133,10 +133,9 @@ export default function EditGame({ params }) {
     setFormData((prevData) => {
       const newAsks = [...prevData.asks];
       newAsks[index].image = null; // Elimina la imagen
-      newAsks[index].previewImage = null; // Elimina el archivo     
+      newAsks[index].previewImage = null; // Elimina el archivo
       return { ...prevData, asks: newAsks };
     });
-
   };
 
   const handleAskChange = useCallback((index, field, value) => {
@@ -166,7 +165,18 @@ export default function EditGame({ params }) {
       ...prevData,
       asks: [
         ...prevData.asks,
-        { ask: '', a: '', b: '', c: '', d: '', answer: '', timer: 5, image: null, previewImage: null, selectedFile: null },
+        {
+          ask: '',
+          a: '',
+          b: '',
+          c: '',
+          d: '',
+          answer: '',
+          timer: 5,
+          image: null,
+          previewImage: null,
+          selectedFile: null,
+        },
       ],
     }));
   };
@@ -187,7 +197,6 @@ export default function EditGame({ params }) {
       }
     });
   };
-
 
   const handleRemoveNewQuestion = (index) => {
     setFormData((prevData) => ({
@@ -210,11 +219,22 @@ export default function EditGame({ params }) {
         hasErrors = true;
       }
       if (!ask.a.trim() || !ask.b.trim()) {
-        toast.error(`Las respuestas A y B para la pregunta ${index + 1} son requeridas.`);
+        toast.error(
+          `Las respuestas A y B para la pregunta ${index + 1} son requeridas.`
+        );
         hasErrors = true;
       }
-      if (!ask.isCorrectA && !ask.isCorrectB && !ask.isCorrectC && !ask.isCorrectD) {
-        toast.error(`Selecciona al menos una respuesta correcta para la pregunta ${index + 1}.`);
+      if (
+        !ask.isCorrectA &&
+        !ask.isCorrectB &&
+        !ask.isCorrectC &&
+        !ask.isCorrectD
+      ) {
+        toast.error(
+          `Selecciona al menos una respuesta correcta para la pregunta ${
+            index + 1
+          }.`
+        );
         hasErrors = true;
       }
       if (ask.timer < 3 || ask.timer > 50) {
@@ -243,7 +263,6 @@ export default function EditGame({ params }) {
             return { ...ask, image: imageUrl };
           } catch (error) {
             console.log(error);
-
           }
         }
         return ask;
@@ -255,37 +274,40 @@ export default function EditGame({ params }) {
       asks: asksWithImages,
     };
 
-    socket.emit('updateGame', { formData: updatedFormData, gameId }, (response) => {
-      if (response.success) {
-        toast('Juego actualizado con éxito. Redirigiendo a inicio. 🚀', {
-          position: 'bottom-center',
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light',
-          transition: Flip,
-          onClose: () => {
-            router.push('/');
-          }
-        });
-
-      } else {
-        toast.error(response.error, {
-          position: 'bottom-center',
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light',
-          transition: Flip,
-        });
+    socket.emit(
+      'updateGame',
+      { formData: updatedFormData, gameId },
+      (response) => {
+        if (response.success) {
+          toast('Juego actualizado con éxito. Redirigiendo a inicio. 🚀', {
+            position: 'bottom-center',
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Flip,
+            onClose: () => {
+              router.push('/');
+            },
+          });
+        } else {
+          toast.error(response.error, {
+            position: 'bottom-center',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Flip,
+          });
+        }
       }
-    });
+    );
   };
 
   const handleAutoResize = (e) => {
@@ -297,7 +319,9 @@ export default function EditGame({ params }) {
   return (
     <form
       className='flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16'
-      onSubmit={(e) => { handleSubmit(e) }}
+      onSubmit={(e) => {
+        handleSubmit(e);
+      }}
     >
       <div className='card-body w-full border-2 border-l-yellow-200 border-r-green-200 border-t-cyan-200 border-b-orange-200 bg-[#111] rounded-md flex flex-col justify-center text-center mx-14 items-center mb-5 py-5 px-5'>
         <label
@@ -343,21 +367,24 @@ export default function EditGame({ params }) {
               >
                 Pregunta {index + 1}:
               </label>
-              <div key={index} className='w-full h-80 my-2 rounded-md  flex justify-center items-center'>
-                <div className='flex flex-col items-center rounded-md justify-center drop w-96 h-full'>
+              <div
+                key={index}
+                className='w-full h-80 my-2 rounded-md  flex justify-center items-center'
+              >
+                <div className='flex flex-col items-center rounded-md justify-center drop w-96 h-72'>
                   {ask.image || ask.previewImage ? (
                     <div key={index} className='h-full relative w-full'>
                       <img
-                        width={100}
-                        height={100}
                         id={`${index + 1}`}
                         src={ask.image || ask.previewImage}
                         alt='Preview'
-                        className=' w-80 h-full object-fit bg-center rounded-md'
+                        className=' w-full h-full object-fit bg-center rounded-md'
                       />
                       <button
                         className='button absolute bottom-11 left-5 '
-                        onClick={(e) => { handleDeleteImg(e, index) }}
+                        onClick={(e) => {
+                          handleDeleteImg(e, index);
+                        }}
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
@@ -402,12 +429,16 @@ export default function EditGame({ params }) {
 
                     // Si no hay imagen cargada, mostrar el mensaje y el botón
                     <>
-                      <p className='text-white font-bold'>Selecciona una imagen</p>
+                      <p className='text-white font-bold'>
+                        Selecciona una imagen
+                      </p>
                       <button
                         title='Add New'
                         type='button'
                         className='group cursor-pointer outline-none hover:rotate-90 duration-300'
-                        onClick={() => document.getElementById(`imageInput${index}`).click()} // Simular el click en el input oculto
+                        onClick={() =>
+                          document.getElementById(`imageInput${index}`).click()
+                        } // Simular el click en el input oculto
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'

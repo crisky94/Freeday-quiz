@@ -138,12 +138,12 @@ const PinPage = () => {
         theme='light'
       />
       <h1
-        className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-primary text-center bg-hackBlack bg-opacity-90 p-2`}
+        className={`${montserrat.className} text-2xl sm:text-4xl uppercase font-bold text-primary text-center bg-[#111] p-2`}
       >
         {game.nameGame}
       </h1>
       <p
-        className={`${montserrat.className} text-sm sm:text-base md:text-lg lg:text-xl uppercase font-bold text-center bg-hackBlack bg-opacity-90 mt-4 break-words w-full max-w-full`}
+        className={`${montserrat.className} text-sm sm:text-base md:text-lg lg:text-xl uppercase font-bold text-center bg-[#111]  mt-4 break-words w-full max-w-full`}
         style={{ wordBreak: 'break-word' }}
       >
         {game.detailGame}
