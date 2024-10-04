@@ -21,7 +21,7 @@ export default function GamesList() {
   const [nickUser, setNickUser] = useState(''); // Estado para almacenar el nombre del usuario creador.
   const { user, isSignedIn } = useUser(); // Obtiene el usuario autenticado del contexto de autenticación.
   const socket = useSocket(); // Obtiene la instancia del socket desde el contexto.
-  const [asks, setAsks] = useState([]); 
+  const [asks, setAsks] = useState([]);
   const [hoveredQuestions, setHoveredQuestions] = useState({}); // Estado para manejar las preguntas que se muestran en la vista previa.
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function GamesList() {
           [gameId]: { question: firstQuestion, timeLeft },
         }));
       }
-    });   
+    });
   };
 
   // Maneja el evento cuando el usuario retira el ratón sobre vista previa.
@@ -125,10 +125,10 @@ export default function GamesList() {
   return (
     <section>
       {isSignedIn ? (
-        <div className='min-h-screen p-2'>
+        <div className='min-h-screen'>
           {games.length > 0 ? (
             <>
-              <div className='mt-12 mb-2 mx-4'>
+              <div className='mt-12 mx-4'>
                 <CreateButton />
               </div>
               <Carousel
@@ -139,14 +139,15 @@ export default function GamesList() {
                 removeArrowOnDeviceType={['tablet', 'mobile']}
                 draggable={true}
                 showDots={true}
+                className=' py-8 px-1'
               >
                 {games.map((game) => (
                   <div
                     key={game.id}
-                    className='card m-1 w-auto rounded-md min-h-72 justify-center items-center text-center  sm:mt-20 shadow-xl p-1 transition-all'
+                    className='bg-custom-linear m-1 w-auto  min-h-72 justify-center items-center text-center  sm:mt-20 shadow-xl p-1 transition-all'
                   >
                     <div className='flex flex-col  card2 text-white min-h-72 items-center justify-center md:gap-2 md:min-w-40 bg-[#111] w-auto'>
-                      <h2 className='truncate card-title  font-bold text-xl text-center justify-center uppercase border-b border-b-white w-full'>
+                      <h2 className='truncate card-title  font-bold text-xl text-center justify-center uppercase  w-full'>
                         {`${game.nameGame}`}
                       </h2>
                       <div className='text-xs p-4 pb-14 text-slate-300 '>
@@ -184,7 +185,7 @@ export default function GamesList() {
                         <span>Seleccionar</span>
                       </Link>
                       <div
-                        className='w-full h-8 bottom-36 my-16 px-16 pt-6 md:pt-2 lg:pt-2 absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black'
+                        className='w-full h-8 bottom-36 my-16 px-4 pt-6 md:pt-2 lg:pt-2 absolute transition duration-700 ease-in-out transform hover:scale-105 cursor-pointer text-xs text-black'
                         onMouseEnter={() => handleMouseEnter(game.id)}
                         onMouseLeave={() => handleMouseLeave(game.id)}
                       >
@@ -193,7 +194,13 @@ export default function GamesList() {
                         </p>
                         {hoveredQuestions[game.id] && (
                           <div className='bg-transparent bg-white'>
-                              <p className='font-bold bg-black text-white'>{`Número de preguntas: `}<span className='text-primary ml-2 text-sm md:text-lg lg:text-lg'> {asks.length}</span></p>                  
+                            <p className='font-bold bg-black text-white'>
+                              {`Número de preguntas: `}
+                              <span className='text-primary ml-2 text-sm md:text-lg lg:text-lg'>
+                                {' '}
+                                {asks.length}
+                              </span>
+                            </p>
                             <DemoPreview
                               question={hoveredQuestions[game.id].question}
                               timeLeft={hoveredQuestions[game.id].timeLeft}

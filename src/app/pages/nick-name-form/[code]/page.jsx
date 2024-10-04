@@ -28,21 +28,21 @@ const NickNameForm = ({ params }) => {
       setIsModalOpen(true);
     });
     // Escucha el evento de éxito al unirse a una sala.
-    socket.on('joinSuccess', () => {   
-        toast('Ingresando a la sala de espera ⏳', {
-          position: 'bottom-center',
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light',
-          transition: Flip,
-          onClose: () => {
-          router.push(`/pages/waiting-room/${code}`);  
-          }
-        });
+    socket.on('joinSuccess', () => {
+      toast('Ingresando a la sala de espera ⏳', {
+        position: 'bottom-center',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+        transition: Flip,
+        onClose: () => {
+          router.push(`/pages/waiting-room/${code}`);
+        },
+      });
     });
     return () => {
       socket.off('nicknameConflict');
@@ -77,15 +77,14 @@ const NickNameForm = ({ params }) => {
   // Función para manejar el reemplazo de un nickname en conflicto.
   const handleReplaceNickname = () => {
     setIsModalOpen(true);
-    if(socket){
+    if (socket) {
       socket.emit('replaceNickname', {
-      nickname: pendingNickname,
-      code,
-      avatar: selectedAvatar,
-    });
+        nickname: pendingNickname,
+        code,
+        avatar: selectedAvatar,
+      });
       setIsModalOpen(false);
     }
-    
   };
 
   const handleSubmit = (e) => {
@@ -99,15 +98,17 @@ const NickNameForm = ({ params }) => {
 
   return (
     <div className='h-screen w-full flex items-center justify-center'>
-      <ToastContainer/>
+      <ToastContainer />
       <div className='bg-custom-linear p-1'>
         <form
           className='bg-black flex flex-col gap-5 w-72 justify-center text-center p-10 items-center shadow-xl rounded-md text-slate-700'
           onSubmit={handleSubmit}
         >
-          <label className='text-white text-xl uppercase'>Introduce tu nickname</label>
+          <label className='text-white text-xl uppercase'>
+            Introduce tu nickname
+          </label>
           <input
-            className='text-black w-52 text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+            className='text-black w-52 text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary focus:border-transparent'
             type='text'
             placeholder='NICKNAME'
             value={nickname}
