@@ -76,6 +76,7 @@ export default function CreateGame() {
   }, [nameGame, currentAsk, timer, detailGame]);
 
   const handleInputChange = (index, value) => {
+    value.trimStart()
     const newAnswers = [...answers];
     newAnswers[index] = value;
     setAnswers(newAnswers);
@@ -400,7 +401,7 @@ export default function CreateGame() {
           placeholder='Coloca un título'
           className=' text-center truncate p-2 md:mx-28   text-md placeholder-slate-500 uppercase rounded-md h-12 w-2/3 mx-5   text-black font-bold focus:outline-none focus:ring-2 ring-secundary'
           type='text'
-          value={nameGame}
+          value={nameGame.trimStart()}
           onChange={(e) => setNameGame(e.target.value)}
         />
       </div>
@@ -410,7 +411,7 @@ export default function CreateGame() {
             maxLength={150}
             placeholder='Escribe tu pregunta'
             className=' text-center resize-none px-1 py-4 text-md uppercase rounded-md mt-4 h-14 max-h-24 m-5 w-full text-black  focus:outline-none focus:ring-2 ring-secundary placeholder-slate-500 custom-scroll'
-            value={currentAsk}
+            value={currentAsk.trimStart()}
             onChange={(e) => setCurrentAsk(e.target.value)}
           />
         </div>

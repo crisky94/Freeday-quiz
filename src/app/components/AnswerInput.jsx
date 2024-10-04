@@ -31,7 +31,7 @@ export default function AnswerInput({
           placeholder={placeholderText}
           className='h-20  w-full px-1 resize-none overflow-hidden bg-transparent border-none placeholder-slate-400 focus:outline-none text-white custom-scroll'
           value={answer}
-          onChange={(e) => onChange(index, e.target.value)}
+          onChange={(e) => onChange(index, e.target.value.trimStart())}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           style={{

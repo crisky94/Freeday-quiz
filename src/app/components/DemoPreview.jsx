@@ -5,8 +5,9 @@ export default function DemoPreview({ question, timeLeft }) {
         <h2 className='font-bold truncate p-1'>{question.ask}</h2>
         <div className="flex justify-center">
           {question.image && (
-            <div className='w-12 h-12'>
+            <div>
               <img
+                width={30}
                 src={question.image}
                 alt={`Imagen de la pregunta`}
                 className='rounded-md'

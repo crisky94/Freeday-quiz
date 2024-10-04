@@ -311,7 +311,7 @@ export default function EditGame({ params }) {
           type='text'
           id='gameName'
           name='gameName'
-          value={formData.gameName}
+          value={formData.gameName.trimStart()}
           onChange={handleChange}
         />
         <label
@@ -324,7 +324,7 @@ export default function EditGame({ params }) {
           className='text-black text-center rounded-md placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary mb-4 w-full resize-none overflow-hidden'
           id='gameDetail'
           name='gameDetail'
-          value={formData.gameDetail}
+          value={formData.gameDetail.trimStart()}
           onChange={handleChange}
           onInput={handleAutoResize}
           maxLength={250}
@@ -443,7 +443,7 @@ export default function EditGame({ params }) {
                 id={`ask-${index}`}
                 name={`ask-${index}`}
                 value={ask.ask}
-                onChange={(e) => handleAskChange(index, 'ask', e.target.value)}
+                onChange={(e) => handleAskChange(index, 'ask', e.target.value.trimStart())}
                 onInput={handleAutoResize}
                 maxLength={150}
                 placeholder='Escribe tu pregunta'
@@ -461,7 +461,7 @@ export default function EditGame({ params }) {
                         id={`${option}-${index}`}
                         type='text'
                         name={`${option}-${index}`}
-                        value={ask[option]}
+                        value={ask[option].trimStart()}
                         maxLength={120}
                         style={{
                           // Ajusta este valor según la altura del textarea
@@ -477,7 +477,7 @@ export default function EditGame({ params }) {
                             : 'D (opcional)'
                         }`}
                         onChange={(e) =>
-                          handleAskChange(index, option, e.target.value)
+                          handleAskChange(index, option, e.target.value.trimStart())
                         }
                         onInput={handleAutoResize}
                       />{' '}
