@@ -8,7 +8,7 @@ export default function DemoPreview({ question, timeLeft }) {
             <img
               src={question.image}
               alt={`Imagen de la pregunta`}
-              className='rounded-md w-28'
+              className='rounded-md w-28 h-24'
             />
           )}
         </div>
