@@ -25,7 +25,6 @@ export default function GameQuizPage({ params }) {
   const [isPaused, setIsPaused] = useState(false); // Estado para pausar el juego
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('info');
-  const [hasAnswered, setHasAnswered] = useState(false);
   const socket = useSocket(); // Obtener instancia del socket
   const code = parseInt(params.code); // Código del juego tomado de los parámetros
   const router = useRouter();
@@ -103,7 +102,7 @@ export default function GameQuizPage({ params }) {
           autoClose: 2000,
           onClose: () => {
             setIsPaused(false);
-          },
+          }
         });
       });
 
@@ -223,6 +222,7 @@ export default function GameQuizPage({ params }) {
       ).length;
       const totalCorrectAnswers = correctAnswers.length;
 
+
       const basePoints = 5;
       const maxTimeBonus = 10; // Límite máximo de puntos por tiempo
       const timeBonus = Math.min(Math.floor(timeLeft / 200), maxTimeBonus);
@@ -238,7 +238,6 @@ export default function GameQuizPage({ params }) {
       // Si la respuesta seleccionada es incorrecta, no suma puntos
       await insertPlayer(gameId, playerName, 0); // Inserta cero puntos si la respuesta es incorrecta
     }
-    setHasAnswered(true);
   };
 
   // Inserta la puntuación del jugador en el servidor
@@ -268,18 +267,13 @@ export default function GameQuizPage({ params }) {
       moveToNextQuestion();
     }, 1000);
   };
-  const handleNextQuestion = () => {
-    handleTimeUp(); // Llama a handleTimeUp para mostrar la respuesta y luego pasar a la siguiente pregunta
-  };
 
   // Mueve a la siguiente pregunta o finaliza el juego si no hay más preguntas
-  const moveToNextQuestion = async () => {
+  const moveToNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex < questions.length) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
-      // await handleTimeUp();
-      setHasAnswered(false);
     } else {
       socket.emit('stopGame');
       router.push(`/pages/ranking/${code}`);
@@ -348,33 +342,21 @@ export default function GameQuizPage({ params }) {
       />
       <ToastContainer />
       {isPaused && (
-        <div className='fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50'>
-          <div className='text-white flex flex-col items-center'>
-            <FaPause className='text-6xl mb-4' />
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+          <div className="text-white flex flex-col items-center">
+            <FaPause className="text-6xl mb-4" />
           </div>
         </div>
       )}
 
       {currentQuestion && (
-        <div
-          className={`flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen ${
-            isPaused ? 'blur-md' : ''
-          }`}
-        >
+        <div className={`flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen ${isPaused ? 'blur-md' : ''}`}>
           <div
             key={currentQuestion.id}
             className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
           >
-            {hasAnswered && (
-              <button
-                onClick={handleNextQuestion}
-                className='m-1 mb-4 p-2 border-2 border-white hover:text-secundary hover:border-secundary bg-black text-white h-14 w-14 text-4xl font-bold  rounded-full'
-              >
-                ➡
-              </button>
-            )}
             <div className='flex flex-col items-center justify-center'>
-              <p className='text-red-600 text-4xl  font-bold border-b-2 mb-1 border-b-red-600 w-20 text-center'>
+              <p className='text-red-600 text-4xl mt-5 font-bold border-b-2 mb-4 border-b-red-600 w-20 text-center'>
                 {typeof timeLeft === 'number' ? formatTime(timeLeft) : timeLeft}
               </p>
             </div>
@@ -382,73 +364,43 @@ export default function GameQuizPage({ params }) {
               {`${currentQuestionIndex + 1}. ${currentQuestion.ask}`}
             </p>
             {currentQuestion.image && (
-              <div className='w-full min-h-72 max-w-[400px] rounded-md flex justify-center drop '>
+              <div className='w-full min-h-68 max-w-[200px] md:max-w-[300px] lg:max-w-[300px] rounded-md flex justify-center drop '>
                 <img
                   src={currentQuestion.image}
                   alt={`Imagen de la pregunta ${currentQuestionIndex + 1}`}
-                  className='w-full max-h-96 rounded-md'
+                  className='w-full h-auto rounded-md'
                 />
               </div>
             )}
-            <div
-              className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${
-                currentQuestion.c && currentQuestion.d
-                  ? 'grid-cols-1'
-                  : 'grid-cols-1'
-              }`}
-            >
-              <div className='bg-custom-linear p-1'>
-                <div
-                  onClick={() => handleAnswerClick('a')}
-                  className={` p-4 cursor-pointer w-full h-full bg-[#111] ${getButtonClass(
-                    'a'
-                  )} text-center overflow-wrap break-word text-sm sm:text-base`}
-                >
-                  {currentQuestion.a}
-                </div>
+            <div className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : 'grid-cols-1'}`}>
+              <div
+                onClick={() => handleAnswerClick('a')}
+                className={`text-black border-2 border-black rounded-md p-4 cursor-pointer w-full bg-white ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}
+              >
+                {currentQuestion.a}
               </div>
-
-              <div className='bg-custom-linear p-1'>
-                <div
-                  onClick={() => handleAnswerClick('b')}
-                  className={` p-4 cursor-pointer w-full h-full bg-[#111] ${getButtonClass(
-                    'b'
-                  )} text-center overflow-wrap break-word text-sm sm:text-base  ${
-                    currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''
-                  }`}
-                >
-                  {currentQuestion.b}
-                </div>
+              <div
+                onClick={() => handleAnswerClick('b')}
+                className={`text-black border-2 border-black rounded-md p-4 cursor-pointer w-full bg-white ${getButtonClass('b')} text-center overflow-wrap break-word text-sm sm:text-base  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''}`}
+              >
+                {currentQuestion.b}
               </div>
-
               {currentQuestion.c && (
-                <div className='bg-custom-linear p-1 '>
-                  <div
-                    onClick={() => handleAnswerClick('c')}
-                    className={` p-4 cursor-pointer bg-[#111] col-span-1 w-full   h-full ${getButtonClass(
-                      'c'
-                    )} text-center overflow-wrap break-word text-sm sm:text-base ${
-                      !currentQuestion.d
-                        ? 'col-span-1 md:col-span-2 justify-self-center'
-                        : ''
+                <div
+                  onClick={() => handleAnswerClick('c')}
+                  className={`text-black border-2 border-black rounded-md p-4 cursor-pointer bg-white col-span-1 w-full ${getButtonClass('c')} text-center overflow-wrap break-word text-sm sm:text-base ${!currentQuestion.d ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]' : ''
                     }`}
-                  >
-                    {currentQuestion.c}
-                  </div>
+                >
+                  {currentQuestion.c}
                 </div>
               )}
               {currentQuestion.d && (
-                <div className='bg-custom-linear p-1'>
-                  <div
-                    onClick={() => handleAnswerClick('d')}
-                    className={` p-4 cursor-pointer bg-[#111] w-full h-full  ${getButtonClass(
-                      'd'
-                    )} text-center overflow-wrap break-word text-sm sm:text-base ${
-                      !currentQuestion.c ? 'col-span-2' : ''
+                <div
+                  onClick={() => handleAnswerClick('d')}
+                  className={`text-black border-2 border-black rounded-md p-4 cursor-pointer bg-white ${getButtonClass('d')} text-center overflow-wrap break-word text-sm sm:text-base ${!currentQuestion.c ? 'col-span-2' : ''
                     }`}
-                  >
-                    {currentQuestion.d}
-                  </div>
+                >
+                  {currentQuestion.d}
                 </div>
               )}
             </div>

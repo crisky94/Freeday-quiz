@@ -193,7 +193,7 @@ export default function GamesList() {
                           Vista previa
                         </p>
                         {hoveredQuestions[game.id] && (
-                          <div className='bg-transparent bg-white'>
+                          <div className=' bg-black'>
                             <p className='font-bold bg-black text-white'>
                               {`Número de preguntas: `}
                               <span className='text-primary ml-2 text-sm md:text-lg lg:text-lg'>
