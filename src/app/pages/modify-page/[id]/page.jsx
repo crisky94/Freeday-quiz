@@ -318,7 +318,7 @@ export default function EditGame({ params }) {
 
   return (
     <form
-      className='flex flex-col items-center w-full max-w-3xl mx-auto p-4 min-h-screen pt-16'
+      className='flex flex-col items-center w-full  mx-auto p-4 h-full  pt-16'
       onSubmit={(e) => {
         handleSubmit(e);
       }}
@@ -474,7 +474,9 @@ export default function EditGame({ params }) {
                 id={`ask-${index}`}
                 name={`ask-${index}`}
                 value={ask.ask}
-                onChange={(e) => handleAskChange(index, 'ask', e.target.value.trimStart())}
+                onChange={(e) =>
+                  handleAskChange(index, 'ask', e.target.value.trimStart())
+                }
                 onInput={handleAutoResize}
                 maxLength={150}
                 placeholder='Escribe tu pregunta'
@@ -508,7 +510,11 @@ export default function EditGame({ params }) {
                             : 'D (opcional)'
                         }`}
                         onChange={(e) =>
-                          handleAskChange(index, option, e.target.value.trimStart())
+                          handleAskChange(
+                            index,
+                            option,
+                            e.target.value.trimStart()
+                          )
                         }
                         onInput={handleAutoResize}
                       />{' '}
