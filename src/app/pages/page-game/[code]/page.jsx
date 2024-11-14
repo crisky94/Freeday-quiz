@@ -102,7 +102,7 @@ export default function GameQuizPage({ params }) {
           autoClose: 2000,
           onClose: () => {
             setIsPaused(false);
-          }
+          },
         });
       });
 
@@ -221,7 +221,6 @@ export default function GameQuizPage({ params }) {
         correctAnswers.includes(answer)
       ).length;
       const totalCorrectAnswers = correctAnswers.length;
-
 
       const basePoints = 5;
       const maxTimeBonus = 10; // Límite máximo de puntos por tiempo
@@ -342,15 +341,19 @@ export default function GameQuizPage({ params }) {
       />
       <ToastContainer />
       {isPaused && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-          <div className="text-white flex flex-col items-center">
-            <FaPause className="text-6xl mb-4" />
+        <div className='fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50'>
+          <div className='text-white flex flex-col items-center'>
+            <FaPause className='text-6xl mb-4' />
           </div>
         </div>
       )}
 
       {currentQuestion && (
-        <div className={`flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen ${isPaused ? 'blur-md' : ''}`}>
+        <div
+          className={`flex flex-col items-center rounded-md mt-20 bg-[#111] max-w-2xl w-full p-1 bg-custom-linear min-w-screen ${
+            isPaused ? 'blur-md' : ''
+          }`}
+        >
           <div
             key={currentQuestion.id}
             className='game flex flex-col justify-center items-center mb-5 py-5 w-full p-5 bg-[#111]'
@@ -364,7 +367,7 @@ export default function GameQuizPage({ params }) {
               {`${currentQuestionIndex + 1}. ${currentQuestion.ask}`}
             </p>
             {currentQuestion.image && (
-              <div className='w-full min-h-68 max-w-[200px] md:max-w-[300px] lg:max-w-[300px] rounded-md flex justify-center drop '>
+              <div className='w-full min-h-64 max-w-[400px] md:max-w-[300px] lg:max-w-[300px] rounded-md flex justify-center drop '>
                 <img
                   src={currentQuestion.image}
                   alt={`Imagen de la pregunta ${currentQuestionIndex + 1}`}
@@ -372,24 +375,41 @@ export default function GameQuizPage({ params }) {
                 />
               </div>
             )}
-            <div className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : 'grid-cols-1'}`}>
+            <div
+              className={`grid gap-5 w-full py-4 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1  ${
+                currentQuestion.c && currentQuestion.d
+                  ? 'grid-cols-1'
+                  : 'grid-cols-1'
+              }`}
+            >
               <div
                 onClick={() => handleAnswerClick('a')}
-                className={`text-black border-2 border-black rounded-md p-4 cursor-pointer w-full bg-white ${getButtonClass('a')} text-center overflow-wrap break-word text-sm sm:text-base`}
+                className={`text-black border-2 border-black rounded-md p-4 cursor-pointer w-full bg-white ${getButtonClass(
+                  'a'
+                )} text-center overflow-wrap break-word text-sm sm:text-base`}
               >
                 {currentQuestion.a}
               </div>
               <div
                 onClick={() => handleAnswerClick('b')}
-                className={`text-black border-2 border-black rounded-md p-4 cursor-pointer w-full bg-white ${getButtonClass('b')} text-center overflow-wrap break-word text-sm sm:text-base  ${currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''}`}
+                className={`text-black border-2 border-black rounded-md p-4 cursor-pointer w-full bg-white ${getButtonClass(
+                  'b'
+                )} text-center overflow-wrap break-word text-sm sm:text-base  ${
+                  currentQuestion.c && currentQuestion.d ? 'grid-cols-1' : ''
+                }`}
               >
                 {currentQuestion.b}
               </div>
               {currentQuestion.c && (
                 <div
                   onClick={() => handleAnswerClick('c')}
-                  className={`text-black border-2 border-black rounded-md p-4 cursor-pointer bg-white col-span-1 w-full ${getButtonClass('c')} text-center overflow-wrap break-word text-sm sm:text-base ${!currentQuestion.d ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]' : ''
-                    }`}
+                  className={`text-black border-2 border-black rounded-md p-4 cursor-pointer bg-white col-span-1 w-full ${getButtonClass(
+                    'c'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base ${
+                    !currentQuestion.d
+                      ? 'col-span-1 md:col-span-2 justify-self-center md:w-[308px]'
+                      : ''
+                  }`}
                 >
                   {currentQuestion.c}
                 </div>
@@ -397,8 +417,11 @@ export default function GameQuizPage({ params }) {
               {currentQuestion.d && (
                 <div
                   onClick={() => handleAnswerClick('d')}
-                  className={`text-black border-2 border-black rounded-md p-4 cursor-pointer bg-white ${getButtonClass('d')} text-center overflow-wrap break-word text-sm sm:text-base ${!currentQuestion.c ? 'col-span-2' : ''
-                    }`}
+                  className={`text-black border-2 border-black rounded-md p-4 cursor-pointer bg-white ${getButtonClass(
+                    'd'
+                  )} text-center overflow-wrap break-word text-sm sm:text-base ${
+                    !currentQuestion.c ? 'col-span-2' : ''
+                  }`}
                 >
                   {currentQuestion.d}
                 </div>

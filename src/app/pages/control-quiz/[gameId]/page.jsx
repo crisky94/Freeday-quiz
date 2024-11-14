@@ -294,10 +294,10 @@ export default function GameControlPage({ params }) {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className='flex flex-col items-center justify-center h-full w-full pt-8'>
+    <div className='flex flex-col items-center justify-center h-full w-full pt-12 '>
       <div className=' flex '>
-        <div className='flex flex-col p-8  h-screen w-screen items-center bg-[#111] gap-5'>
-          <h1 className='uppercase font-bold text-2xl text-center'>
+        <div className='flex flex-col px-2   h-screen w-screen items-center bg-[#111] gap-5'>
+          <h1 className='uppercase font-bold text-2xl text-center '>
             Sala de control del juego
           </h1>
           <div className='text-[#1cffe4] font-bold uppercase'>{message}</div>

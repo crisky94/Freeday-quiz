@@ -112,7 +112,7 @@ const NickNameForm = ({ params }) => {
             type='text'
             placeholder='NICKNAME'
             value={nickname}
-            maxLength={25}
+            maxLength={20}
             onChange={(e) => {
               const value = e.target.value;
               // Permitir espacios solo después del primer carácter

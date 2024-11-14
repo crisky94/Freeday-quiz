@@ -15,7 +15,7 @@ function RankingPage() {
   const [ranking, setRanking] = useState([]);
   const [socketId, setSocketId] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const socket = useSocket();// Obtiene la instancia del socket desde el contexto
+  const socket = useSocket(); // Obtiene la instancia del socket desde el contexto
 
   useEffect(() => {
     // Verifica si el socket está disponible
@@ -99,30 +99,35 @@ function RankingPage() {
                 .map((player, index) => (
                   <tr
                     key={index}
-                    className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'
-                      } bg-opacity-40 rounded-md mb-1`}
+                    className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${
+                      player.socketId === socketId
+                        ? 'bg-yellow-200'
+                        : 'bg-white'
+                    } bg-opacity-40 rounded-md mb-1`}
                   >
-                    <td className='flex items-center'>
-                      {index === 0 && (
-                        <Image src='/corona1.png' width={30} height={30} />
-                      )}
-                      {index === 1 && (
-                        <Image src='/corona2.png' width={30} height={30} />
-                      )}
-                      {index === 2 && (
-                        <Image src='/corona3.png' width={30} height={30} />
-                      )}
+                    <td className='flex items-center justify-between '>
                       <div
-                        className='border-2 border-white rounded-full ml-2 mr-6'
+                        className='border-2 border-white rounded-full '
                         dangerouslySetInnerHTML={{ __html: player.avatar }}
                       />
-                      <span className='font-semibold text-lg'>
+                      <span className='font-semibold text-md'>
                         {player.playerName}
                       </span>
                     </td>
-                    <td className='text-right font-bold text-yellow-500 text-lg md:text-sm mr-2'>
-                      {player.score}px
-                    </td>
+                    <div className='flex flex-col items-center'>
+                      {index === 0 && (
+                        <Image src='/corona1.png' width={25} height={25} />
+                      )}
+                      {index === 1 && (
+                        <Image src='/corona2.png' width={20} height={20} />
+                      )}
+                      {index === 2 && (
+                        <Image src='/corona3.png' width={20} height={20} />
+                      )}
+                      <td className='text-right font-bold text-secundary text-md '>
+                        {player.score}px
+                      </td>
+                    </div>
                   </tr>
                 ))}
             </tbody>
@@ -132,7 +137,6 @@ function RankingPage() {
       </div>
     </>
   );
-
 }
 
 export default RankingPage;
