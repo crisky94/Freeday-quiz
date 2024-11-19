@@ -128,7 +128,7 @@ export default function GamesList() {
         <div className='min-h-screen'>
           {games.length > 0 ? (
             <>
-              <div className='mt-12 mx-4'>
+              <div className='mt-12 mx-4  '>
                 <CreateButton />
               </div>
               <Carousel
@@ -139,7 +139,7 @@ export default function GamesList() {
                 removeArrowOnDeviceType={['tablet', 'mobile']}
                 draggable={true}
                 showDots={true}
-                className=' py-8 px-1'
+                className=' py-14'
               >
                 {games.map((game) => (
                   <div
