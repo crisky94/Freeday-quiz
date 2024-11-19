@@ -76,7 +76,7 @@ export default function CreateGame() {
   }, [nameGame, currentAsk, timer, detailGame]);
 
   const handleInputChange = (index, value) => {
-    value.trimStart()
+    value.trimStart();
     const newAnswers = [...answers];
     newAnswers[index] = value;
     setAnswers(newAnswers);
