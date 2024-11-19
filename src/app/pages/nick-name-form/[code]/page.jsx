@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import AvatarModal from '../../../components/AvatarModal';
 import { useAvatar } from '../../../../context/avatarContext';
 import { useSocket } from '@/context/socketContext';
-import { toast } from 'react-toastify';
+import { toast, Flip, ToastContainer } from 'react-toastify';
 import Image from 'next/image';
 import Loading from '@/app/loading';
 
@@ -29,9 +29,21 @@ const NickNameForm = ({ params }) => {
     });
     // Escucha el evento de éxito al unirse a una sala.
     socket.on('joinSuccess', () => {
-      router.push(`/pages/waiting-room/${code}`);
+      toast('Ingresando a la sala de espera ⏳', {
+        position: 'bottom-center',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+        transition: Flip,
+        onClose: () => {
+          router.push(`/pages/waiting-room/${code}`);
+        },
+      });
     });
-
     return () => {
       socket.off('nicknameConflict');
       socket.off('joinSuccess');
@@ -65,11 +77,14 @@ const NickNameForm = ({ params }) => {
   // Función para manejar el reemplazo de un nickname en conflicto.
   const handleReplaceNickname = () => {
     setIsModalOpen(true);
-    socket.emit('replaceNickname', {
-      nickname: pendingNickname,
-      code,
-      avatar: selectedAvatar,
-    });
+    if (socket) {
+      socket.emit('replaceNickname', {
+        nickname: pendingNickname,
+        code,
+        avatar: selectedAvatar,
+      });
+      setIsModalOpen(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -79,31 +94,30 @@ const NickNameForm = ({ params }) => {
       setPendingNickname(nickname);
       socket.emit('joinRoom', { nickname, code, avatar: selectedAvatar }); // Envía el evento para unirse a la sala.
     }
-
-    if (!nickname && !selectedAvatar) {
-      toast.error('Por favor, ingresa un nickname y selecciona un avatar.', {
-        onClose: () => {
-          window.location.reload();
-        },
-      });
-    }
   };
 
   return (
     <div className='h-screen w-full flex items-center justify-center'>
+      <ToastContainer />
       <div className='bg-custom-linear p-1'>
         <form
           className='bg-black flex flex-col gap-5 w-72 justify-center text-center p-10 items-center shadow-xl rounded-md text-slate-700'
           onSubmit={handleSubmit}
         >
-          <label className='text-white text-xl'>Introduce tu nickname</label>
+          <label className='text-white text-xl uppercase'>
+            Introduce tu nickname
+          </label>
           <input
-            className='text-black w-52 text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+            className='text-black w-52 text-center rounded-md h-10 placeholder:text-center focus:outline-none focus:ring-2 focus:ring-secundary focus:border-transparent'
             type='text'
             placeholder='NICKNAME'
             value={nickname}
-            maxLength={25}
-            onChange={(e) => setNickname(e.target.value)}
+            maxLength={20}
+            onChange={(e) => {
+              const value = e.target.value;
+              // Permitir espacios solo después del primer carácter
+              setNickname(value.charAt(0) === ' ' ? value.trimStart() : value);
+            }}
           />
           {selectedAvatar && (
             <div className='my-4 border-2 rounded-full'>
@@ -136,7 +150,6 @@ const NickNameForm = ({ params }) => {
           </div>
         </form>
       </div>
-
       <AvatarModal
         isOpen={isModalAvatarOpen}
         onRequestClose={handleCloseModal}

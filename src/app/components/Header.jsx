@@ -35,16 +35,16 @@ export default function Header() {
         );
       }
     };
- if(code){
-   socket.emit('getPlayers', { code }, handleGetPlayers);
- }
+    if (code) {
+      socket.emit('getPlayers', { code }, handleGetPlayers);
+    }
     return () => {
       socket.off('getPlayers', handleGetPlayers);
     };
   }, [socket, fetchAvatar, players]);
 
   return (
-    <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 shadow-md shadow-slate-200 z-50 h-32'>
+    <nav className='header fixed top-0 w-full flex justify-between items-center pl-8 pr-8 drop z-50 h-32'>
       <Link href='/'>
         <Image
           src={'/Logotipo_Logotipo.png'}

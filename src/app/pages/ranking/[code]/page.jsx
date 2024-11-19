@@ -15,7 +15,7 @@ function RankingPage() {
   const [ranking, setRanking] = useState([]);
   const [socketId, setSocketId] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const socket = useSocket();// Obtiene la instancia del socket desde el contexto
+  const socket = useSocket(); // Obtiene la instancia del socket desde el contexto
 
   useEffect(() => {
     // Verifica si el socket está disponible
@@ -58,11 +58,11 @@ function RankingPage() {
   if (isLoading) {
     return (
       <>
-        <div className='relative flex flex-col items-center justify-center h-[400px] w-full rounded-lg  text-slate-600 uppercase sm:h-[500px] md:h-[600px] lg:h-[700px] min-h-screen bgroom'>
+        <div className='relative flex flex-col items-center justify-center h-auto min-h-screen w-full rounded-lg text-slate-600 uppercase bgroom'>
           <p className='mb-4 text-center text-lg sm:text-xl md:text-2xl'>
             Haz click en el texto
           </p>
-          <span className='pointer-events-none whitespace-pre-wrap  bg-clip-text text-center text-4xl font-semibold leading-none text-primary sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none '>
+          <span className='pointer-events-none whitespace-pre-wrap bg-clip-text text-center text-4xl font-semibold leading-none text-primary sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl dark:from-white dark:to-slate-900/10 select-none'>
             ¡Juego Completado!
           </span>
           <Confetti
@@ -85,46 +85,54 @@ function RankingPage() {
   // Muestra el ranking si los datos ya han sido enviados por el creador
   return (
     <>
-      <div className='flex flex-col p-2 h-auto items-center  bgroom text-white w-full pt-24 min-h-screen'>
+      <div className='flex flex-col p-2 h-auto items-center bgroom text-white w-full pt-24 min-h-screen'>
         <h1 className='uppercase font-bold text-xl md:text-2xl text-center mb-3'>
           Ranking
         </h1>
-        <table className='w-full text-left'>
-          <tbody className='w-full text-white flex flex-col justify-center items-center'>
-            {ranking
-              .sort((a, b) => b.score - a.score)
-              .slice(0, 8)
-              .map((player, index) => (
-                <tr
-                  key={index}
-                  className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${player.socketId === socketId ? 'bg-yellow-200' : 'bg-white'
+
+        {/* Contenedor con scroll para la tabla */}
+        <div className='w-full max-h-[550px] overflow-y-auto mt-20 mb-20'>
+          <table className='w-full text-left'>
+            <tbody className='w-full text-white flex flex-col justify-center items-center'>
+              {ranking
+                .sort((a, b) => b.score - a.score)
+                .map((player, index) => (
+                  <tr
+                    key={index}
+                    className={`w-full max-w-xs md:max-w-md flex items-center justify-between p-2 ${
+                      player.socketId === socketId
+                        ? 'bg-yellow-200'
+                        : 'bg-white'
                     } bg-opacity-40 rounded-md mb-1`}
-                >
-                  <td className='flex items-center'>
-                    {index === 0 && (
-                      <Image src='/corona1.png' width={20} height={20} />
-                    )}
-                    {index === 1 && (
-                      <Image src='/corona2.png' width={20} height={20} />
-                    )}
-                    {index === 2 && (
-                      <Image src='/corona3.png' width={20} height={20} />
-                    )}
-                    <div
-                      className='border-2 border-white rounded-full ml-2 mr-6'
-                      dangerouslySetInnerHTML={{ __html: player.avatar }}
-                    />
-                    <span className='font-semibold text-lg'>
-                      {player.playerName}
-                    </span>
-                  </td>
-                  <td className='text-right font-bold text-yellow-500 text-lg md:text-sm mr-2'>
-                    {player.score}px
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+                  >
+                    <td className='flex items-center justify-between '>
+                      <div
+                        className='border-2 border-white rounded-full '
+                        dangerouslySetInnerHTML={{ __html: player.avatar }}
+                      />
+                      <span className='font-semibold text-md'>
+                        {player.playerName}
+                      </span>
+                    </td>
+                    <div className='flex flex-col items-center'>
+                      {index === 0 && (
+                        <Image src='/corona1.png' width={25} height={25} />
+                      )}
+                      {index === 1 && (
+                        <Image src='/corona2.png' width={20} height={20} />
+                      )}
+                      {index === 2 && (
+                        <Image src='/corona3.png' width={20} height={20} />
+                      )}
+                      <td className='text-right font-bold text-secundary text-md '>
+                        {player.score}px
+                      </td>
+                    </div>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
         <ToastContainer />
       </div>
     </>

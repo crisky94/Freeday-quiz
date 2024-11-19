@@ -13,9 +13,6 @@ module.exports = {
         hackBlack: '#111111',
         hackYellow: '#d4d703',
       },
-      screens: {
-        max450: { max: '450px' }, // Definir un nuevo breakpoint para pantallas aún más pequeñas
-      },
       backgroundImage: {
         'custom-linear':
           'linear-gradient(90deg, rgba(28, 255, 228, 1) 0%, rgba(252, 255, 0, 1) 100%)',

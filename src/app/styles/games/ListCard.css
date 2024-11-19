@@ -12,10 +12,9 @@
 }
 
 .card2 {
-  min-height: 300px;
+  min-height: 350px;
   box-sizing: border-box;
   background: #111;
-  border-radius: 20px;
   padding: 20px;
   width: 100%;
   display: flex;
@@ -39,16 +38,18 @@
 /* DOTS*/
 .custom-dot {
   background-color: transparent;
-  padding: 5px;
+  padding: 1px 2px;
   cursor: pointer;
 }
 
 .custom-dot .dot {
+  position: absolute top 10px;
   width: 10px;
   height: 10px;
   background-color: var(--bg-dot);
   border-radius: 50%;
   display: inline-block;
+  border: 1px black solid;
 }
 
 .custom-dot--active .dot {

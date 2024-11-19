@@ -130,12 +130,12 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
   //* Obtener jugadores(header-sidebar-waitingRoom-pageGame)
   socket.on('getPlayers', async ({ code }, callback) => {
     try {
-      const game = await prisma.games.findUnique({
+      if (code) {
+          const game = await prisma.games.findUnique({
         where: {
           codeGame: code,
         },
       });
-
       if (game) {
         const players = await prisma.Players.findMany({
           where: {
@@ -153,6 +153,8 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       } else {
         callback({ error: 'Juego no encontrado' });
       }
+      }
+    
     } catch (error) {
       console.error('Error al obtener jugadores:', error);
       callback({ error: 'Error al obtener jugadores' });
@@ -201,12 +203,12 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       });
       const gameId = game.id;
       if (game && game.codeGame === code) {
-        callback({ success: true, message: 'Pin correcto!', gameId });
+        callback({ success: true, message: '¡Pin correcto!', gameId });
       } else {
-        callback({ success: false, message: 'Pin incorrecto!' });
+        callback({ success: false, message: '¡Pin incorrecto!' });
       }
     } catch (error) {
-      console.error('Error al buscar el juego:', error);
+      console.error('¡Pin incorrecto!', error);
       callback({ success: false, message: 'Error al buscar el juego' });
     }
   });
@@ -243,6 +245,7 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
           isCorrectC: true,
           isCorrectD: true,
           timer: true,
+          image: true,
         },
       });
 

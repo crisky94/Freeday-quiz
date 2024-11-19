@@ -66,7 +66,7 @@ export default function GameControlPage({ params }) {
         case 'resumed':
           toast('El juego está en marcha', {
             position: 'bottom-center',
-            autoClose: 4000,
+            autoClose: 5000,
             transition: Bounce,
           });
           break;
@@ -83,8 +83,15 @@ export default function GameControlPage({ params }) {
       console.log(gameState);
     };
     // Escuchar eventos del socket para actualizar el estado del juego en tiempo real
-    socket.on('pauseGame', () => setIsPaused(true));
-    socket.on('resumeGame', () => setIsPaused(false));
+    socket.on('pauseGame', async () => {
+      setIsPaused(true);
+      await handleReloadPlayersData(); // Recarga los datos de los jugadores al pausar
+    });
+    socket.on('resumeGame', () => {
+      setTimeout(() => {
+        setIsPaused(false);
+      }, 3050);
+    });
     socket.on('updatedAsks', (response) => {
       if (response.asks) {
         setQuestions((prevQuestions) => {
@@ -122,6 +129,7 @@ export default function GameControlPage({ params }) {
         onClose: () => {
           setShowEndGame(true);
           setShowRankingModal(true);
+          handleReloadPlayersData();
         },
       });
     });
@@ -171,29 +179,41 @@ export default function GameControlPage({ params }) {
     setTimeLeft(0);
   };
   // Función para detener el juego
-  const handleStopGame = () => {
+  const handleStopGame = async () => {
     if (socket) {
-      socket.emit('stopGame'); // Emitir un evento para detener el juego
+      // Primero recarga los datos de los jugadores
+      await handleReloadPlayersData();
+
+      // Una vez cargados, emite el evento para finalizar el juego
+      socket.emit('stopGame');
       setGameState('stopped');
-      setMessage('El juego ha finalizado ');
-      moveToLastQuestion(); // Moverse a la última pregunta
+      setMessage('El juego ha finalizado');
+      moveToLastQuestion();
+      setIsPaused(true);
+      // Finalmente, muestra el modal con el ranking actualizado
+      setShowRankingModal(true);
     }
   };
 
   // Función para recargar los datos de los jugadores
-  const handleReloadPlayersData = () => {
-    if (socket) {
-      socket.emit('getPlayers', { code }, (response) => {
-        if (response.error) {
-          console.error(response.error);
-        } else {
-          setPlayers(response.players); // Actualizar la lista de jugadores
-          setPlayerId(response.players.id);
-        }
-      });
-      console.log(playerId);
-    }
+  const handleReloadPlayersData = async () => {
+    return new Promise((resolve, reject) => {
+      if (socket) {
+        socket.emit('getPlayers', { code }, (response) => {
+          if (response.error) {
+            console.error(response.error);
+            reject(response.error); // Maneja errores aquí
+          } else {
+            setPlayers(response.players); // Actualizar la lista de jugadores
+            setPlayerId(response.players.id);
+            resolve(); // Resuelve la promesa al terminar
+          }
+        });
+        console.log(playerId);
+      }
+    });
   };
+
   // Función para enviar el ranking de jugadores
   const handleSendRanking = () => {
     if (socket) {
@@ -221,7 +241,7 @@ export default function GameControlPage({ params }) {
         if (response.error) {
           console.error(response.error);
         } else {
-          toast('Quiz finalizado', {
+          toast('Quiz finalizado, enviando jugadores al inicio', {
             autoClose: 2000,
             onClose: () => {
               router.push('/');
@@ -274,10 +294,10 @@ export default function GameControlPage({ params }) {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen w-full pt-16'>
-      <div className='bg-custom-linear flex mb-2'>
-        <div className='flex flex-col p-14 m-1 h-auto w-58 sm:w-full items-center bg-black gap-5'>
-          <h1 className='uppercase font-bold text-xl text-center'>
+    <div className='flex flex-col items-center justify-center h-full w-full mt-32 '>
+      <div className=' flex '>
+        <div className='flex flex-col px-2   h-screen w-screen items-center bg-[#111] gap-5'>
+          <h1 className='uppercase font-bold text-2xl text-center '>
             Sala de control del juego
           </h1>
           <div className='text-[#1cffe4] font-bold uppercase'>{message}</div>
@@ -290,7 +310,7 @@ export default function GameControlPage({ params }) {
                   setMessage('El juego está en marcha');
                 }
               }}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black hoverGradiant bg-custom-linear w-48 h-12 rounded-md px-2'
             >
               Reanudar
             </button>
@@ -303,7 +323,7 @@ export default function GameControlPage({ params }) {
                   setMessage('El juego está pausado');
                 }
               }}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black hoverGradiant font-bold bg-custom-linear w-48 h-12 rounded-md px-2'
             >
               Pausar
             </button>
@@ -311,30 +331,35 @@ export default function GameControlPage({ params }) {
           {!showEndGame && (
             <button
               onClick={handleStopGame}
-              className='text-black hoverGradiant bg-custom-linear w-32 h-10 rounded-md px-2'
+              className='text-black  hoverGradiant font-bold bg-custom-linear w-48 h-12 rounded-md px-2'
             >
               Finalizar
             </button>
           )}
           {showEndGame && <EndGame onSend={handleSendMainScreen} />}
           <Link
-            className='btn-edit text-black hoverGradiant bg-custom-linear w-48 h-14 rounded-md py-4 text-center'
+            className='btn-edit text-black hoverGradiant font-bold bg-custom-linear w-48 h-12 rounded-md p-3 md:p-2 text-center'
             href={`/pages/modify-page/${gameId}`}
             target='_blank'
           >
             Modificar juego
           </Link>
-          <div className='flex flex-col p-5 m-1 items-center bg-black gap-5'>
-            <p className='break-word'>
-              Preguntas: {currentQuestionIndex + 1} de {questions.length}
-            </p>
-            <div className='text-lg text-center'>
-              {currentQuestionIndex + 1}. {currentQuestion?.ask}
-            </div>
-            <div className='text-xl font-bold text-center mt-4 text-red-500'>
-              Tiempo restante: {formatTime(timeLeft)}
+          <div className='bg-custom-linear max-w-full p-1'>
+            <div className='flex flex-col p-2  w-full  items-center rounded-sm bg-[#111] '>
+              <p className='break-words font-semibold'>
+                Preguntas: {currentQuestionIndex + 1} de {questions.length}
+              </p>
+              <div className='text-md text-center w-full  mx-8    p-2 px-8'>
+                <p className=' break-words  whitespace-normal '>
+                  {currentQuestion?.ask}
+                </p>
+              </div>
+              <div className='text-xl font-bold text-center mt-1 text-red-500'>
+                Tiempo restante: {formatTime(timeLeft)}
+              </div>
             </div>
           </div>
+
           {showRankingModal && (
             <RankingModal
               code={code}
