@@ -310,7 +310,7 @@ export default function GameControlPage({ params }) {
                   setMessage('El juego está en marcha');
                 }
               }}
-              className='text-black hoverGradiant bg-custom-linear w-48 h-12 rounded-md px-2'
+              className='text-black hoverGradiant bg-custom-linear w-48 h-12 rounded-md px-2 font-bold'
             >
               Reanudar
             </button>
@@ -344,7 +344,7 @@ export default function GameControlPage({ params }) {
           >
             Modificar juego
           </Link>
-          <div className='bg-custom-linear max-w-full p-1'>
+          <div className='bg-custom-linear max-w-full p-1 mx-8'>
             <div className='flex flex-col p-2  w-full  items-center rounded-sm bg-[#111] '>
               <p className='break-words font-semibold'>
                 Preguntas: {currentQuestionIndex + 1} de {questions.length}
