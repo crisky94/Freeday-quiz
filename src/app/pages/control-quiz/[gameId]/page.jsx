@@ -294,7 +294,7 @@ export default function GameControlPage({ params }) {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className='flex flex-col items-center justify-center h-full w-full pt-12 '>
+    <div className='flex flex-col items-center justify-center h-full w-full mt-32 '>
       <div className=' flex '>
         <div className='flex flex-col px-2   h-screen w-screen items-center bg-[#111] gap-5'>
           <h1 className='uppercase font-bold text-2xl text-center '>

@@ -130,12 +130,12 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
   //* Obtener jugadores(header-sidebar-waitingRoom-pageGame)
   socket.on('getPlayers', async ({ code }, callback) => {
     try {
-      const game = await prisma.games.findUnique({
+      if (code) {
+          const game = await prisma.games.findUnique({
         where: {
           codeGame: code,
         },
       });
-
       if (game) {
         const players = await prisma.Players.findMany({
           where: {
@@ -153,6 +153,8 @@ export function playerEvents(socket, io, prisma, gamePlayerMap) {
       } else {
         callback({ error: 'Juego no encontrado' });
       }
+      }
+    
     } catch (error) {
       console.error('Error al obtener jugadores:', error);
       callback({ error: 'Error al obtener jugadores' });
