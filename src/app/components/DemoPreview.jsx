@@ -27,7 +27,7 @@ export default function DemoPreview({ question, timeLeft }) {
             <div
               className={`bg-white text-black border-2 border-black truncate rounded-md p-1 ${
                 !question.d
-                  ? 'col-span-2 md:col-span-2 justify-self-center w-[130px] md:w-[200px]'
+                  ? 'col-span-2 md:col-span-2 justify-self-center w-[150px] md:w-[350px]'
                   : ''
               }`}
             >
@@ -35,7 +35,7 @@ export default function DemoPreview({ question, timeLeft }) {
             </div>
           )}
           {question.d && (
-            <div className='bg-white border-2 border-black truncate rounded-md p-1'>
+            <div className='bg-white text-black border-2 border-black truncate rounded-md p-1'>
               {question.d}
             </div>
           )}
