@@ -170,6 +170,8 @@ export default function GameControlPage({ params }) {
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000);
     } else {
       handleReloadPlayersData();
+      setShowEndGame(true);
+      setShowRankingModal(true);
     }
   };
   // Función para saltar a la última pregunta
