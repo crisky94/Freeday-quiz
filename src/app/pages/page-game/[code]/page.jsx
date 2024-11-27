@@ -274,7 +274,6 @@ export default function GameQuizPage({ params }) {
       setCurrentQuestionIndex(nextIndex);
       setTimeLeft((questions[nextIndex]?.timer || 0) * 1000); // Convertir a milisegundos
     } else {
-      socket.emit('stopGame');
       router.push(`/pages/ranking/${code}`);
     }
   };

@@ -40,9 +40,10 @@ export default function RankingModal({ ranking, onSend }) {
                     key={index}
                     className='flex items-center w-full bg-black p-2 justify-between rounded-md mb-1'
                   >
-                    <div dangerouslySetInnerHTML={{ __html: player.avatar }} />
-                    <div className='ml-4 mr-4 font-semibold text-white'>
-                      {' '}
+                    <div className='mx-1 gap-2 font-semibold flex items-center text-white'>
+                      <figure
+                        dangerouslySetInnerHTML={{ __html: player.avatar }}
+                      />{' '}
                       {player.playerName}
                     </div>
 

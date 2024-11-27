@@ -43,7 +43,6 @@
 }
 
 .custom-dot .dot {
-  position: absolute top 10px;
   width: 10px;
   height: 10px;
   background-color: var(--bg-dot);

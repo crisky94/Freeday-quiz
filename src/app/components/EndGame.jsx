@@ -21,16 +21,16 @@ export default function EndGame({ onSend }) {
         className='hoverGradiant font-bold bg-custom-linear text-black px-5 text-md h-12 w-48 rounded-md hover:transition duration-200'
         onClick={toggleModal}
       >
-        Enviar a Home
+        Enviar a inicio
       </button>
       {isOpen && (
         <div className='fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50'>
-          <div className='mt-4 flex justify-center text-black gap-10'>
+          <div className='mt-4 flex flex-wrap justify-center text-black gap-2'>
             <button
               onClick={onSend}
               className='hoverGradiant bg-custom-linear px-5 text-sm h-12 rounded-md hover:transition duration-200 font-bold'
             >
-              Confirmar Envio a Home
+              Confirmar
             </button>
             <button
               onClick={handleCancel}
