@@ -27,8 +27,12 @@ const NickNameForm = ({ params }) => {
       setIsModalOpen(true);
     });
     // Escucha el evento de éxito al unirse a una sala.
+    socket.on('joinSuccess', () => {
+      router.push(`/pages/waiting-room/${code}`);
+    });
     return () => {
       socket.off('nicknameConflict');
+      socket.off('joinSuccess');
     };
   }, [socket, code, router]);
   if (!socketReady) {
