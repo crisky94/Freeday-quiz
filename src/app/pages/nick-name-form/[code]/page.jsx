@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import AvatarModal from '../../../components/AvatarModal';
 import { useAvatar } from '../../../../context/avatarContext';
 import { useSocket } from '@/context/socketContext';
-import { toast, Flip, ToastContainer } from 'react-toastify';
 import Image from 'next/image';
 import Loading from '@/app/loading';
 
@@ -28,25 +27,8 @@ const NickNameForm = ({ params }) => {
       setIsModalOpen(true);
     });
     // Escucha el evento de éxito al unirse a una sala.
-    socket.on('joinSuccess', () => {
-      toast('Ingresando a la sala de espera ⏳', {
-        position: 'bottom-center',
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-        transition: Flip,
-        onClose: () => {
-          router.push(`/pages/waiting-room/${code}`);
-        },
-      });
-    });
     return () => {
       socket.off('nicknameConflict');
-      socket.off('joinSuccess');
     };
   }, [socket, code, router]);
   if (!socketReady) {
@@ -98,7 +80,6 @@ const NickNameForm = ({ params }) => {
 
   return (
     <div className='h-screen w-full flex items-center justify-center'>
-      <ToastContainer />
       <div className='bg-custom-linear p-1'>
         <form
           className='bg-black flex flex-col gap-5 w-72 justify-center text-center p-10 items-center shadow-xl rounded-md text-slate-700'
